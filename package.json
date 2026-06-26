@@ -1,0 +1,44 @@
+﻿{
+  "name": "nexus-ai-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Enterprise AI Platform – ChatGPT + Copilot + Notion AI + Slack AI + GitHub Copilot",
+  "workspaces": [
+    "frontend/apps/*",
+    "frontend/packages/*",
+    "backend/services/*",
+    "backend/packages/*",
+    "mcp/servers/*",
+    "mcp/sdk",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write .",
+    "prepare": "husky install",
+    "db:migrate": "turbo run db:migrate --filter=@nexus/database",
+    "db:studio": "turbo run db:studio --filter=@nexus/database"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "eslint": "^8.57.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.2.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.4.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{js,json,md,yml,yaml}": ["prettier --write"]
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

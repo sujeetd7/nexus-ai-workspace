@@ -1,0 +1,52 @@
+﻿# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.next/
+.turbo/
+out/
+
+# Testing
+coverage/
+.nyc_output/
+pytest_cache/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Python
+*.egg-info/
+.venv/
+venv/
+__pycache__/
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Docker
+*.override.yml
+
+# Prisma
+prisma/generated/

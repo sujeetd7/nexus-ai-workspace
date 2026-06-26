@@ -1,0 +1,21 @@
+﻿name: CD – Deploy Production
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build & Push Docker Images
+        run: |
+          docker build -t nexus-ai/backend:${{ github.sha }} ./backend
+          docker build -t nexus-ai/ai:${{ github.sha }} ./ai
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -k infrastructure/kubernetes/overlays/production

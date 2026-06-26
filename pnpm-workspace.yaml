@@ -1,0 +1,8 @@
+﻿packages:
+  - "frontend/apps/*"
+  - "frontend/packages/*"
+  - "backend/services/*"
+  - "backend/packages/*"
+  - "mcp/servers/*"
+  - "mcp/sdk"
+  - "shared"
