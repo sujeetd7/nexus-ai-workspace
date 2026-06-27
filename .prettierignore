@@ -1,9 +1,6 @@
-﻿node_modules/
-dist/
-.next/
-build/
-coverage/
-*.lock
-pnpm-lock.yaml
-*.min.js
-*.generated.ts
+﻿node_modules
+dist
+build
+coverage
+.turbo
+.next

@@ -1,0 +1,27 @@
+# Platform Owner
+* @sujeetd7
+
+# Frontend
+/frontend/ @sujeetd7
+
+# Backend
+/backend/ @sujeetd7
+
+# AI Platform
+/ai/ @sujeetd7
+
+# MCP
+/mcp/ @sujeetd7
+
+# Shared Contracts
+/shared/ @sujeetd7
+
+# Infrastructure
+/infra/ @sujeetd7
+
+# Architecture
+/docs/adr/ @sujeetd7
+/docs/ARCHITECTURE_FROZEN.md @sujeetd7
+
+# Github Workflow
+/.github/ @sujeetd7

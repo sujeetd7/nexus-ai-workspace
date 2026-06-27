@@ -1,0 +1,4469 @@
+Folder PATH listing
+Volume serial number is B0ED-067D
+C:.
+|   .commitlintrc
+|   .editorconfig
+|   .env.example
+|   .eslintrc
+|   .eslintrc.js
+|   .gitignore
+|   .node-version
+|   .nvmrc
+|   .prettierignore
+|   .prettierrc
+|   commitlint.config.js
+|   docker-compose.yml
+|   package.json
+|   pnpm-workspace.yaml
+|   README.md
+|   structure.txt
+|   turbo.json
+|   
++---.github
+|   |   CODEOWNERS
+|   |   CONTRIBUTING.md
+|   |   PULL_REQUEST_TEMPLATE.md
+|   |   SECURITY.md
+|   |   SUPPORT.md
+|   |   
+|   +---actions
+|   |   +---build
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---deploy
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---test
+|   |           .gitkeep
+|   |           
+|   +---ISSUE_TEMPLATE
+|   |       .gitkeep
+|   |       architecture_proposal.md
+|   |       bug_report.md
+|   |       feature_request.md
+|   |       
+|   +---PULL_REQUEST_TEMPLATE
+|   |       .gitkeep
+|   |       
+|   \---workflows
+|           .gitkeep
+|           cd.yml
+|           ci.yml
+|           release.yml
+|           security.yml
+|           
++---ai
+|   +---agents
+|   |   +---base
+|   |   |   +---interfaces
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---tests
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---planner
+|   |   |   +---adapters
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---graphs
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---interfaces
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---prompts
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---tests
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---workflows
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---rag
+|   |   |   +---adapters
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---graphs
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---interfaces
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---prompts
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---tests
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---workflows
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---research
+|   |   |   +---adapters
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---graphs
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---interfaces
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---prompts
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---tests
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---workflows
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---reviewer
+|   |   |   +---adapters
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---graphs
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---interfaces
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---prompts
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---tests
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---workflows
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---runtime
+|   |   |   +---interfaces
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---tests
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---summarizer
+|   |   |   +---adapters
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---graphs
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---interfaces
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---prompts
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---tests
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---workflows
+|   |   |           .gitkeep
+|   |   |           
+|   |   \---tool
+|   |       +---adapters
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---graphs
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---interfaces
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---prompts
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---schemas
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---tests
+|   |       |       .gitkeep
+|   |       |       
+|   |       \---workflows
+|   |               .gitkeep
+|   |               
+|   +---config
+|   |       .gitkeep
+|   |       
+|   +---context
+|   |   +---builder
+|   |   |   +---adapters
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---interfaces
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---tests
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---workflows
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---schemas
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---tests
+|   |           .gitkeep
+|   |           
+|   +---cost
+|   |   +---adapters
+|   |   |   +---anthropic
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---github-models
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---openai
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---interfaces
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---schemas
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---services
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---tests
+|   |           .gitkeep
+|   |           
+|   +---embeddings
+|   |   +---adapters
+|   |   |   +---huggingface
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---local
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---openai
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---interfaces
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---schemas
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---services
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---tests
+|   |           .gitkeep
+|   |           
+|   +---evaluation
+|   |   +---adapters
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---benchmarks
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---datasets
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---metrics
+|   |   |   +---custom
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---ragas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---schemas
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---schemas
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---services
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---tests
+|   |           .gitkeep
+|   |           
+|   +---guardrails
+|   |   +---input
+|   |   |   +---adapters
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---tests
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---interfaces
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---output
+|   |   |   +---adapters
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---tests
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---schemas
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---tests
+|   |           .gitkeep
+|   |           
+|   +---hooks
+|   |   \---prompt-hooks
+|   |       +---adapters
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---interfaces
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---post
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---pre
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---schemas
+|   |       |       .gitkeep
+|   |       |       
+|   |       \---tests
+|   |               .gitkeep
+|   |               
+|   +---kernel
+|   |   +---config
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---core
+|   |   |   +---agents
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---chains
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---graphs
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---interfaces
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---memory
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---tools
+|   |   |           .gitkeep
+|   |   |           
+|   |   \---providers
+|   |       +---anthropic
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---github-models
+|   |       |       .gitkeep
+|   |       |       
+|   |       \---openai
+|   |               .gitkeep
+|   |               
+|   +---mcp
+|   |   +---client
+|   |   |   +---adapters
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---schemas
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---manager
+|   |   |   +---adapters
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---interfaces
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---tests
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---schemas
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---tests
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---tools
+|   |       +---adapters
+|   |       |       .gitkeep
+|   |       |       
+|   |       \---schemas
+|   |               .gitkeep
+|   |               
+|   +---memory
+|   |   +---buffer
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---entity
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---episodic
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---manager
+|   |   |   +---adapters
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---interfaces
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---tests
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---schemas
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---summary
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---tests
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---vector
+|   |           .gitkeep
+|   |           
+|   +---observability
+|   |   +---interfaces
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---langsmith
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---logging
+|   |   |   +---adapters
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---schemas
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---metrics
+|   |   |   +---adapters
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---schemas
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---tests
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---tracing
+|   |       +---adapters
+|   |       |       .gitkeep
+|   |       |       
+|   |       \---schemas
+|   |               .gitkeep
+|   |               
+|   +---pipelines
+|   |   +---evaluation
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---fine-tuning
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---ingestion
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---training
+|   |           .gitkeep
+|   |           
+|   +---registry
+|   |   +---instruction-registry
+|   |   |   +---instructions
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---interfaces
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---services
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---tests
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---prompt-registry
+|   |   |   +---interfaces
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---prompts
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---schemas
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---services
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---tests
+|   |   |           .gitkeep
+|   |   |           
+|   |   \---skill-registry
+|   |       +---interfaces
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---schemas
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---services
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---skills
+|   |       |       .gitkeep
+|   |       |       
+|   |       \---tests
+|   |               .gitkeep
+|   |               
+|   +---routing
+|   |   \---model-router
+|   |       +---adapters
+|   |       |   +---anthropic
+|   |       |   |       .gitkeep
+|   |       |   |       
+|   |       |   +---github-models
+|   |       |   |       .gitkeep
+|   |       |   |       
+|   |       |   \---openai
+|   |       |           .gitkeep
+|   |       |           
+|   |       +---interfaces
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---schemas
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---strategies
+|   |       |       .gitkeep
+|   |       |       
+|   |       \---tests
+|   |               .gitkeep
+|   |               
+|   +---services
+|   |   +---agent-service
+|   |   |   +---src
+|   |   |   |   +---agents
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---config
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---graphs
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---memory
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---tools
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---tests
+|   |   |       +---integration
+|   |   |       |       .gitkeep
+|   |   |       |       
+|   |   |       \---unit
+|   |   |               .gitkeep
+|   |   |               
+|   |   +---document-ai
+|   |   |   +---src
+|   |   |   |   +---config
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---extractors
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---indexers
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---parsers
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---tests
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---inference-service
+|   |   |   +---src
+|   |   |   |   +---config
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---models
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---pipelines
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---tests
+|   |   |       +---integration
+|   |   |       |       .gitkeep
+|   |   |       |       
+|   |   |       \---unit
+|   |   |               .gitkeep
+|   |   |               
+|   |   \---rag-service
+|   |       +---src
+|   |       |   +---config
+|   |       |   |       .gitkeep
+|   |       |   |       
+|   |       |   +---embedding
+|   |       |   |       .gitkeep
+|   |       |   |       
+|   |       |   +---ingestion
+|   |       |   |       .gitkeep
+|   |       |   |       
+|   |       |   +---reranking
+|   |       |   |       .gitkeep
+|   |       |   |       
+|   |       |   \---retrieval
+|   |       |           .gitkeep
+|   |       |           
+|   |       \---tests
+|   |           +---integration
+|   |           |       .gitkeep
+|   |           |       
+|   |           \---unit
+|   |                   .gitkeep
+|   |                   
+|   +---streaming
+|   |   +---adapters
+|   |   |   +---sse
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---websocket
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---handlers
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---interfaces
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---schemas
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---tests
+|   |           .gitkeep
+|   |           
+|   +---tests
+|   |   +---benchmarks
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---fixtures
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---integration
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---unit
+|   |           .gitkeep
+|   |           
+|   \---vectordb
+|       +---chromadb
+|       |   +---adapters
+|       |   |       .gitkeep
+|       |   |       
+|       |   +---collections
+|       |   |       .gitkeep
+|       |   |       
+|       |   +---config
+|       |   |       .gitkeep
+|       |   |       
+|       |   +---schemas
+|       |   |       .gitkeep
+|       |   |       
+|       |   \---tests
+|       |           .gitkeep
+|       |           
+|       +---interfaces
+|       |       .gitkeep
+|       |       
+|       +---migrations
+|       |       .gitkeep
+|       |       
+|       +---schemas
+|       |       .gitkeep
+|       |       
+|       \---tests
+|               .gitkeep
+|               
++---backend
+|   +---config
+|   |   +---eslint
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---typescript
+|   |           .gitkeep
+|   |           
+|   +---packages
+|   |   +---auth
+|   |   |   \---src
+|   |   |       +---jwt
+|   |   |       |       .gitkeep
+|   |   |       |       
+|   |   |       +---middleware
+|   |   |       |       .gitkeep
+|   |   |       |       
+|   |   |       \---rbac
+|   |   |               .gitkeep
+|   |   |               
+|   |   +---cache
+|   |   |   \---src
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---database
+|   |   |   +---prisma
+|   |   |   |   +---migrations
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---seeds
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---src
+|   |   |       +---models
+|   |   |       |       .gitkeep
+|   |   |       |       
+|   |   |       \---repositories
+|   |   |               .gitkeep
+|   |   |               
+|   |   +---events
+|   |   |   \---src
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---logger
+|   |   |   \---src
+|   |   |           .gitkeep
+|   |   |           
+|   |   \---queue
+|   |       \---src
+|   |           +---consumers
+|   |           |       .gitkeep
+|   |           |       
+|   |           \---producers
+|   |                   .gitkeep
+|   |                   
+|   \---services
+|       +---admin-service
+|       |   +---src
+|       |   |   +---audit
+|       |   |   |   \---events
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---config
+|       |   |   |   +---database
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---env
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logger
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---redis
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---controllers
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---dashboard
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---dto
+|       |   |   |   +---requests
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---responses
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---events
+|       |   |   |   +---consumers
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---publishers
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---feature-flags
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---impersonation
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---middleware
+|       |   |   |   +---auth
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---error
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logging
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---rate-limit
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---validation
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---queues
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---reports
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---repositories
+|       |   |   |   +---mongo
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---prisma
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---routes
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---services
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---system
+|       |   |   |   +---config
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---health
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---types
+|       |   |   |   +---enums
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---interfaces
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---utils
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---validators
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---workers
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |       +---e2e
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---fixtures
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---integration
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---mocks
+|       |       |       .gitkeep
+|       |       |       
+|       |       \---unit
+|       |               .gitkeep
+|       |               
+|       +---ai-gateway
+|       |   +---src
+|       |   |   +---config
+|       |   |   |   +---database
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---env
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logger
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---redis
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---controllers
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---cost-tracking
+|       |   |   |   +---adapters
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---budgets
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---dto
+|       |   |   |   +---requests
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---responses
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---events
+|       |   |   |   +---consumers
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---publishers
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---guardrails
+|       |   |   |   +---input
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---output
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---middleware
+|       |   |   |   +---auth
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---error
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logging
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---rate-limit
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---validation
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---model-routing
+|       |   |   |   +---adapters
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---strategies
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---proxy
+|       |   |   |   +---anthropic
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---github-models
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---openai
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---queues
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---rate-limiting
+|       |   |   |   \---providers
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---repositories
+|       |   |   |   +---mongo
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---prisma
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---response-cache
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---routes
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---services
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---streaming
+|       |   |   |   +---sse
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---websocket
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---types
+|       |   |   |   +---enums
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---interfaces
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---utils
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---validators
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---workers
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |       +---e2e
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---fixtures
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---integration
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---mocks
+|       |       |       .gitkeep
+|       |       |       
+|       |       \---unit
+|       |               .gitkeep
+|       |               
+|       +---analytics-service
+|       |   +---src
+|       |   |   +---aggregators
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---collectors
+|       |   |   |   +---events
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---usage
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---config
+|       |   |   |   +---database
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---env
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logger
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---redis
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---controllers
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---dashboards
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---dto
+|       |   |   |   +---requests
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---responses
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---events
+|       |   |   |   +---consumers
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---publishers
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---exports
+|       |   |   |   +---csv
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---pdf
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---middleware
+|       |   |   |   +---auth
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---error
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logging
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---rate-limit
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---validation
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---pipelines
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---queues
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---reports
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---repositories
+|       |   |   |   +---mongo
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---prisma
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---routes
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---services
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---types
+|       |   |   |   +---enums
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---interfaces
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---utils
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---validators
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---workers
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |       +---e2e
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---fixtures
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---integration
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---mocks
+|       |       |       .gitkeep
+|       |       |       
+|       |       \---unit
+|       |               .gitkeep
+|       |               
+|       +---api-gateway
+|       |   +---src
+|       |   |   +---circuit-breaker
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---config
+|       |   |   |   |   .gitkeep
+|       |   |   |   |   
+|       |   |   |   +---database
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---env
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logger
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---redis
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---controllers
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---dto
+|       |   |   |   +---requests
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---responses
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---events
+|       |   |   |   +---consumers
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---publishers
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---health
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---load-balancer
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---middleware
+|       |   |   |   |   .gitkeep
+|       |   |   |   |   
+|       |   |   |   +---auth
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---cors
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---error
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---helmet
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logging
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---rate-limit
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---validation
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---plugins
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---proxy
+|       |   |   |   +---http
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---ws
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---queues
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---repositories
+|       |   |   |   +---mongo
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---prisma
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---routes
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---services
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---types
+|       |   |   |   +---enums
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---interfaces
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---utils
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---validators
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---workers
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |       +---e2e
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---fixtures
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---integration
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---mocks
+|       |       |       .gitkeep
+|       |       |       
+|       |       \---unit
+|       |               .gitkeep
+|       |               
+|       +---auth-service
+|       |   +---src
+|       |   |   +---config
+|       |   |   |   |   .gitkeep
+|       |   |   |   |   
+|       |   |   |   +---database
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---env
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logger
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---redis
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---controllers
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---dto
+|       |   |   |   +---requests
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---responses
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---events
+|       |   |   |   +---consumers
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---publishers
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---mfa
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---middleware
+|       |   |   |   |   .gitkeep
+|       |   |   |   |   
+|       |   |   |   +---auth
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---error
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logging
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---rate-limit
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---validation
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---password
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---queues
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---repositories
+|       |   |   |   |   .gitkeep
+|       |   |   |   |   
+|       |   |   |   +---mongo
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---prisma
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---routes
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---services
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---sessions
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---strategies
+|       |   |   |   +---jwt
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---oauth
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---tokens
+|       |   |   |   +---access
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---refresh
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---types
+|       |   |   |   +---enums
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---interfaces
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---utils
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---validators
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---workers
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |       +---e2e
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---fixtures
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---integration
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---mocks
+|       |       |       .gitkeep
+|       |       |       
+|       |       \---unit
+|       |               .gitkeep
+|       |               
+|       +---chat-service
+|       |   +---src
+|       |   |   +---channels
+|       |   |   |   +---direct
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---group
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---config
+|       |   |   |   |   .gitkeep
+|       |   |   |   |   
+|       |   |   |   +---database
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---env
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logger
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---redis
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---controllers
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---dto
+|       |   |   |   +---requests
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---responses
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---events
+|       |   |   |   +---consumers
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---publishers
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---gateways
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---messages
+|       |   |   |   +---media
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---reactions
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---text
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---middleware
+|       |   |   |   +---auth
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---error
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logging
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---rate-limit
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---validation
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---presence
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---queues
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---repositories
+|       |   |   |   |   .gitkeep
+|       |   |   |   |   
+|       |   |   |   +---mongo
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---prisma
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---routes
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---services
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---threads
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---types
+|       |   |   |   +---enums
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---interfaces
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---utils
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---validators
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---websockets
+|       |   |   |   +---handlers
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---namespaces
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   \---workers
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |       +---e2e
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---fixtures
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---integration
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---mocks
+|       |       |       .gitkeep
+|       |       |       
+|       |       \---unit
+|       |               .gitkeep
+|       |               
+|       +---document-service
+|       |   +---src
+|       |   |   +---config
+|       |   |   |   |   .gitkeep
+|       |   |   |   |   
+|       |   |   |   +---database
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---env
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logger
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---redis
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---controllers
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---dto
+|       |   |   |   +---requests
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---responses
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---events
+|       |   |   |   +---consumers
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---publishers
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---indexing
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---middleware
+|       |   |   |   +---auth
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---error
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logging
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---rate-limit
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---validation
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---parsers
+|       |   |   |   +---docx
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---markdown
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---pdf
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---permissions
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---processors
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---queues
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---repositories
+|       |   |   |   |   .gitkeep
+|       |   |   |   |   
+|       |   |   |   +---mongo
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---prisma
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---routes
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---services
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---storage
+|       |   |   |   +---local
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---s3
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---types
+|       |   |   |   +---enums
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---interfaces
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---utils
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---validators
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---versions
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---workers
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |       +---e2e
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---fixtures
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---integration
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---mocks
+|       |       |       .gitkeep
+|       |       |       
+|       |       \---unit
+|       |               .gitkeep
+|       |               
+|       +---notification-service
+|       |   +---src
+|       |   |   +---channels
+|       |   |   |   +---email
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---in-app
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---push
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---sms
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---config
+|       |   |   |   |   .gitkeep
+|       |   |   |   |   
+|       |   |   |   +---database
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---env
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logger
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---redis
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---controllers
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---dto
+|       |   |   |   +---requests
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---responses
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---events
+|       |   |   |   +---consumers
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---publishers
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---middleware
+|       |   |   |   +---auth
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---error
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logging
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---rate-limit
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---validation
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---preferences
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---queues
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---repositories
+|       |   |   |   +---mongo
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---prisma
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---routes
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---services
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---subscriptions
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---templates
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---types
+|       |   |   |   +---enums
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---interfaces
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---utils
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---validators
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---workers
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |       +---e2e
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---fixtures
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---integration
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---mocks
+|       |       |       .gitkeep
+|       |       |       
+|       |       \---unit
+|       |               .gitkeep
+|       |               
+|       +---prompt-service
+|       |   +---src
+|       |   |   +---config
+|       |   |   |   +---database
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---env
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logger
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---redis
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---controllers
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---dto
+|       |   |   |   +---requests
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---responses
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---events
+|       |   |   |   +---consumers
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---publishers
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---history
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---middleware
+|       |   |   |   +---auth
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---error
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logging
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---rate-limit
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---validation
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---queues
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---registry
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---rendering
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---repositories
+|       |   |   |   +---mongo
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---prisma
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---routes
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---services
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---templates
+|       |   |   |   +---categories
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---versions
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---types
+|       |   |   |   +---enums
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---interfaces
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---utils
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---validators
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---variables
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---workers
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |       +---e2e
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---fixtures
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---integration
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---mocks
+|       |       |       .gitkeep
+|       |       |       
+|       |       \---unit
+|       |               .gitkeep
+|       |               
+|       +---user-service
+|       |   +---src
+|       |   |   +---avatars
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---config
+|       |   |   |   |   .gitkeep
+|       |   |   |   |   
+|       |   |   |   +---database
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---env
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logger
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---redis
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---controllers
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---dto
+|       |   |   |   +---requests
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---responses
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---events
+|       |   |   |   +---consumers
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---publishers
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---middleware
+|       |   |   |   +---auth
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---error
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---logging
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---rate-limit
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---validation
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---preferences
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---profiles
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---queues
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---repositories
+|       |   |   |   |   .gitkeep
+|       |   |   |   |   
+|       |   |   |   +---mongo
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---prisma
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---routes
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---search
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---services
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---types
+|       |   |   |   +---enums
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---interfaces
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---utils
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---validators
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---workers
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |       +---e2e
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---fixtures
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---integration
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---mocks
+|       |       |       .gitkeep
+|       |       |       
+|       |       \---unit
+|       |               .gitkeep
+|       |               
+|       \---workspace-service
+|           +---src
+|           |   +---billing
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---config
+|           |   |   |   .gitkeep
+|           |   |   |   
+|           |   |   +---database
+|           |   |   |       .gitkeep
+|           |   |   |       
+|           |   |   +---env
+|           |   |   |       .gitkeep
+|           |   |   |       
+|           |   |   +---logger
+|           |   |   |       .gitkeep
+|           |   |   |       
+|           |   |   \---redis
+|           |   |           .gitkeep
+|           |   |           
+|           |   +---controllers
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---dto
+|           |   |   +---requests
+|           |   |   |       .gitkeep
+|           |   |   |       
+|           |   |   \---responses
+|           |   |           .gitkeep
+|           |   |           
+|           |   +---events
+|           |   |   +---consumers
+|           |   |   |       .gitkeep
+|           |   |   |       
+|           |   |   \---publishers
+|           |   |           .gitkeep
+|           |   |           
+|           |   +---invitations
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---members
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---middleware
+|           |   |   +---auth
+|           |   |   |       .gitkeep
+|           |   |   |       
+|           |   |   +---error
+|           |   |   |       .gitkeep
+|           |   |   |       
+|           |   |   +---logging
+|           |   |   |       .gitkeep
+|           |   |   |       
+|           |   |   +---rate-limit
+|           |   |   |       .gitkeep
+|           |   |   |       
+|           |   |   \---validation
+|           |   |           .gitkeep
+|           |   |           
+|           |   +---permissions
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---queues
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---repositories
+|           |   |   |   .gitkeep
+|           |   |   |   
+|           |   |   +---mongo
+|           |   |   |       .gitkeep
+|           |   |   |       
+|           |   |   \---prisma
+|           |   |           .gitkeep
+|           |   |           
+|           |   +---routes
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---services
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---settings
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---types
+|           |   |   +---enums
+|           |   |   |       .gitkeep
+|           |   |   |       
+|           |   |   \---interfaces
+|           |   |           .gitkeep
+|           |   |           
+|           |   +---utils
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---validators
+|           |   |       .gitkeep
+|           |   |       
+|           |   \---workers
+|           |           .gitkeep
+|           |           
+|           \---tests
+|               +---e2e
+|               |       .gitkeep
+|               |       
+|               +---fixtures
+|               |       .gitkeep
+|               |       
+|               +---integration
+|               |       .gitkeep
+|               |       
+|               +---mocks
+|               |       .gitkeep
+|               |       
+|               \---unit
+|                       .gitkeep
+|                       
++---docker
+|   +---chromadb
+|   +---mongodb
+|   +---ngnix
+|   +---postgres
+|   \---redis
++---docs
+|   |   agents.md
+|   |   ai-kernel.md
+|   |   architecture.md
+|   |   backend.md
+|   |   database.md
+|   |   deployment.md
+|   |   frontend.md
+|   |   mcp.md
+|   |   README.md
+|   |   roadmap.md
+|   |   security.md
+|   |   testing.md
+|   |   
+|   +---adr
+|   |       .gitkeep
+|   |       0001-project-vision.md
+|   |       0002-microservices.md
+|   |       0003-microfrontends.md
+|   |       0004-polyglot-database.md
+|   |       0004-polyglot-db.md
+|   |       0005-ai-kernel.md
+|   |       0006-agent-runtime.md
+|   |       ADR-000-template.md
+|   |       ADR-001-monorepo-turborepo.md
+|   |       ADR-002-ai-kernel-langgraph-fastmcp.md
+|   |       ADR-003-backend-microservices-express-prisma.md
+|   |       
+|   +---api
+|   |   +---mcp
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---rest
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---websocket
+|   |           .gitkeep
+|   |           
+|   +---architecture
+|   |   +---decisions
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---diagrams
+|   |           .gitkeep
+|   |           
+|   +---diagrams
+|   +---guides
+|   |   +---deployment
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---development
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---getting-started
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---security
+|   |           .gitkeep
+|   |           
+|   \---runbooks
+|       +---incidents
+|       |       .gitkeep
+|       |       
+|       \---operations
+|               .gitkeep
+|               
++---frontend
+|   +---apps
+|   |   +---admin-mf
+|   |   |   +---public
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---src
+|   |   |   |   +---assets
+|   |   |   |   |   +---fonts
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---icons
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---images
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---audit
+|   |   |   |   |   \---filters
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---components
+|   |   |   |   |   +---atoms
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---layout
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---molecules
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---organisms
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---feature-flags
+|   |   |   |   |   +---editor
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---list
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---forms
+|   |   |   |   |   +---fields
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---schemas
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---hooks
+|   |   |   |   |   +---api
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---business
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---ui
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---i18n
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---pages
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---providers
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---redux
+|   |   |   |   |   +---selectors
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---slices
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---store
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---roles
+|   |   |   |   |   +---list
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---permissions
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---routes
+|   |   |   |   |   +---private
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---public
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---rtk-query
+|   |   |   |   |   +---apis
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---transformations
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---schemas
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---services
+|   |   |   |   |   +---adapters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---api
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---styles
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---system
+|   |   |   |   |   +---config
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---health
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---types
+|   |   |   |   |   +---enums
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---interfaces
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---users
+|   |   |   |   |   +---detail
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---invite
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---list
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---utils
+|   |   |   |   |   +---constants
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---formatters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---helpers
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   \---workspaces
+|   |   |   |       +---detail
+|   |   |   |       |       .gitkeep
+|   |   |   |       |       
+|   |   |   |       \---list
+|   |   |   |               .gitkeep
+|   |   |   |               
+|   |   |   +---tests
+|   |   |   |   +---e2e
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---fixtures
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---integration
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---unit
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---__mocks__
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---analytics-mf
+|   |   |   +---public
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---src
+|   |   |   |   +---assets
+|   |   |   |   |   +---fonts
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---icons
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---images
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---charts
+|   |   |   |   |   +---bar
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---heatmap
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---line
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---pie
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---sankey
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---components
+|   |   |   |   |   +---atoms
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---layout
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---molecules
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---organisms
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---dashboards
+|   |   |   |   |   +---layouts
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---widgets
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---filters
+|   |   |   |   |   +---date
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---model
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---user
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---forms
+|   |   |   |   |   +---fields
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---schemas
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---hooks
+|   |   |   |   |   +---api
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---business
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---ui
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---i18n
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---metrics
+|   |   |   |   |   +---cost
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---performance
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---usage
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---pages
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---providers
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---redux
+|   |   |   |   |   +---selectors
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---slices
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---store
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---reports
+|   |   |   |   |   +---exports
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---templates
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---routes
+|   |   |   |   |   +---private
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---public
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---rtk-query
+|   |   |   |   |   +---apis
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---transformations
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---schemas
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---services
+|   |   |   |   |   +---adapters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---api
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---styles
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---types
+|   |   |   |   |   +---enums
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---interfaces
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   \---utils
+|   |   |   |       +---constants
+|   |   |   |       |       .gitkeep
+|   |   |   |       |       
+|   |   |   |       +---formatters
+|   |   |   |       |       .gitkeep
+|   |   |   |       |       
+|   |   |   |       \---helpers
+|   |   |   |               .gitkeep
+|   |   |   |               
+|   |   |   +---tests
+|   |   |   |   +---e2e
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---fixtures
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---integration
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---unit
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---__mocks__
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---auth-mf
+|   |   |   +---public
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---src
+|   |   |   |   +---assets
+|   |   |   |   |   +---fonts
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---icons
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---images
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---components
+|   |   |   |   |   +---atoms
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---layout
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---molecules
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---organisms
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---flows
+|   |   |   |   |   +---forgot-password
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---login
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---mfa
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---oauth
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---register
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---forms
+|   |   |   |   |   +---fields
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---schemas
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---guards
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---hooks
+|   |   |   |   |   +---api
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---business
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---ui
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---i18n
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---pages
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---providers
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---redux
+|   |   |   |   |   +---selectors
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---slices
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---store
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---routes
+|   |   |   |   |   +---private
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---public
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---rtk-query
+|   |   |   |   |   +---apis
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---transformations
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---schemas
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---services
+|   |   |   |   |   +---adapters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---api
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---styles
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---tokens
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---types
+|   |   |   |   |   +---enums
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---interfaces
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   \---utils
+|   |   |   |       +---constants
+|   |   |   |       |       .gitkeep
+|   |   |   |       |       
+|   |   |   |       +---formatters
+|   |   |   |       |       .gitkeep
+|   |   |   |       |       
+|   |   |   |       \---helpers
+|   |   |   |               .gitkeep
+|   |   |   |               
+|   |   |   +---tests
+|   |   |   |   +---e2e
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---fixtures
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---integration
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---unit
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---__mocks__
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---chat-mf
+|   |   |   +---public
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---src
+|   |   |   |   +---assets
+|   |   |   |   |   +---fonts
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---icons
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---images
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---channels
+|   |   |   |   |   +---direct
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---group
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---workspace
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---components
+|   |   |   |   |   +---atoms
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---layout
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---molecules
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---organisms
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---editor
+|   |   |   |   |   +---plugins
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---toolbar
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---forms
+|   |   |   |   |   +---fields
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---schemas
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---hooks
+|   |   |   |   |   +---api
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---business
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---ui
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---i18n
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---messages
+|   |   |   |   |   +---media
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---reactions
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---text
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---threads
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---pages
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---presence
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---providers
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---redux
+|   |   |   |   |   +---selectors
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---slices
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---store
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---routes
+|   |   |   |   |   +---private
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---public
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---rtk-query
+|   |   |   |   |   +---apis
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---transformations
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---schemas
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---search
+|   |   |   |   |   +---channels
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---messages
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---services
+|   |   |   |   |   +---adapters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---api
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---styles
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---types
+|   |   |   |   |   +---enums
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---interfaces
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---utils
+|   |   |   |   |   +---constants
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---formatters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---helpers
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   \---websockets
+|   |   |   |       \---handlers
+|   |   |   |               .gitkeep
+|   |   |   |               
+|   |   |   +---tests
+|   |   |   |   +---e2e
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---fixtures
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---integration
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---unit
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---__mocks__
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---mobile
+|   |   |   +---src
+|   |   |   |   +---app
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---components
+|   |   |   |   |   +---shared
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---ui
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---features
+|   |   |   |   |   +---agents
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---auth
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---chat
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---workspace
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---hooks
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---lib
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---navigation
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---types
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---tests
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---notifications-mf
+|   |   |   +---public
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---src
+|   |   |   |   +---assets
+|   |   |   |   |   +---fonts
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---icons
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---images
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---badges
+|   |   |   |   |   \---counter
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---components
+|   |   |   |   |   +---atoms
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---layout
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---molecules
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---organisms
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---forms
+|   |   |   |   |   +---fields
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---schemas
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---hooks
+|   |   |   |   |   +---api
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---business
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---ui
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---i18n
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---inbox
+|   |   |   |   |   +---detail
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---filters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---list
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---pages
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---preferences
+|   |   |   |   |   +---channels
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---frequency
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---providers
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---redux
+|   |   |   |   |   +---selectors
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---slices
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---store
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---routes
+|   |   |   |   |   +---private
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---public
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---rtk-query
+|   |   |   |   |   +---apis
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---transformations
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---schemas
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---services
+|   |   |   |   |   +---adapters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---api
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---styles
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---toast
+|   |   |   |   |   +---manager
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---templates
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---types
+|   |   |   |   |   +---enums
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---interfaces
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---utils
+|   |   |   |   |   +---constants
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---formatters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---helpers
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   \---websockets
+|   |   |   |       \---handlers
+|   |   |   |               .gitkeep
+|   |   |   |               
+|   |   |   +---tests
+|   |   |   |   +---e2e
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---fixtures
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---integration
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---unit
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---__mocks__
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---prompt-mf
+|   |   |   +---public
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---src
+|   |   |   |   +---assets
+|   |   |   |   |   +---fonts
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---icons
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---images
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---components
+|   |   |   |   |   +---atoms
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---layout
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---molecules
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---organisms
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---editor
+|   |   |   |   |   +---monaco
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---preview
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---toolbar
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---forms
+|   |   |   |   |   +---fields
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---schemas
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---history
+|   |   |   |   |   \---versions
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---hooks
+|   |   |   |   |   +---api
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---business
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---ui
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---i18n
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---pages
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---providers
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---redux
+|   |   |   |   |   +---selectors
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---slices
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---store
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---registry
+|   |   |   |   |   \---browser
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---routes
+|   |   |   |   |   +---private
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---public
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---rtk-query
+|   |   |   |   |   +---apis
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---transformations
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---schemas
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---services
+|   |   |   |   |   +---adapters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---api
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---styles
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---templates
+|   |   |   |   |   +---categories
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---library
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---testing
+|   |   |   |   |   +---results
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---runner
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---types
+|   |   |   |   |   +---enums
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---interfaces
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---utils
+|   |   |   |   |   +---constants
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---formatters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---helpers
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   \---variables
+|   |   |   |       \---builder
+|   |   |   |               .gitkeep
+|   |   |   |               
+|   |   |   +---tests
+|   |   |   |   +---e2e
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---fixtures
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---integration
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---unit
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---__mocks__
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---rag-mf
+|   |   |   +---public
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---src
+|   |   |   |   +---assets
+|   |   |   |   |   +---fonts
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---icons
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---images
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---collections
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---components
+|   |   |   |   |   +---atoms
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---layout
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---molecules
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---organisms
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---documents
+|   |   |   |   |   +---detail
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---list
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---upload
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---forms
+|   |   |   |   |   +---fields
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---schemas
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---hooks
+|   |   |   |   |   +---api
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---business
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---ui
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---i18n
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---ingestion
+|   |   |   |   |   +---pipeline
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---status
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---pages
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---preview
+|   |   |   |   |   +---pdf
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---text
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---providers
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---redux
+|   |   |   |   |   +---selectors
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---slices
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---store
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---routes
+|   |   |   |   |   +---private
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---public
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---rtk-query
+|   |   |   |   |   +---apis
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---transformations
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---schemas
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---search
+|   |   |   |   |   +---filters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---results
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---semantic
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---services
+|   |   |   |   |   +---adapters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---api
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---styles
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---types
+|   |   |   |   |   +---enums
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---interfaces
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   \---utils
+|   |   |   |       +---constants
+|   |   |   |       |       .gitkeep
+|   |   |   |       |       
+|   |   |   |       +---formatters
+|   |   |   |       |       .gitkeep
+|   |   |   |       |       
+|   |   |   |       \---helpers
+|   |   |   |               .gitkeep
+|   |   |   |               
+|   |   |   +---tests
+|   |   |   |   +---e2e
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---fixtures
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---integration
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---unit
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---__mocks__
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---settings-mf
+|   |   |   +---public
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---src
+|   |   |   |   +---appearance
+|   |   |   |   |   +---language
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---theme
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---assets
+|   |   |   |   |   +---fonts
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---icons
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---images
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---components
+|   |   |   |   |   +---atoms
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---layout
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---molecules
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---organisms
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---forms
+|   |   |   |   |   +---fields
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---schemas
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---hooks
+|   |   |   |   |   +---api
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---business
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---ui
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---i18n
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---integrations
+|   |   |   |   |   +---api-keys
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---github
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---slack
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---notifications
+|   |   |   |   |   +---channels
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---preferences
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---pages
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---profile
+|   |   |   |   |   +---avatar
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---general
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---providers
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---redux
+|   |   |   |   |   +---selectors
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---slices
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---store
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---routes
+|   |   |   |   |   +---private
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---public
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---rtk-query
+|   |   |   |   |   +---apis
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---transformations
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---schemas
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---security
+|   |   |   |   |   +---mfa
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---password
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---sessions
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---services
+|   |   |   |   |   +---adapters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---api
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---styles
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---types
+|   |   |   |   |   +---enums
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---interfaces
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   \---utils
+|   |   |   |       +---constants
+|   |   |   |       |       .gitkeep
+|   |   |   |       |       
+|   |   |   |       +---formatters
+|   |   |   |       |       .gitkeep
+|   |   |   |       |       
+|   |   |   |       \---helpers
+|   |   |   |               .gitkeep
+|   |   |   |               
+|   |   |   +---tests
+|   |   |   |   +---e2e
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---fixtures
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---integration
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---unit
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---__mocks__
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---shell
+|   |   |   +---public
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---src
+|   |   |   |   +---assets
+|   |   |   |   |   +---fonts
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---icons
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---images
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---bootstrap
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---components
+|   |   |   |   |   +---atoms
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---layout
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---molecules
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---organisms
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---federation
+|   |   |   |   |   +---exposed
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---remotes
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---forms
+|   |   |   |   |   +---fields
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---schemas
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---hooks
+|   |   |   |   |   +---api
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---business
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---ui
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---i18n
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---navigation
+|   |   |   |   |   +---breadcrumbs
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---header
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---sidebar
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---pages
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---providers
+|   |   |   |   |   |   .gitkeep
+|   |   |   |   |   |   
+|   |   |   |   |   +---auth
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---mfe
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---store
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---theme
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---websocket
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---redux
+|   |   |   |   |   +---selectors
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---slices
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---store
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---routes
+|   |   |   |   |   +---private
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---public
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---rtk-query
+|   |   |   |   |   +---apis
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---transformations
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---schemas
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---services
+|   |   |   |   |   +---adapters
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---api
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---shell
+|   |   |   |   |   +---errors
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   +---guards
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---lazy
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   +---styles
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---types
+|   |   |   |   |   +---enums
+|   |   |   |   |   |       .gitkeep
+|   |   |   |   |   |       
+|   |   |   |   |   \---interfaces
+|   |   |   |   |           .gitkeep
+|   |   |   |   |           
+|   |   |   |   \---utils
+|   |   |   |       +---constants
+|   |   |   |       |       .gitkeep
+|   |   |   |       |       
+|   |   |   |       +---formatters
+|   |   |   |       |       .gitkeep
+|   |   |   |       |       
+|   |   |   |       \---helpers
+|   |   |   |               .gitkeep
+|   |   |   |               
+|   |   |   +---tests
+|   |   |   |   +---e2e
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---fixtures
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   +---integration
+|   |   |   |   |       .gitkeep
+|   |   |   |   |       
+|   |   |   |   \---unit
+|   |   |   |           .gitkeep
+|   |   |   |           
+|   |   |   \---__mocks__
+|   |   |           .gitkeep
+|   |   |           
+|   |   \---web
+|   |       +---public
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---src
+|   |       |   +---app
+|   |       |   |   +---providers
+|   |       |   |   |       .gitkeep
+|   |       |   |   |       
+|   |       |   |   +---routes
+|   |       |   |   |       .gitkeep
+|   |       |   |   |       
+|   |       |   |   \---store
+|   |       |   |           .gitkeep
+|   |       |   |           
+|   |       |   +---components
+|   |       |   |   +---layout
+|   |       |   |   |       .gitkeep
+|   |       |   |   |       
+|   |       |   |   +---shared
+|   |       |   |   |       .gitkeep
+|   |       |   |   |       
+|   |       |   |   \---ui
+|   |       |   |           .gitkeep
+|   |       |   |           
+|   |       |   +---features
+|   |       |   |   +---agents
+|   |       |   |   |   +---api
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   +---components
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   +---hooks
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   \---store
+|   |       |   |   |           .gitkeep
+|   |       |   |   |           
+|   |       |   |   +---auth
+|   |       |   |   |   +---api
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   +---components
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   +---hooks
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   \---store
+|   |       |   |   |           .gitkeep
+|   |       |   |   |           
+|   |       |   |   +---chat
+|   |       |   |   |   +---api
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   +---components
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   +---hooks
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   \---store
+|   |       |   |   |           .gitkeep
+|   |       |   |   |           
+|   |       |   |   +---documents
+|   |       |   |   |   +---api
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   +---components
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   +---hooks
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   \---store
+|   |       |   |   |           .gitkeep
+|   |       |   |   |           
+|   |       |   |   +---settings
+|   |       |   |   |   +---api
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   +---components
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   +---hooks
+|   |       |   |   |   |       .gitkeep
+|   |       |   |   |   |       
+|   |       |   |   |   \---store
+|   |       |   |   |           .gitkeep
+|   |       |   |   |           
+|   |       |   |   \---workspace
+|   |       |   |       +---api
+|   |       |   |       |       .gitkeep
+|   |       |   |       |       
+|   |       |   |       +---components
+|   |       |   |       |       .gitkeep
+|   |       |   |       |       
+|   |       |   |       +---hooks
+|   |       |   |       |       .gitkeep
+|   |       |   |       |       
+|   |       |   |       \---store
+|   |       |   |               .gitkeep
+|   |       |   |               
+|   |       |   +---hooks
+|   |       |   |       .gitkeep
+|   |       |   |       
+|   |       |   +---lib
+|   |       |   |   +---api
+|   |       |   |   |       .gitkeep
+|   |       |   |   |       
+|   |       |   |   +---socket
+|   |       |   |   |       .gitkeep
+|   |       |   |   |       
+|   |       |   |   \---validators
+|   |       |   |           .gitkeep
+|   |       |   |           
+|   |       |   +---styles
+|   |       |   |       .gitkeep
+|   |       |   |       
+|   |       |   \---types
+|   |       |           .gitkeep
+|   |       |           
+|   |       \---tests
+|   |           +---e2e
+|   |           |       .gitkeep
+|   |           |       
+|   |           +---integration
+|   |           |       .gitkeep
+|   |           |       
+|   |           \---unit
+|   |                   .gitkeep
+|   |                   
+|   +---config
+|   |   +---eslint
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---tailwind
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---typescript
+|   |           .gitkeep
+|   |           
+|   \---packages
+|       +---analytics
+|       |   +---src
+|       |   |       .gitkeep
+|       |   |       
+|       |   \---tests
+|       |           .gitkeep
+|       |           
+|       +---auth-sdk
+|       |   +---src
+|       |   |       .gitkeep
+|       |   |       
+|       |   \---tests
+|       |           .gitkeep
+|       |           
+|       +---shared-hooks
+|       |   +---src
+|       |   |   +---api
+|       |   |   |   +---mutation
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---pagination
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---query
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---auth
+|       |   |   |   +---permissions
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---session
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---clipboard
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---form
+|       |   |   |   +---submission
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---validation
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---intersection
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---keyboard
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---realtime
+|       |   |   |   +---sse
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---websocket
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---storage
+|       |   |   |   +---local
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---session
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---types
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---ui
+|       |   |       +---breakpoints
+|       |   |       |       .gitkeep
+|       |   |       |       
+|       |   |       +---modal
+|       |   |       |       .gitkeep
+|       |   |       |       
+|       |   |       +---sidebar
+|       |   |       |       .gitkeep
+|       |   |       |       
+|       |   |       +---theme
+|       |   |       |       .gitkeep
+|       |   |       |       
+|       |   |       \---toast
+|       |   |               .gitkeep
+|       |   |               
+|       |   \---tests
+|       |       \---unit
+|       |               .gitkeep
+|       |               
+|       +---shared-theme
+|       |   +---src
+|       |   |   +---colors
+|       |   |   |   +---palettes
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---semantic
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---components
+|       |   |   |   +---button
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---card
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---input
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---themes
+|       |   |   |   +---dark
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---high-contrast
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---light
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---tokens
+|       |   |   |   +---animation
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---breakpoints
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---colors
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---radii
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---shadows
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---spacing
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---typography
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---types
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---typography
+|       |   |   |   +---fonts
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---scales
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   \---utils
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |       \---unit
+|       |               .gitkeep
+|       |               
+|       +---shared-types
+|       |   \---src
+|       |       +---api
+|       |       |   +---errors
+|       |       |   |       .gitkeep
+|       |       |   |       
+|       |       |   +---requests
+|       |       |   |       .gitkeep
+|       |       |   |       
+|       |       |   \---responses
+|       |       |           .gitkeep
+|       |       |           
+|       |       +---domain
+|       |       |   +---analytics
+|       |       |   |       .gitkeep
+|       |       |   |       
+|       |       |   +---document
+|       |       |   |       .gitkeep
+|       |       |   |       
+|       |       |   +---message
+|       |       |   |       .gitkeep
+|       |       |   |       
+|       |       |   +---notification
+|       |       |   |       .gitkeep
+|       |       |   |       
+|       |       |   +---prompt
+|       |       |   |       .gitkeep
+|       |       |   |       
+|       |       |   +---user
+|       |       |   |       .gitkeep
+|       |       |   |       
+|       |       |   \---workspace
+|       |       |           .gitkeep
+|       |       |           
+|       |       +---enums
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---events
+|       |       |   +---sse
+|       |       |   |       .gitkeep
+|       |       |   |       
+|       |       |   \---websocket
+|       |       |           .gitkeep
+|       |       |           
+|       |       +---guards
+|       |       |       .gitkeep
+|       |       |       
+|       |       +---store
+|       |       |   +---app
+|       |       |   |       .gitkeep
+|       |       |   |       
+|       |       |   +---auth
+|       |       |   |       .gitkeep
+|       |       |   |       
+|       |       |   \---ui
+|       |       |           .gitkeep
+|       |       |           
+|       |       \---utils
+|       |               .gitkeep
+|       |               
+|       +---shared-ui
+|       |   +---src
+|       |   |   +---animations
+|       |   |   |   +---keyframes
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---transitions
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---components
+|       |   |   |   +---atoms
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---layout
+|       |   |   |   |   +---containers
+|       |   |   |   |   |       .gitkeep
+|       |   |   |   |   |       
+|       |   |   |   |   \---grid
+|       |   |   |   |           .gitkeep
+|       |   |   |   |           
+|       |   |   |   +---molecules
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---organisms
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---icons
+|       |   |   |   +---sprite
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---svg
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---primitives
+|       |   |   |   +---accordion
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---avatar
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---badge
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---button
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---dropdown
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---input
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---modal
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---select
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---table
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   +---tabs
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---tooltip
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   +---styles
+|       |   |   |   +---global
+|       |   |   |   |       .gitkeep
+|       |   |   |   |       
+|       |   |   |   \---utilities
+|       |   |   |           .gitkeep
+|       |   |   |           
+|       |   |   \---types
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |       +---unit
+|       |       |       .gitkeep
+|       |       |       
+|       |       \---visual
+|       |               .gitkeep
+|       |               
+|       +---socket-client
+|       |   +---src
+|       |   |       .gitkeep
+|       |   |       
+|       |   \---tests
+|       |           .gitkeep
+|       |           
+|       \---ui-kit
+|           +---src
+|           |   +---components
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---hooks
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---themes
+|           |   |       .gitkeep
+|           |   |       
+|           |   \---tokens
+|           |           .gitkeep
+|           |           
+|           \---tests
+|                   .gitkeep
+|                   
++---infra
+|   +---docker
+|   |   +---development
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---production
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---services
+|   |           .gitkeep
+|   |           
+|   +---kubernetes
+|   |   +---base
+|   |   |   +---configmaps
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---deployments
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   +---secrets
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---services
+|   |   |           .gitkeep
+|   |   |           
+|   |   +---charts
+|   |   |   \---nexus-ai
+|   |   |           .gitkeep
+|   |   |           
+|   |   \---overlays
+|   |       +---development
+|   |       |       .gitkeep
+|   |       |       
+|   |       +---production
+|   |       |       .gitkeep
+|   |       |       
+|   |       \---staging
+|   |               .gitkeep
+|   |               
+|   +---monitoring
+|   |   +---alertmanager
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---grafana
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---prometheus
+|   |           .gitkeep
+|   |           
+|   +---scripts
+|   |   +---db
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---deployment
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---monitoring
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---seed
+|   |           .gitkeep
+|   |           
+|   \---terraform
+|       +---environments
+|       |   +---dev
+|       |   |       .gitkeep
+|       |   |       
+|       |   +---prod
+|       |   |       .gitkeep
+|       |   |       
+|       |   \---staging
+|       |           .gitkeep
+|       |           
+|       \---modules
+|           +---eks
+|           |       .gitkeep
+|           |       
+|           +---rds
+|           |       .gitkeep
+|           |       
+|           +---redis
+|           |       .gitkeep
+|           |       
+|           +---s3
+|           |       .gitkeep
+|           |       
+|           \---vpc
+|                   .gitkeep
+|                   
++---logs
++---mcp
+|   +---config
+|   |       .gitkeep
+|   |       
+|   +---registry
+|   |   +---src
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---tests
+|   |           .gitkeep
+|   |           
+|   +---sdk
+|   |   +---src
+|   |   |   +---client
+|   |   |   |       .gitkeep
+|   |   |   |       
+|   |   |   \---types
+|   |   |           .gitkeep
+|   |   |           
+|   |   \---tests
+|   |           .gitkeep
+|   |           
+|   \---servers
+|       +---code-mcp
+|       |   +---src
+|       |   |   +---config
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---prompts
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---resources
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---tools
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |           .gitkeep
+|       |           
+|       +---document-mcp
+|       |   +---src
+|       |   |   +---config
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---prompts
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---resources
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---tools
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |           .gitkeep
+|       |           
+|       +---github-mcp
+|       |   +---src
+|       |   |   +---config
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---prompts
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---resources
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---tools
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |           .gitkeep
+|       |           
+|       +---nexus-core
+|       |   +---src
+|       |   |   +---config
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---prompts
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   +---resources
+|       |   |   |       .gitkeep
+|       |   |   |       
+|       |   |   \---tools
+|       |   |           .gitkeep
+|       |   |           
+|       |   \---tests
+|       |           .gitkeep
+|       |           
+|       \---workspace-mcp
+|           +---src
+|           |   +---config
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---prompts
+|           |   |       .gitkeep
+|           |   |       
+|           |   +---resources
+|           |   |       .gitkeep
+|           |   |       
+|           |   \---tools
+|           |           .gitkeep
+|           |           
+|           \---tests
+|                   .gitkeep
+|                   
++---observability
+|   +---dashboards
+|   +---logging
+|   +---metrics
+|   \---tracing
++---scripts
+|       build.ps1
+|       dev.ps1
+|       setup.ps1
+|       test.ps1
+|       
++---shared
+|   +---constants
+|   +---contracts
+|   |   |   api-contracts.ts
+|   |   |   event-contracts.ts
+|   |   |   socket-contracts.ts
+|   |   |   
+|   |   +---graphql
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---grpc
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---rest
+|   |           .gitkeep
+|   |           
+|   +---mocks
+|   |       .gitkeep
+|   |       
+|   +---schemas
+|   |   +---openapi
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---prisma
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---zod
+|   |           .gitkeep
+|   |           
+|   +---tests
+|   |       .gitkeep
+|   |       
+|   +---types
+|   |   |   Agent.ts
+|   |   |   Chat.ts
+|   |   |   MCP.ts
+|   |   |   Message.ts
+|   |   |   User.ts
+|   |   |   
+|   |   +---ai
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---auth
+|   |   |       .gitkeep
+|   |   |       
+|   |   +---document
+|   |   |       .gitkeep
+|   |   |       
+|   |   \---workspace
+|   |           .gitkeep
+|   |           
+|   \---utils
+|       +---constant
+|       +---crypto
+|       |       .gitkeep
+|       |       
+|       +---date
+|       |       .gitkeep
+|       |       
+|       +---errors
+|       +---helpers
+|       +---logger
+|       +---pagination
+|       |       .gitkeep
+|       |       
+|       +---retry
+|       |       .gitkeep
+|       |       
+|       \---validation
+|               .gitkeep
+|               
++---storage
+|   +---exports
+|   +---temp
+|   \---uploads
+\---tools
+    +---cli
+    +---generators
+    \---scripts
