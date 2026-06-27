@@ -325,3 +325,39 @@ Feature flags control gradual rollout and enable safe deployment of in-progress 
 | Security vulnerability in AI output | High | Low | Output guardrails, moderation | Security Lead |
 | MCP protocol maturity risks | Low | Medium | Abstraction behind SDK | Platform Lead |
 | Mobile app App Store review delays | Low | Low | Early submission buffer | Mobile Lead |
+
+Phase 0
+Environment + Architecture
+
+Phase 1
+Authentication + RBAC
+
+Phase 2
+Dashboard + Shell
+
+Phase 3
+AI Chat + Streaming
+
+Phase 4
+Document Upload + RAG
+
+Phase 5
+Agents + Skills
+
+Phase 6
+MCP Integration
+
+Phase 7
+Memory + Prompt Hooks
+
+Phase 8
+Guardrails + Evaluation
+
+Phase 9
+Observability
+
+Phase 10
+Production Readiness
+
+Phase 11
+Interview Preparation
