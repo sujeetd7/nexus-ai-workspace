@@ -1,17 +1,12 @@
-﻿{
+{
   "name": "nexus-ai-workspace",
   "version": "1.0.0",
   "private": true,
   "description": "Enterprise AI Platform – ChatGPT + Copilot + Notion AI + Slack AI + GitHub Copilot",
   "workspaces": [
-    "frontend/apps/*",
-    "frontend/packages/*",
-    "backend/services/*",
-    "backend/packages/*",
-    "mcp/servers/*",
-    "mcp/sdk",
-    "shared"
-  ],
+  "backend/services/*",
+  "shared"
+],
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
