@@ -1,13 +1,36 @@
-import app from "./app";
+import { createServer } from "http";
+
+import { createApp } from "./app";
 import { env } from "./config/env";
-import { logger } from "./config/logger";
 
-const PORT = Number(env.PORT);
+const app = createApp();
 
-app.listen(PORT, () => {
-  logger.info({
-    message: "Auth service started",
-    environment: env.NODE_ENV,
-    port: PORT,
+const server = createServer(app);
+
+server.listen(env.PORT, () => {
+  console.log(`
+=========================================
+SERVICE : ${env.SERVICE_NAME}
+PORT    : ${env.PORT}
+ENV     : ${env.NODE_ENV}
+=========================================
+`);
+});
+
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received");
+
+  server.close(() => {
+    console.log("Server closed");
+    process.exit(0);
+  });
+});
+
+process.on("SIGINT", () => {
+  console.log("SIGINT received");
+
+  server.close(() => {
+    console.log("Server closed");
+    process.exit(0);
   });
 });

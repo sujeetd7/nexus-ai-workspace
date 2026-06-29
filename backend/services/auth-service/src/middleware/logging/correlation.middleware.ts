@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { v4 as uuid } from "uuid";
 
-export function correlationId(
+export function correlationMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
@@ -12,7 +12,10 @@ export function correlationId(
 
   req.requestId = requestId;
 
-  res.setHeader("x-request-id", requestId);
+  res.setHeader(
+    "x-request-id",
+    requestId
+  );
 
   next();
 }
