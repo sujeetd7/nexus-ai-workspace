@@ -1,9 +1,15 @@
+import { UserRole }
+  from "../auth/roles";
+
+
 export interface User {
   id: string;
 
   email: string;
 
   passwordHash: string;
+
+  role: UserRole;
 
   firstName?: string;
 

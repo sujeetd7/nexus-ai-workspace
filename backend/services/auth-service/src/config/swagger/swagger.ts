@@ -1,25 +1,24 @@
-import swaggerJSDoc from "swagger-jsdoc";
+import swaggerJsdoc from "swagger-jsdoc";
 
-export const swaggerSpec = swaggerJSDoc({
+export const swaggerSpec = swaggerJsdoc({
   definition: {
     openapi: "3.0.0",
 
     info: {
-      title: "Nexus Auth Service",
+      title: "Nexus AI Auth Service",
       version: "1.0.0",
-      description:
-        "Enterprise Authentication Microservice",
+      description: "Enterprise Authentication Service",
     },
 
     servers: [
       {
-        url: "http://localhost:3001/api/v1",
+        url: "http://localhost:3001",
       },
     ],
 
     components: {
       securitySchemes: {
-        bearerAuth: {
+        BearerAuth: {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
@@ -29,7 +28,7 @@ export const swaggerSpec = swaggerJSDoc({
 
     security: [
       {
-        bearerAuth: [],
+        BearerAuth: [],
       },
     ],
   },

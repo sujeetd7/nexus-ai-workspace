@@ -1,3 +1,4 @@
+import { UserRole } from "../../types/auth/roles";
 import { User }
   from "../../types/interfaces/auth.interface";
 
@@ -37,6 +38,7 @@ export class AuthRepository
     const newUser: User = {
       id: crypto.randomUUID(),
       ...user,
+      role: UserRole.USER,
       emailVerified: false,
       isActive: true,
       createdAt: new Date(),

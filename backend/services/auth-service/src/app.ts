@@ -2,6 +2,8 @@ import express, { Express } from "express";
 import helmet from "helmet";
 import compression from "compression";
 import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger";
 
 import { correlationMiddleware }
   from "./middleware/logging/correlation.middleware";
@@ -20,6 +22,11 @@ import { notFound }
 
 import { errorHandler }
   from "./middleware/error/error.middleware";
+
+  import profileRoutes
+  from "./routes/profile/profile.routes";
+  import adminRoutes
+  from "./routes/admin/admin.routes";
 
 export function createApp(): Express {
   const app = express();
@@ -76,6 +83,12 @@ export function createApp(): Express {
     authRoutes
   );
 
+   app.use(
+  "/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec)
+);
+
   /*
     404 HANDLER
   */
@@ -85,6 +98,20 @@ export function createApp(): Express {
     GLOBAL ERROR HANDLER
   */
   app.use(errorHandler);
+
+
+
+app.use(
+  "/profile",
+  profileRoutes,
+);
+
+app.use(
+  "/admin",
+  adminRoutes,
+);
+
+
 
   return app;
 }

@@ -23,6 +23,39 @@ interface LogoutRequest {
 
 export class AuthController {
 
+
+  /**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Register new user
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User registered
+ *       409:
+ *         description: Email exists
+ */
+
   async register(
     req: Request<Record<string, never>, unknown, RegisterRequest>,
     res: Response,

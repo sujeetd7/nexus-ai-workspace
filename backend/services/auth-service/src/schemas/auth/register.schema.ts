@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const RegisterSchema = z.object({
+export const registerSchema = z.object({
   email: z.email(),
   password: z.string().min(8),
   firstName: z.string().min(1),
@@ -8,4 +8,4 @@ export const RegisterSchema = z.object({
 });
 
 export type RegisterSchemaType =
-  z.infer<typeof RegisterSchema>;
+  z.infer<typeof registerSchema>;
