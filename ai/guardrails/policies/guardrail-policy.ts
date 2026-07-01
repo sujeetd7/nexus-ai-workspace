@@ -14,7 +14,8 @@
 // Policy Schema
 // ---------------------------------------------------------------------------
 
-export type PolicyEnvironment = "production" | "staging" | "development" | "test";
+export type PolicyEnvironment =
+  "production" | "staging" | "development" | "test";
 
 export interface GuardrailPolicyEntry {
   /** Whether this guardrail is active in this policy */

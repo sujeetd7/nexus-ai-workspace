@@ -9,10 +9,10 @@ it is returned to the caller.
 
 ## Hooks in This Folder
 
-| Hook           | Priority | Description                                      |
-|----------------|----------|--------------------------------------------------|
-| `LoggingHook`  | 100      | Structured logging of prompt + response pairs    |
-| `MetricsHook`  | 110      | Emit token usage, latency, and cost metrics      |
+| Hook          | Priority | Description                                   |
+| ------------- | -------- | --------------------------------------------- |
+| `LoggingHook` | 100      | Structured logging of prompt + response pairs |
+| `MetricsHook` | 110      | Emit token usage, latency, and cost metrics   |
 
 ## Execution Order
 

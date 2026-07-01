@@ -10,12 +10,14 @@ meet the structural requirements of downstream consumers.
 ## Validation Types
 
 ### Input Validation
+
 - Maximum prompt length enforcement
 - Required fields validation (for structured prompts)
 - Language detection and filtering
 - Encoding validation (valid UTF-8, no null bytes)
 
 ### Output Validation
+
 - JSON schema validation (for structured responses)
 - Maximum response length enforcement
 - Response completeness check (no truncated JSON)
@@ -24,10 +26,10 @@ meet the structural requirements of downstream consumers.
 
 ## Files
 
-| File                       | Description                                    |
-|----------------------------|------------------------------------------------|
-| `response-validator.ts`    | Output validation guardrail                    |
-| `input-validator.ts`       | Input validation guardrail (TODO)              |
+| File                    | Description                       |
+| ----------------------- | --------------------------------- |
+| `response-validator.ts` | Output validation guardrail       |
+| `input-validator.ts`    | Input validation guardrail (TODO) |
 
 ## Interface: `PromptValidator`
 

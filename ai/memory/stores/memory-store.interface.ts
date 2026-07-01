@@ -185,14 +185,21 @@ export interface ChromaDBMemoryStore extends MemoryStore {
   similaritySearch(
     query: string,
     topK: number,
-    filter?: Record<string, unknown>
-  ): Promise<Array<{ id: string; content: string; score: number; metadata: Record<string, unknown> }>>;
+    filter?: Record<string, unknown>,
+  ): Promise<
+    Array<{
+      id: string;
+      content: string;
+      score: number;
+      metadata: Record<string, unknown>;
+    }>
+  >;
 
   /** Upsert a document with its embedding */
   upsertEmbedding(
     id: string,
     content: string,
     embedding: number[],
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ): Promise<void>;
 }

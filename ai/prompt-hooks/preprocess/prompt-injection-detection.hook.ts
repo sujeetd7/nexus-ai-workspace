@@ -54,9 +54,7 @@ export interface DetectionResult {
  *
  * @implements {PromptHook<InjectionDetectionConfig>}
  */
-export class PromptInjectionDetectionHook
-  implements PromptHook<InjectionDetectionConfig>
-{
+export class PromptInjectionDetectionHook implements PromptHook<InjectionDetectionConfig> {
   readonly name = "PromptInjectionDetectionHook";
   readonly stage = HookStage.PREPROCESS;
   readonly priority = 20;
@@ -75,7 +73,11 @@ export class PromptInjectionDetectionHook
    * TODO: Integrate with OWASP LLM security guidelines
    * TODO: Add semantic embedding-based detection for novel attacks
    */
-  private readonly INJECTION_PATTERNS: Array<{ id: string; pattern: RegExp; confidence: number }> = [
+  private readonly INJECTION_PATTERNS: Array<{
+    id: string;
+    pattern: RegExp;
+    confidence: number;
+  }> = [
     {
       id: "OVERRIDE_001",
       pattern: /ignore\s+(all\s+)?(previous|above|prior)\s+instructions/i,
@@ -83,7 +85,8 @@ export class PromptInjectionDetectionHook
     },
     {
       id: "OVERRIDE_002",
-      pattern: /disregard\s+(your\s+)?(previous|above|prior|system)\s+(instructions|prompt)/i,
+      pattern:
+        /disregard\s+(your\s+)?(previous|above|prior|system)\s+(instructions|prompt)/i,
       confidence: 0.92,
     },
     {
@@ -99,7 +102,7 @@ export class PromptInjectionDetectionHook
     {
       id: "ESCAPE_001",
       pattern: /```\s*\n.*ignore.*instructions/is,
-      confidence: 0.80,
+      confidence: 0.8,
     },
   ];
 
@@ -160,11 +163,12 @@ export class PromptInjectionDetectionHook
   }
 
   private sensitivityThreshold(): number {
-    const thresholds: Record<InjectionDetectionConfig["sensitivity"], number> = {
-      low: 0.9,
-      medium: 0.8,
-      high: 0.7,
-    };
+    const thresholds: Record<InjectionDetectionConfig["sensitivity"], number> =
+      {
+        low: 0.9,
+        medium: 0.8,
+        high: 0.7,
+      };
     return thresholds[this.config.sensitivity];
   }
 

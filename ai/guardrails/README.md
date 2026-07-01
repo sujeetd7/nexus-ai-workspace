@@ -54,17 +54,17 @@ guardrails/
 
 ## Interfaces
 
-| Interface           | Description                                         |
-|---------------------|-----------------------------------------------------|
-| `Guardrail`         | Base interface for all guardrails                   |
-| `GuardrailResult`   | Result from a guardrail check                       |
-| `PromptValidator`   | Validates prompt structure and content              |
-| `ContentModerator`  | Classifies and filters harmful content              |
+| Interface          | Description                            |
+| ------------------ | -------------------------------------- |
+| `Guardrail`        | Base interface for all guardrails      |
+| `GuardrailResult`  | Result from a guardrail check          |
+| `PromptValidator`  | Validates prompt structure and content |
+| `ContentModerator` | Classifies and filters harmful content |
 
 ## Guardrail Categories
 
 | Category            | Input | Output | Critical |
-|---------------------|-------|--------|----------|
+| ------------------- | ----- | ------ | -------- |
 | Prompt Injection    | ✓     |        | ✓        |
 | Jailbreak Detection | ✓     |        | ✓        |
 | PII Detection       | ✓     | ✓      |          |
@@ -75,12 +75,12 @@ guardrails/
 
 ## OWASP LLM Top 10 Coverage
 
-| Risk                          | Folder           |
-|-------------------------------|------------------|
-| LLM01: Prompt Injection       | `prompt-injection/` |
-| LLM02: Insecure Output        | `validation/`    |
-| LLM06: Sensitive Info Disclosure | `pii/`        |
-| LLM09: Overreliance           | `validation/`    |
+| Risk                             | Folder              |
+| -------------------------------- | ------------------- |
+| LLM01: Prompt Injection          | `prompt-injection/` |
+| LLM02: Insecure Output           | `validation/`       |
+| LLM06: Sensitive Info Disclosure | `pii/`              |
+| LLM09: Overreliance              | `validation/`       |
 
 ## TODO
 

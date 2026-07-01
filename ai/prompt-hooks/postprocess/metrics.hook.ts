@@ -80,7 +80,10 @@ export class MetricsHook implements PromptHook<MetricsHookConfig> {
 
       // Placeholder: log metrics to console in structured format
       // In production: otelMeter.createCounter(name).add(value, attributes)
-      console.debug(`[MetricsHook] ${this.config.namespace}`, JSON.stringify(metrics));
+      console.debug(
+        `[MetricsHook] ${this.config.namespace}`,
+        JSON.stringify(metrics),
+      );
 
       return {
         proceed: true,
@@ -110,7 +113,8 @@ export class MetricsHook implements PromptHook<MetricsHookConfig> {
       [`${this.config.namespace}.history_turns`]: context.history.length,
       [`${this.config.namespace}.tool_count`]: context.tools.length,
       [`${this.config.namespace}.hook_trace_count`]: context.hookTrace.length,
-      [`${this.config.namespace}.estimated_prompt_tokens`]: estimatedPromptTokens,
+      [`${this.config.namespace}.estimated_prompt_tokens`]:
+        estimatedPromptTokens,
       [`${this.config.namespace}.estimated_cost_usd`]: estimatedCostUsd,
       model_id: modelId,
       session_id: context.metadata.sessionId,

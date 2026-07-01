@@ -11,9 +11,11 @@ Status: FROZEN
 # Frontend
 
 Architecture:
+
 - Microfrontend
 
 Technologies:
+
 - React
 - React Native
 - TypeScript
@@ -26,9 +28,11 @@ Technologies:
 # Backend
 
 Architecture:
+
 - Microservices
 
 Technologies:
+
 - Node.js
 - Express
 - TypeScript
@@ -49,6 +53,7 @@ Technologies:
 # AI Platform
 
 Architecture:
+
 - AI Kernel
 - Agents
 - Skills
@@ -59,6 +64,7 @@ Architecture:
 - RAG
 
 Frameworks:
+
 - LangChain
 - LangGraph
 - LlamaIndex
@@ -69,6 +75,7 @@ Frameworks:
 # MCP
 
 Servers:
+
 - GitHub
 - Weather
 - Filesystem

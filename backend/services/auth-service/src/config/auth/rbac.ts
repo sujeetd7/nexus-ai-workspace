@@ -1,12 +1,7 @@
-import { UserRole }
-  from "../../types/auth/roles";
+import { UserRole } from "@prisma/client";
+import { Permission } from "../../types/auth/permissions";
 
-import { Permission }
-  from "../../types/auth/permissions";
-
-export const ROLE_PERMISSIONS:
-Record<UserRole, Permission[]> = {
-
+export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
   [UserRole.ADMIN]: [
     Permission.USER_READ,
     Permission.USER_CREATE,
@@ -14,12 +9,7 @@ Record<UserRole, Permission[]> = {
     Permission.PROFILE_UPDATE,
   ],
 
-  [UserRole.MANAGER]: [
-    Permission.USER_READ,
-    Permission.PROFILE_UPDATE,
-  ],
+  [UserRole.MANAGER]: [Permission.USER_READ, Permission.PROFILE_UPDATE],
 
-  [UserRole.USER]: [
-    Permission.PROFILE_UPDATE,
-  ],
+  [UserRole.USER]: [Permission.PROFILE_UPDATE],
 };

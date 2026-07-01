@@ -4,11 +4,11 @@ Low-level adapters connecting the memory interfaces to physical storage backends
 
 ## Supported Backends
 
-| Adapter                    | Backend  | Memory Type           | Status   |
-|----------------------------|----------|-----------------------|----------|
-| `RedisMemoryStore`         | Redis    | Short-term (sessions) | Planned  |
-| `MongoDBMemoryStore`       | MongoDB  | Long-term + Episodic  | Planned  |
-| `ChromaDBMemoryStore`      | ChromaDB | Semantic (vector)     | Planned  |
+| Adapter               | Backend  | Memory Type           | Status  |
+| --------------------- | -------- | --------------------- | ------- |
+| `RedisMemoryStore`    | Redis    | Short-term (sessions) | Planned |
+| `MongoDBMemoryStore`  | MongoDB  | Long-term + Episodic  | Planned |
+| `ChromaDBMemoryStore` | ChromaDB | Semantic (vector)     | Planned |
 
 ## Architecture
 

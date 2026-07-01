@@ -1,6 +1,4 @@
-import { UserRole }
-  from "../auth/roles";
-
+import { UserRole } from "@prisma/client";
 
 export interface User {
   id: string;
@@ -22,12 +20,17 @@ export interface User {
   createdAt: Date;
 
   updatedAt: Date;
+  failedLoginAttempts: number;
+
+  lockedUntil?: Date;
 }
 
 export interface UserResponse {
   id: string;
 
   email: string;
+
+  role: UserRole;
 
   firstName?: string;
 
@@ -49,11 +52,26 @@ export interface RegisterInput {
   firstName?: string;
 
   lastName?: string;
+  role?: UserRole;
 }
 
 export interface LoginInput {
   email: string;
   password: string;
+}
+
+export interface VerifyEmailInput {
+  token: string;
+}
+
+export interface ResendVerificationInput {
+  email: string;
+}
+
+export interface SessionContext {
+  ipAddress?: string;
+  userAgent?: string;
+  deviceName?: string;
 }
 
 export interface TokenPair {
@@ -69,4 +87,5 @@ export interface AuthResponse {
 export interface JwtPayload {
   sub: string;
   email: string;
+  role: UserRole;
 }

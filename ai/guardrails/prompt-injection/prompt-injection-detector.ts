@@ -51,22 +51,49 @@ export class PromptInjectionGuardrail implements Guardrail<PromptInjectionGuardr
 
   // TODO: Replace with a production classifier
   private readonly PATTERNS = [
-    { id: "PI-001", pattern: /ignore\s+(all\s+)?(previous|prior|above)\s+instructions/i, confidence: 0.95 },
-    { id: "PI-002", pattern: /disregard\s+(your\s+)?(guidelines|policy|rules|instructions)/i, confidence: 0.92 },
-    { id: "PI-003", pattern: /you\s+are\s+now\s+(DAN|jailbroken|free|unrestricted)/i, confidence: 0.90 },
-    { id: "PI-004", pattern: /act\s+as\s+(if\s+you\s+(have\s+no|don'?t\s+have)\s+restrictions)/i, confidence: 0.88 },
-    { id: "PI-005", pattern: /\[SYSTEM\].*override|<\|system\|>/i, confidence: 0.85 },
+    {
+      id: "PI-001",
+      pattern: /ignore\s+(all\s+)?(previous|prior|above)\s+instructions/i,
+      confidence: 0.95,
+    },
+    {
+      id: "PI-002",
+      pattern: /disregard\s+(your\s+)?(guidelines|policy|rules|instructions)/i,
+      confidence: 0.92,
+    },
+    {
+      id: "PI-003",
+      pattern: /you\s+are\s+now\s+(DAN|jailbroken|free|unrestricted)/i,
+      confidence: 0.9,
+    },
+    {
+      id: "PI-004",
+      pattern:
+        /act\s+as\s+(if\s+you\s+(have\s+no|don'?t\s+have)\s+restrictions)/i,
+      confidence: 0.88,
+    },
+    {
+      id: "PI-005",
+      pattern: /\[SYSTEM\].*override|<\|system\|>/i,
+      confidence: 0.85,
+    },
   ];
 
   async initialize(config: PromptInjectionGuardrailConfig): Promise<void> {
     this.config = { ...this.config, ...config };
   }
 
-  async check(content: string, context?: Record<string, unknown>): Promise<GuardrailResult> {
+  async check(
+    content: string,
+    context?: Record<string, unknown>,
+  ): Promise<GuardrailResult> {
     const start = Date.now();
 
     for (const rule of this.PATTERNS) {
-      if (rule.pattern.test(content) && rule.confidence >= this.config.blockThreshold) {
+      if (
+        rule.pattern.test(content) &&
+        rule.confidence >= this.config.blockThreshold
+      ) {
         return {
           guardrailId: this.id,
           verdict: GuardrailVerdict.BLOCK,

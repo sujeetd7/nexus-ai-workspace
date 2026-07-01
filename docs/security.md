@@ -31,15 +31,15 @@ This document defines the security architecture, threat model, controls, and ope
 
 ## 1. Security Principles
 
-| Principle | Application |
-|---|---|
-| **Zero Trust** | No implicit trust inside or outside the network perimeter |
-| **Least Privilege** | Every component gets only the permissions it needs |
-| **Defense in Depth** | Multiple independent layers of security controls |
-| **Fail Secure** | On failure, deny access rather than grant it |
-| **Secure by Default** | Every feature ships with security controls enabled |
-| **Shift Left** | Security concerns addressed during design and development |
-| **Auditability** | All security-relevant actions logged and traceable |
+| Principle             | Application                                               |
+| --------------------- | --------------------------------------------------------- |
+| **Zero Trust**        | No implicit trust inside or outside the network perimeter |
+| **Least Privilege**   | Every component gets only the permissions it needs        |
+| **Defense in Depth**  | Multiple independent layers of security controls          |
+| **Fail Secure**       | On failure, deny access rather than grant it              |
+| **Secure by Default** | Every feature ships with security controls enabled        |
+| **Shift Left**        | Security concerns addressed during design and development |
+| **Auditability**      | All security-relevant actions logged and traceable        |
 
 ---
 
@@ -47,40 +47,40 @@ This document defines the security architecture, threat model, controls, and ope
 
 ### Assets to Protect
 
-| Asset | Classification | Value |
-|---|---|---|
-| User credentials | Critical | Account takeover risk |
-| User messages and documents | Sensitive | Privacy violation, IP leak |
-| AI model API keys | Critical | Cost fraud, data exfiltration |
-| JWT signing secrets | Critical | Full authentication bypass |
-| Database connection strings | Critical | Direct data access |
-| Workspace data | Sensitive | Multi-tenant data leak |
+| Asset                       | Classification | Value                         |
+| --------------------------- | -------------- | ----------------------------- |
+| User credentials            | Critical       | Account takeover risk         |
+| User messages and documents | Sensitive      | Privacy violation, IP leak    |
+| AI model API keys           | Critical       | Cost fraud, data exfiltration |
+| JWT signing secrets         | Critical       | Full authentication bypass    |
+| Database connection strings | Critical       | Direct data access            |
+| Workspace data              | Sensitive      | Multi-tenant data leak        |
 
 ### STRIDE Threat Analysis
 
-| Threat | Attack Vector | Control |
-|---|---|---|
-| **Spoofing** | Session token theft | httpOnly cookies, short JWT expiry |
-| **Tampering** | Message replay attacks | Request signing (future), HTTPS |
-| **Repudiation** | Deny sending a message | Audit log with immutable records |
-| **Information Disclosure** | Cross-workspace data leak | workspace_id filtering, tenant isolation tests |
-| **Denial of Service** | Brute force, flood requests | Rate limiting, CAPTCHAs, WAF |
-| **Elevation of Privilege** | RBAC bypass | Server-side permission enforcement, claim validation |
+| Threat                     | Attack Vector               | Control                                              |
+| -------------------------- | --------------------------- | ---------------------------------------------------- |
+| **Spoofing**               | Session token theft         | httpOnly cookies, short JWT expiry                   |
+| **Tampering**              | Message replay attacks      | Request signing (future), HTTPS                      |
+| **Repudiation**            | Deny sending a message      | Audit log with immutable records                     |
+| **Information Disclosure** | Cross-workspace data leak   | workspace_id filtering, tenant isolation tests       |
+| **Denial of Service**      | Brute force, flood requests | Rate limiting, CAPTCHAs, WAF                         |
+| **Elevation of Privilege** | RBAC bypass                 | Server-side permission enforcement, claim validation |
 
 ### OWASP Top 10 Coverage
 
-| OWASP Category | Status | Controls |
-|---|---|---|
-| A01 Broken Access Control | [TODO] | RBAC middleware, workspace isolation |
-| A02 Cryptographic Failures | [TODO] | HTTPS everywhere, bcrypt for passwords |
-| A03 Injection | [TODO] | Parameterized queries (Prisma), input validation |
-| A04 Insecure Design | [TODO] | Threat modeling, security ADRs |
-| A05 Security Misconfiguration | [TODO] | Helmet.js, security headers, no defaults |
-| A06 Vulnerable Components | [TODO] | Dependabot, Snyk scanning |
-| A07 Auth Failures | [TODO] | JWT best practices, MFA (Phase 2) |
-| A08 Software Integrity Failures | [TODO] | Signed commits, SBOM |
-| A09 Logging/Monitoring Failures | [TODO] | Audit logging, alert on anomalies |
-| A10 Server-Side Request Forgery | [TODO] | URL allowlist for external requests |
+| OWASP Category                  | Status | Controls                                         |
+| ------------------------------- | ------ | ------------------------------------------------ |
+| A01 Broken Access Control       | [TODO] | RBAC middleware, workspace isolation             |
+| A02 Cryptographic Failures      | [TODO] | HTTPS everywhere, bcrypt for passwords           |
+| A03 Injection                   | [TODO] | Parameterized queries (Prisma), input validation |
+| A04 Insecure Design             | [TODO] | Threat modeling, security ADRs                   |
+| A05 Security Misconfiguration   | [TODO] | Helmet.js, security headers, no defaults         |
+| A06 Vulnerable Components       | [TODO] | Dependabot, Snyk scanning                        |
+| A07 Auth Failures               | [TODO] | JWT best practices, MFA (Phase 2)                |
+| A08 Software Integrity Failures | [TODO] | Signed commits, SBOM                             |
+| A09 Logging/Monitoring Failures | [TODO] | Audit logging, alert on anomalies                |
+| A10 Server-Side Request Forgery | [TODO] | URL allowlist for external requests              |
 
 ---
 
@@ -96,10 +96,10 @@ This document defines the security architecture, threat model, controls, and ope
 
 ### JWT Token Design
 
-| Token | Algorithm | Expiry | Storage | Revocation |
-|---|---|---|---|---|
-| Access Token | HS256 | 15 minutes | Memory (client) | JTI blocklist in Redis |
-| Refresh Token | UUID | 7 days | httpOnly cookie | Stored hash in Redis |
+| Token         | Algorithm | Expiry     | Storage         | Revocation             |
+| ------------- | --------- | ---------- | --------------- | ---------------------- |
+| Access Token  | HS256     | 15 minutes | Memory (client) | JTI blocklist in Redis |
+| Refresh Token | UUID      | 7 days     | httpOnly cookie | Stored hash in Redis   |
 
 ### Access Token Claims
 
@@ -153,18 +153,18 @@ super_admin
 
 Permissions are fine-grained flags checked at the service layer:
 
-| Permission | Description |
-|---|---|
-| `chat.read` | Read chat threads and messages |
-| `chat.write` | Send messages |
-| `chat.admin` | Manage channels, delete any message |
-| `doc.read` | Read documents |
-| `doc.write` | Upload and edit documents |
-| `doc.delete` | Delete documents |
-| `ai.use` | Use AI chat and agent features |
-| `ai.admin` | Configure AI settings for workspace |
+| Permission         | Description                           |
+| ------------------ | ------------------------------------- |
+| `chat.read`        | Read chat threads and messages        |
+| `chat.write`       | Send messages                         |
+| `chat.admin`       | Manage channels, delete any message   |
+| `doc.read`         | Read documents                        |
+| `doc.write`        | Upload and edit documents             |
+| `doc.delete`       | Delete documents                      |
+| `ai.use`           | Use AI chat and agent features        |
+| `ai.admin`         | Configure AI settings for workspace   |
 | `workspace.manage` | Manage workspace settings and members |
-| `admin.access` | Access admin dashboard |
+| `admin.access`     | Access admin dashboard                |
 
 ### Enforcement Layers
 
@@ -179,24 +179,24 @@ Permissions are fine-grained flags checked at the service layer:
 
 ### HTTP Security Headers (Helmet.js)
 
-| Header | Value |
-|---|---|
-| `Content-Security-Policy` | Restrictive CSP for XSS prevention |
-| `X-Frame-Options` | DENY (clickjacking prevention) |
-| `X-Content-Type-Options` | nosniff |
+| Header                      | Value                               |
+| --------------------------- | ----------------------------------- |
+| `Content-Security-Policy`   | Restrictive CSP for XSS prevention  |
+| `X-Frame-Options`           | DENY (clickjacking prevention)      |
+| `X-Content-Type-Options`    | nosniff                             |
 | `Strict-Transport-Security` | max-age=31536000; includeSubDomains |
-| `Referrer-Policy` | strict-origin-when-cross-origin |
-| `Permissions-Policy` | Disable unnecessary browser APIs |
+| `Referrer-Policy`           | strict-origin-when-cross-origin     |
+| `Permissions-Policy`        | Disable unnecessary browser APIs    |
 
 ### Rate Limiting
 
-| Tier | Limit | Window | Scope |
-|---|---|---|---|
-| Login attempts | 5 | 15 minutes | Per IP |
-| General API | 200 | 1 minute | Per user |
-| AI inference | 50 | 1 minute | Per user |
-| File upload | 10 | 1 minute | Per user |
-| Admin API | 100 | 1 minute | Per admin user |
+| Tier           | Limit | Window     | Scope          |
+| -------------- | ----- | ---------- | -------------- |
+| Login attempts | 5     | 15 minutes | Per IP         |
+| General API    | 200   | 1 minute   | Per user       |
+| AI inference   | 50    | 1 minute   | Per user       |
+| File upload    | 10    | 1 minute   | Per user       |
+| Admin API      | 100   | 1 minute   | Per admin user |
 
 ### Input Validation
 
@@ -218,12 +218,12 @@ Permissions are fine-grained flags checked at the service layer:
 
 ### Encryption at Rest
 
-| Data Store | Encryption | Key Management |
-|---|---|---|
-| PostgreSQL | AES-256 (disk) | Cloud provider managed |
-| MongoDB | AES-256 (disk) | Cloud provider managed |
-| Redis | AES-256 (disk) | Cloud provider managed |
-| File Storage (S3) | SSE-S3 / SSE-KMS | AWS KMS |
+| Data Store        | Encryption       | Key Management         |
+| ----------------- | ---------------- | ---------------------- |
+| PostgreSQL        | AES-256 (disk)   | Cloud provider managed |
+| MongoDB           | AES-256 (disk)   | Cloud provider managed |
+| Redis             | AES-256 (disk)   | Cloud provider managed |
+| File Storage (S3) | SSE-S3 / SSE-KMS | AWS KMS                |
 
 ### Encryption in Transit
 
@@ -233,13 +233,13 @@ Permissions are fine-grained flags checked at the service layer:
 
 ### Sensitive Field Handling
 
-| Field | Handling |
-|---|---|
-| Passwords | bcrypt hashed, never logged |
-| Refresh tokens | SHA-256 hashed before storage |
-| API keys | SHA-256 hashed, only first 8 chars shown in UI |
-| PII (email, name) | Encrypted at application layer for sensitive workspaces |
-| AI conversation content | Encrypted in MongoDB at field level ([TODO]) |
+| Field                   | Handling                                                |
+| ----------------------- | ------------------------------------------------------- |
+| Passwords               | bcrypt hashed, never logged                             |
+| Refresh tokens          | SHA-256 hashed before storage                           |
+| API keys                | SHA-256 hashed, only first 8 chars shown in UI          |
+| PII (email, name)       | Encrypted at application layer for sensitive workspaces |
+| AI conversation content | Encrypted in MongoDB at field level ([TODO])            |
 
 ---
 
@@ -306,11 +306,11 @@ Permissions are fine-grained flags checked at the service layer:
 
 ### Secret Categories
 
-| Category | Examples | Storage |
-|---|---|---|
-| Database credentials | `DATABASE_URL` | Kubernetes Secrets / Vault |
-| API keys (external) | `OPENAI_API_KEY` | Kubernetes Secrets / Vault |
-| JWT secrets | `JWT_SECRET` | Kubernetes Secrets / Vault |
+| Category                | Examples                  | Storage                    |
+| ----------------------- | ------------------------- | -------------------------- |
+| Database credentials    | `DATABASE_URL`            | Kubernetes Secrets / Vault |
+| API keys (external)     | `OPENAI_API_KEY`          | Kubernetes Secrets / Vault |
+| JWT secrets             | `JWT_SECRET`              | Kubernetes Secrets / Vault |
 | Internal service tokens | `INTERNAL_SERVICE_SECRET` | Kubernetes Secrets / Vault |
 
 ### Secret Lifecycle
@@ -341,16 +341,16 @@ Permissions are fine-grained flags checked at the service layer:
 
 ## 11. Security Testing
 
-| Test Type | Tool | Frequency |
-|---|---|---|
-| SAST (Static Analysis) | ESLint security plugins, Bandit (Python) | Every PR |
-| Dependency vulnerability scan | `pnpm audit`, `pip-audit`, Snyk | Every PR + daily |
-| Container image scan | Trivy | Every build |
-| Secret scan | gitleaks | Every commit |
-| DAST (Dynamic Analysis) | OWASP ZAP | Monthly |
-| Penetration testing | External vendor | Annually |
-| Tenant isolation testing | Custom test suite | Every release |
-| Auth flow testing | Jest integration tests | Every PR |
+| Test Type                     | Tool                                     | Frequency        |
+| ----------------------------- | ---------------------------------------- | ---------------- |
+| SAST (Static Analysis)        | ESLint security plugins, Bandit (Python) | Every PR         |
+| Dependency vulnerability scan | `pnpm audit`, `pip-audit`, Snyk          | Every PR + daily |
+| Container image scan          | Trivy                                    | Every build      |
+| Secret scan                   | gitleaks                                 | Every commit     |
+| DAST (Dynamic Analysis)       | OWASP ZAP                                | Monthly          |
+| Penetration testing           | External vendor                          | Annually         |
+| Tenant isolation testing      | Custom test suite                        | Every release    |
+| Auth flow testing             | Jest integration tests                   | Every PR         |
 
 ---
 
@@ -358,12 +358,12 @@ Permissions are fine-grained flags checked at the service layer:
 
 ### Severity Levels
 
-| Level | Description | Response Time | Escalation |
-|---|---|---|---|
-| P0 — Critical | Data breach, auth bypass | 15 minutes | All-hands |
-| P1 — High | Service down, suspected breach | 1 hour | On-call + security |
-| P2 — Medium | Degraded security control | 4 hours | Security team |
-| P3 — Low | Vulnerability discovered, not exploited | 48 hours | Security team |
+| Level         | Description                             | Response Time | Escalation         |
+| ------------- | --------------------------------------- | ------------- | ------------------ |
+| P0 — Critical | Data breach, auth bypass                | 15 minutes    | All-hands          |
+| P1 — High     | Service down, suspected breach          | 1 hour        | On-call + security |
+| P2 — Medium   | Degraded security control               | 4 hours       | Security team      |
+| P3 — Low      | Vulnerability discovered, not exploited | 48 hours      | Security team      |
 
 ### Response Playbook
 
@@ -381,12 +381,12 @@ See [Incident Runbooks](./runbooks/incidents/) for detailed playbooks.
 
 ## 13. Compliance
 
-| Regulation | Applicability | Status |
-|---|---|---|
-| GDPR | EU user data | [TODO: implement data rights pipeline] |
-| SOC 2 Type II | Enterprise customers | [TODO: Phase 3 audit preparation] |
-| CCPA | California users | [TODO: privacy policy + opt-out] |
-| HIPAA | Healthcare workspaces (future) | [Not in scope Phase 1-2] |
+| Regulation    | Applicability                  | Status                                 |
+| ------------- | ------------------------------ | -------------------------------------- |
+| GDPR          | EU user data                   | [TODO: implement data rights pipeline] |
+| SOC 2 Type II | Enterprise customers           | [TODO: Phase 3 audit preparation]      |
+| CCPA          | California users               | [TODO: privacy policy + opt-out]       |
+| HIPAA         | Healthcare workspaces (future) | [Not in scope Phase 1-2]               |
 
 ---
 

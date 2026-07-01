@@ -1,21 +1,16 @@
-import { Request, Response, NextFunction } from "express";
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "crypto";
+import { NextFunction, Request, Response } from "express";
 
 export function correlationMiddleware(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) {
-  const requestId = String(
-    req.headers["x-request-id"] || uuid()
-  );
+  const requestId = String(req.headers["x-request-id"] || randomUUID());
 
   req.requestId = requestId;
 
-  res.setHeader(
-    "x-request-id",
-    requestId
-  );
+  res.setHeader("x-request-id", requestId);
 
   next();
 }

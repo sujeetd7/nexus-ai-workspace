@@ -9,10 +9,10 @@ in priority order and may mutate the `PromptContext` or halt the pipeline.
 
 ## Hooks in This Folder
 
-| Hook                           | Priority | Description                                        |
-|-------------------------------|----------|----------------------------------------------------|
-| `TokenOptimizationHook`       | 10       | Reduces token count without losing semantic meaning |
-| `PromptInjectionDetectionHook`| 20       | Detects and blocks prompt injection attempts        |
+| Hook                           | Priority | Description                                         |
+| ------------------------------ | -------- | --------------------------------------------------- |
+| `TokenOptimizationHook`        | 10       | Reduces token count without losing semantic meaning |
+| `PromptInjectionDetectionHook` | 20       | Detects and blocks prompt injection attempts        |
 
 ## Execution Order
 

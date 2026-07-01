@@ -7,8 +7,7 @@ export const swaggerSpec = swaggerJSDoc({
     info: {
       title: "Nexus Auth Service",
       version: "1.0.0",
-      description:
-        "Enterprise Authentication Microservice",
+      description: "Enterprise Authentication Microservice",
     },
 
     servers: [
@@ -34,8 +33,5 @@ export const swaggerSpec = swaggerJSDoc({
     ],
   },
 
-  apis: [
-    "./src/routes/**/*.ts",
-    "./src/controllers/**/*.ts",
-  ],
+  apis: ["./src/routes/**/*.ts", "./src/controllers/**/*.ts"],
 });

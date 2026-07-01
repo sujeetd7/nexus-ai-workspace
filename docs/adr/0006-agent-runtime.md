@@ -65,11 +65,11 @@ Every agent graph operates on a **typed `AgentState`** dataclass (TypedDict). St
 
 Agent memory is organized in three tiers, each with a different scope and TTL:
 
-| Tier | Storage | Scope | TTL |
-|---|---|---|---|
-| **Session memory** | Redis | Per conversation | 24 hours |
-| **Entity memory** | Redis | Per session + workspace | 24 hours |
-| **Long-term memory** | ChromaDB + PostgreSQL | Per user | Permanent |
+| Tier                 | Storage               | Scope                   | TTL       |
+| -------------------- | --------------------- | ----------------------- | --------- |
+| **Session memory**   | Redis                 | Per conversation        | 24 hours  |
+| **Entity memory**    | Redis                 | Per session + workspace | 24 hours  |
+| **Long-term memory** | ChromaDB + PostgreSQL | Per user                | Permanent |
 
 **Rationale:** A single memory strategy cannot satisfy all needs. Buffer memory for recency, entity memory for structured facts, and vector memory for semantic recall are complementary. The tiered approach balances cost, speed, and recall quality.
 
@@ -90,6 +90,7 @@ The supervisor operates as a LangGraph subgraph. Leaf agents are also LangGraph 
 All agent tool calls — without exception — go through the MCP registry. Agents do not call APIs, databases, or external services directly. Every external interaction is a typed MCP tool call.
 
 **Rationale:** This constraint provides:
+
 - Centralized audit log of all tool invocations
 - Uniform permission enforcement at the tool server level
 - Tool replaceability without agent code changes
@@ -126,11 +127,13 @@ Every agent execution has a configurable `max_iterations` limit (default: 25 cyc
 **Description:** All agents first create a full plan (list of steps), then execute each step in sequence.
 
 **Pros:**
+
 - Better for long-horizon tasks
 - Plan is visible to the user upfront
 - Easier to parallelize independent steps
 
 **Cons:**
+
 - Plans become stale when early steps yield unexpected results
 - Adds a full LLM call upfront before any work begins
 - Increases TTFB (time to first meaningful output)
@@ -143,10 +146,12 @@ Every agent execution has a configurable `max_iterations` limit (default: 25 cyc
 **Description:** Agents publish results to a message queue; other agents subscribe and react.
 
 **Pros:**
+
 - Decoupled, event-driven agent composition
 - Natural retry and backoff for failed agent subtasks
 
 **Cons:**
+
 - Non-deterministic execution order
 - Hard to implement streaming responses (what token goes where?)
 - Significantly more complex orchestration than supervisor pattern
@@ -159,10 +164,12 @@ Every agent execution has a configurable `max_iterations` limit (default: 25 cyc
 **Description:** All agents have access to all registered MCP tools.
 
 **Pros:**
+
 - Simpler configuration
 - Agents can use any tool they reason is appropriate
 
 **Cons:**
+
 - No enforcement boundary: a compromised prompt could invoke destructive tools
 - LLM tool selection degrades when too many tools are available (token context, confusion)
 - No clear ownership of which tools belong to which agent domain
@@ -174,10 +181,12 @@ Every agent execution has a configurable `max_iterations` limit (default: 25 cyc
 **Description:** Agent output streamed to clients via WebSocket instead of SSE.
 
 **Pros:**
+
 - Bidirectional: client can cancel or send follow-up while streaming
 - Single protocol for all real-time communication
 
 **Cons:**
+
 - SSE is simpler to implement and sufficient for unidirectional streaming
 - SSE is natively supported by `EventSource` in browsers without additional libraries
 - WebSocket requires more complex connection management on the AI platform
@@ -214,12 +223,12 @@ Every agent execution has a configurable `max_iterations` limit (default: 25 cyc
 
 ### Risks
 
-| Risk | Likelihood | Mitigation |
-|---|---|---|
-| Prompt injection via tool results | Low | Tool output sanitization, context length limits |
-| Agent gets stuck in tool call loop | Low | Max iterations guard, loop detection |
-| Memory tier inconsistency (stale entity memory) | Medium | TTL-based expiry, explicit invalidation on workspace change |
-| Supervisor misroutes complex tasks | Medium | Routing tests in golden dataset, fallback to generalist agent |
+| Risk                                            | Likelihood | Mitigation                                                    |
+| ----------------------------------------------- | ---------- | ------------------------------------------------------------- |
+| Prompt injection via tool results               | Low        | Tool output sanitization, context length limits               |
+| Agent gets stuck in tool call loop              | Low        | Max iterations guard, loop detection                          |
+| Memory tier inconsistency (stale entity memory) | Medium     | TTL-based expiry, explicit invalidation on workspace change   |
+| Supervisor misroutes complex tasks              | Medium     | Routing tests in golden dataset, fallback to generalist agent |
 
 ---
 
@@ -227,13 +236,13 @@ Every agent execution has a configurable `max_iterations` limit (default: 25 cyc
 
 All agent runtime changes must pass the following before deployment:
 
-| Criterion | Minimum Threshold | Measurement |
-|---|---|---|
-| Task success rate | 90% | Golden dataset evaluation |
-| Tool selection accuracy | 85% | Annotation comparison |
-| TTFB (time to first token) | P90 < 1000ms | Prometheus histogram |
-| Max iterations triggered | < 1% of invocations | Prometheus counter |
-| Hallucination rate | < 5% | LLM-as-judge evaluation |
+| Criterion                  | Minimum Threshold   | Measurement               |
+| -------------------------- | ------------------- | ------------------------- |
+| Task success rate          | 90%                 | Golden dataset evaluation |
+| Tool selection accuracy    | 85%                 | Annotation comparison     |
+| TTFB (time to first token) | P90 < 1000ms        | Prometheus histogram      |
+| Max iterations triggered   | < 1% of invocations | Prometheus counter        |
+| Hallucination rate         | < 5%                | LLM-as-judge evaluation   |
 
 ---
 

@@ -2,10 +2,7 @@ import { Request, Response } from "express";
 
 import { env } from "../config/env";
 
-export function health(
-  req: Request,
-  res: Response
-) {
+export function health(req: Request, res: Response) {
   res.status(200).json({
     success: true,
     data: {

@@ -39,14 +39,14 @@ The **Model Context Protocol (MCP)** is an open standard for connecting AI model
 
 ### Key Concepts
 
-| Concept | Description |
-|---|---|
-| **MCP Server** | A service that exposes tools, resources, and prompts via the MCP protocol |
-| **MCP Client** | A consumer that connects to MCP servers and invokes tools |
-| **Tool** | A callable function exposed by an MCP server with typed input/output schema |
-| **Resource** | A data source exposed by an MCP server (files, database records) |
-| **Prompt** | A reusable prompt template exposed by an MCP server |
-| **Registry** | Central discovery service for all MCP servers in the platform |
+| Concept        | Description                                                                 |
+| -------------- | --------------------------------------------------------------------------- |
+| **MCP Server** | A service that exposes tools, resources, and prompts via the MCP protocol   |
+| **MCP Client** | A consumer that connects to MCP servers and invokes tools                   |
+| **Tool**       | A callable function exposed by an MCP server with typed input/output schema |
+| **Resource**   | A data source exposed by an MCP server (files, database records)            |
+| **Prompt**     | A reusable prompt template exposed by an MCP server                         |
+| **Registry**   | Central discovery service for all MCP servers in the platform               |
 
 ---
 
@@ -118,60 +118,60 @@ mcp/
 
 The primary MCP server exposing core platform capabilities.
 
-| Tool | Description | Input | Output |
-|---|---|---|---|
-| `nexus.search` | Search across all workspace content | `{ query, scope, limit }` | `{ results: SearchResult[] }` |
-| `nexus.user.get` | Get user profile and preferences | `{ user_id }` | `{ user: UserProfile }` |
-| `nexus.workspace.list` | List accessible workspaces | `{ user_id }` | `{ workspaces: Workspace[] }` |
-| `nexus.memory.recall` | Retrieve from long-term agent memory | `{ query, session_id }` | `{ memories: Memory[] }` |
-| `nexus.memory.store` | Store to long-term agent memory | `{ content, session_id, tags }` | `{ id: string }` |
+| Tool                   | Description                          | Input                           | Output                        |
+| ---------------------- | ------------------------------------ | ------------------------------- | ----------------------------- |
+| `nexus.search`         | Search across all workspace content  | `{ query, scope, limit }`       | `{ results: SearchResult[] }` |
+| `nexus.user.get`       | Get user profile and preferences     | `{ user_id }`                   | `{ user: UserProfile }`       |
+| `nexus.workspace.list` | List accessible workspaces           | `{ user_id }`                   | `{ workspaces: Workspace[] }` |
+| `nexus.memory.recall`  | Retrieve from long-term agent memory | `{ query, session_id }`         | `{ memories: Memory[] }`      |
+| `nexus.memory.store`   | Store to long-term agent memory      | `{ content, session_id, tags }` | `{ id: string }`              |
 
 ### GitHub MCP (`servers/github-mcp/`)
 
 GitHub repository and code intelligence tools.
 
-| Tool | Description | Input | Output |
-|---|---|---|---|
-| `github.repo.search` | Search repositories | `{ query, org }` | `{ repos: Repo[] }` |
-| `github.code.search` | Search code across repos | `{ query, lang, repo }` | `{ matches: CodeMatch[] }` |
-| `github.pr.list` | List pull requests | `{ repo, state, author }` | `{ prs: PR[] }` |
-| `github.issue.create` | Create a new issue | `{ repo, title, body, labels }` | `{ issue: Issue }` |
-| `github.file.read` | Read file content from repo | `{ repo, path, ref }` | `{ content: string }` |
+| Tool                  | Description                 | Input                           | Output                     |
+| --------------------- | --------------------------- | ------------------------------- | -------------------------- |
+| `github.repo.search`  | Search repositories         | `{ query, org }`                | `{ repos: Repo[] }`        |
+| `github.code.search`  | Search code across repos    | `{ query, lang, repo }`         | `{ matches: CodeMatch[] }` |
+| `github.pr.list`      | List pull requests          | `{ repo, state, author }`       | `{ prs: PR[] }`            |
+| `github.issue.create` | Create a new issue          | `{ repo, title, body, labels }` | `{ issue: Issue }`         |
+| `github.file.read`    | Read file content from repo | `{ repo, path, ref }`           | `{ content: string }`      |
 
 ### Document MCP (`servers/document-mcp/`)
 
 Document parsing, search, and annotation tools.
 
-| Tool | Description | Input | Output |
-|---|---|---|---|
-| `doc.search` | Semantic search in indexed documents | `{ query, workspace_id, top_k }` | `{ results: DocChunk[] }` |
-| `doc.get` | Retrieve document content | `{ document_id }` | `{ document: Document }` |
-| `doc.summarize` | AI-powered document summary | `{ document_id, length }` | `{ summary: string }` |
-| `doc.extract` | Extract structured data from document | `{ document_id, schema }` | `{ data: Record }` |
-| `doc.annotate` | Add annotation to document | `{ document_id, text, position }` | `{ annotation_id: string }` |
+| Tool            | Description                           | Input                             | Output                      |
+| --------------- | ------------------------------------- | --------------------------------- | --------------------------- |
+| `doc.search`    | Semantic search in indexed documents  | `{ query, workspace_id, top_k }`  | `{ results: DocChunk[] }`   |
+| `doc.get`       | Retrieve document content             | `{ document_id }`                 | `{ document: Document }`    |
+| `doc.summarize` | AI-powered document summary           | `{ document_id, length }`         | `{ summary: string }`       |
+| `doc.extract`   | Extract structured data from document | `{ document_id, schema }`         | `{ data: Record }`          |
+| `doc.annotate`  | Add annotation to document            | `{ document_id, text, position }` | `{ annotation_id: string }` |
 
 ### Workspace MCP (`servers/workspace-mcp/`)
 
 Organizational context and team tools.
 
-| Tool | Description | Input | Output |
-|---|---|---|---|
-| `workspace.context.get` | Get workspace AI context | `{ workspace_id }` | `{ context: WorkspaceContext }` |
-| `workspace.members.list` | List workspace members | `{ workspace_id }` | `{ members: Member[] }` |
-| `workspace.channel.list` | List chat channels | `{ workspace_id }` | `{ channels: Channel[] }` |
-| `workspace.settings.get` | Get workspace AI settings | `{ workspace_id }` | `{ settings: AISettings }` |
+| Tool                     | Description               | Input              | Output                          |
+| ------------------------ | ------------------------- | ------------------ | ------------------------------- |
+| `workspace.context.get`  | Get workspace AI context  | `{ workspace_id }` | `{ context: WorkspaceContext }` |
+| `workspace.members.list` | List workspace members    | `{ workspace_id }` | `{ members: Member[] }`         |
+| `workspace.channel.list` | List chat channels        | `{ workspace_id }` | `{ channels: Channel[] }`       |
+| `workspace.settings.get` | Get workspace AI settings | `{ workspace_id }` | `{ settings: AISettings }`      |
 
 ### Code MCP (`servers/code-mcp/`)
 
 Code intelligence, completion, and review tools.
 
-| Tool | Description | Input | Output |
-|---|---|---|---|
-| `code.complete` | Code completion at cursor | `{ code, language, position }` | `{ completions: string[] }` |
-| `code.explain` | Explain code block | `{ code, language }` | `{ explanation: string }` |
-| `code.review` | AI code review | `{ code, language, context }` | `{ review: CodeReview }` |
-| `code.test.generate` | Generate test cases | `{ code, language, framework }` | `{ tests: string }` |
-| `code.refactor` | Suggest refactoring | `{ code, language, goal }` | `{ refactored: string, diff: string }` |
+| Tool                 | Description               | Input                           | Output                                 |
+| -------------------- | ------------------------- | ------------------------------- | -------------------------------------- |
+| `code.complete`      | Code completion at cursor | `{ code, language, position }`  | `{ completions: string[] }`            |
+| `code.explain`       | Explain code block        | `{ code, language }`            | `{ explanation: string }`              |
+| `code.review`        | AI code review            | `{ code, language, context }`   | `{ review: CodeReview }`               |
+| `code.test.generate` | Generate test cases       | `{ code, language, framework }` | `{ tests: string }`                    |
+| `code.refactor`      | Suggest refactoring       | `{ code, language, goal }`      | `{ refactored: string, diff: string }` |
 
 ---
 
@@ -340,25 +340,25 @@ Every tool must define:
 
 ## 11. Observability
 
-| Signal | Implementation | Status |
-|---|---|---|
-| Tool invocation count | Prometheus counter per tool | [TODO: implement] |
-| Tool execution latency | Prometheus histogram | [TODO: implement] |
-| Tool error rate | Prometheus counter per error code | [TODO: implement] |
-| Registry health | `/health` endpoint + alerting | [TODO: implement] |
-| Tool call audit log | Structured log per invocation | [TODO: implement] |
+| Signal                 | Implementation                    | Status            |
+| ---------------------- | --------------------------------- | ----------------- |
+| Tool invocation count  | Prometheus counter per tool       | [TODO: implement] |
+| Tool execution latency | Prometheus histogram              | [TODO: implement] |
+| Tool error rate        | Prometheus counter per error code | [TODO: implement] |
+| Registry health        | `/health` endpoint + alerting     | [TODO: implement] |
+| Tool call audit log    | Structured log per invocation     | [TODO: implement] |
 
 ---
 
 ## 12. Architectural Tradeoffs
 
-| Decision | Benefit | Cost |
-|---|---|---|
+| Decision                                 | Benefit                                 | Cost                                          |
+| ---------------------------------------- | --------------------------------------- | --------------------------------------------- |
 | Central registry over direct connections | Simplified discovery, health monitoring | Registry as potential single point of failure |
-| Protocol-level tool abstraction | Provider independence, extensibility | Additional indirection and latency |
-| Typed SDK over raw protocol | Developer experience, type safety | SDK maintenance overhead |
-| FastMCP for Python servers | Rapid development | Python-specific, separate from TS servers |
-| Tool namespacing | Clear ownership, permission scoping | Verbose tool names |
+| Protocol-level tool abstraction          | Provider independence, extensibility    | Additional indirection and latency            |
+| Typed SDK over raw protocol              | Developer experience, type safety       | SDK maintenance overhead                      |
+| FastMCP for Python servers               | Rapid development                       | Python-specific, separate from TS servers     |
+| Tool namespacing                         | Clear ownership, permission scoping     | Verbose tool names                            |
 
 ---
 

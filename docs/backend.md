@@ -61,71 +61,71 @@ backend/
 
 ### API Gateway
 
-| Attribute | Detail |
-|---|---|
+| Attribute      | Detail                                                           |
+| -------------- | ---------------------------------------------------------------- |
 | Responsibility | Request routing, auth validation, rate limiting, SSL termination |
-| Port | 4000 |
-| Technology | Express + http-proxy-middleware |
-| Auth | Validates JWT; passes decoded claims downstream |
-| Rate Limiting | Per-user and per-IP via Redis sliding window |
+| Port           | 4000                                                             |
+| Technology     | Express + http-proxy-middleware                                  |
+| Auth           | Validates JWT; passes decoded claims downstream                  |
+| Rate Limiting  | Per-user and per-IP via Redis sliding window                     |
 
 ### Auth Service
 
-| Attribute | Detail |
-|---|---|
-| Responsibility | User authentication, token lifecycle, OAuth, RBAC |
-| Port | 4001 |
-| Technology | Express + Prisma + bcrypt |
-| Database | PostgreSQL (users, roles, sessions) |
-| Key Endpoints | `POST /auth/login`, `POST /auth/refresh`, `POST /auth/logout`, `POST /auth/register` |
+| Attribute      | Detail                                                                               |
+| -------------- | ------------------------------------------------------------------------------------ |
+| Responsibility | User authentication, token lifecycle, OAuth, RBAC                                    |
+| Port           | 4001                                                                                 |
+| Technology     | Express + Prisma + bcrypt                                                            |
+| Database       | PostgreSQL (users, roles, sessions)                                                  |
+| Key Endpoints  | `POST /auth/login`, `POST /auth/refresh`, `POST /auth/logout`, `POST /auth/register` |
 
 ### Chat Service
 
-| Attribute | Detail |
-|---|---|
+| Attribute      | Detail                                                          |
+| -------------- | --------------------------------------------------------------- |
 | Responsibility | Chat threads, message persistence, real-time WebSocket delivery |
-| Port | 4002 |
-| Technology | Express + Socket.io + BullMQ |
-| Database | MongoDB (threads, messages) |
-| Key Features | Typing indicators, read receipts, AI response integration |
+| Port           | 4002                                                            |
+| Technology     | Express + Socket.io + BullMQ                                    |
+| Database       | MongoDB (threads, messages)                                     |
+| Key Features   | Typing indicators, read receipts, AI response integration       |
 
 ### Document Service
 
-| Attribute | Detail |
-|---|---|
+| Attribute      | Detail                                                         |
+| -------------- | -------------------------------------------------------------- |
 | Responsibility | File upload, storage, parsing, metadata, AI enrichment trigger |
-| Port | 4003 |
-| Technology | Express + Multer + LlamaParse client |
-| Database | MongoDB (document metadata) + S3 (file storage) |
-| Key Features | PDF/DOCX/Markdown parsing, RAG indexing trigger |
+| Port           | 4003                                                           |
+| Technology     | Express + Multer + LlamaParse client                           |
+| Database       | MongoDB (document metadata) + S3 (file storage)                |
+| Key Features   | PDF/DOCX/Markdown parsing, RAG indexing trigger                |
 
 ### User Service
 
-| Attribute | Detail |
-|---|---|
+| Attribute      | Detail                                     |
+| -------------- | ------------------------------------------ |
 | Responsibility | User profiles, preferences, avatar, search |
-| Port | 4004 |
-| Technology | Express + Prisma |
-| Database | PostgreSQL (user profiles, preferences) |
+| Port           | 4004                                       |
+| Technology     | Express + Prisma                           |
+| Database       | PostgreSQL (user profiles, preferences)    |
 
 ### Workspace Service
 
-| Attribute | Detail |
-|---|---|
+| Attribute      | Detail                                                  |
+| -------------- | ------------------------------------------------------- |
 | Responsibility | Workspace and team management, membership, billing tier |
-| Port | 4005 |
-| Technology | Express + Prisma |
-| Database | PostgreSQL (workspaces, members, roles) |
+| Port           | 4005                                                    |
+| Technology     | Express + Prisma                                        |
+| Database       | PostgreSQL (workspaces, members, roles)                 |
 
 ### Notification Service
 
-| Attribute | Detail |
-|---|---|
-| Responsibility | Email, push, and in-app notifications |
-| Port | 4006 |
-| Technology | Express + BullMQ + SendGrid |
-| Database | MongoDB (notification records, preferences) |
-| Queue | `notifications` BullMQ queue |
+| Attribute      | Detail                                      |
+| -------------- | ------------------------------------------- |
+| Responsibility | Email, push, and in-app notifications       |
+| Port           | 4006                                        |
+| Technology     | Express + BullMQ + SendGrid                 |
+| Database       | MongoDB (notification records, preferences) |
+| Queue          | `notifications` BullMQ queue                |
 
 ---
 
@@ -143,16 +143,16 @@ backend/
 
 ### Routing Table
 
-| Path Prefix | Upstream Service | Strip Prefix |
-|---|---|---|
-| `/api/auth` | auth-service:4001 | No |
-| `/api/chat` | chat-service:4002 | No |
-| `/api/documents` | document-service:4003 | No |
-| `/api/users` | user-service:4004 | No |
-| `/api/workspace` | workspace-service:4005 | No |
-| `/api/notifications` | notification-service:4006 | No |
-| `/api/ai` | ai-platform:8000 | No |
-| `/ws` | chat-service:4002 | No |
+| Path Prefix          | Upstream Service          | Strip Prefix |
+| -------------------- | ------------------------- | ------------ |
+| `/api/auth`          | auth-service:4001         | No           |
+| `/api/chat`          | chat-service:4002         | No           |
+| `/api/documents`     | document-service:4003     | No           |
+| `/api/users`         | user-service:4004         | No           |
+| `/api/workspace`     | workspace-service:4005    | No           |
+| `/api/notifications` | notification-service:4006 | No           |
+| `/api/ai`            | ai-platform:8000          | No           |
+| `/ws`                | chat-service:4002         | No           |
 
 ### Middleware Stack (in order)
 
@@ -182,14 +182,14 @@ backend/
 
 ### Event Taxonomy
 
-| Event | Producer | Consumers |
-|---|---|---|
-| `user.created` | auth-service | user-service, notification-service |
-| `user.deleted` | auth-service | user-service, workspace-service, document-service |
-| `message.created` | chat-service | notification-service, ai-platform |
-| `document.uploaded` | document-service | ai-platform (RAG indexing) |
-| `workspace.member.added` | workspace-service | notification-service |
-| `ai.response.generated` | ai-platform | chat-service |
+| Event                    | Producer          | Consumers                                         |
+| ------------------------ | ----------------- | ------------------------------------------------- |
+| `user.created`           | auth-service      | user-service, notification-service                |
+| `user.deleted`           | auth-service      | user-service, workspace-service, document-service |
+| `message.created`        | chat-service      | notification-service, ai-platform                 |
+| `document.uploaded`      | document-service  | ai-platform (RAG indexing)                        |
+| `workspace.member.added` | workspace-service | notification-service                              |
+| `ai.response.generated`  | ai-platform       | chat-service                                      |
 
 ---
 
@@ -204,14 +204,14 @@ backend/
 
 ### RBAC Model
 
-| Role | Scope | Key Permissions |
-|---|---|---|
-| `super_admin` | Platform | Full access to all resources |
-| `org_admin` | Organization | Manage users, workspaces, billing |
-| `workspace_admin` | Workspace | Manage members, settings, integrations |
-| `member` | Workspace | Read/write own data, use AI features |
-| `viewer` | Workspace | Read-only access |
-| `ai_service` | Internal | AI platform service calls |
+| Role              | Scope        | Key Permissions                        |
+| ----------------- | ------------ | -------------------------------------- |
+| `super_admin`     | Platform     | Full access to all resources           |
+| `org_admin`       | Organization | Manage users, workspaces, billing      |
+| `workspace_admin` | Workspace    | Manage members, settings, integrations |
+| `member`          | Workspace    | Read/write own data, use AI features   |
+| `viewer`          | Workspace    | Read-only access                       |
+| `ai_service`      | Internal     | AI platform service calls              |
 
 ### Permission Enforcement
 
@@ -226,14 +226,14 @@ backend/
 
 Each service owns its data exclusively. Cross-service data access must go through the service's API.
 
-| Service | Primary Store | Schema/Collection |
-|---|---|---|
-| auth-service | PostgreSQL | `users`, `sessions`, `roles`, `permissions` |
-| user-service | PostgreSQL | `profiles`, `preferences`, `avatar` |
-| workspace-service | PostgreSQL | `workspaces`, `memberships`, `invitations` |
-| chat-service | MongoDB | `threads`, `messages`, `reactions` |
-| document-service | MongoDB | `documents`, `versions`, `annotations` |
-| notification-service | MongoDB | `notifications`, `notification_preferences` |
+| Service              | Primary Store | Schema/Collection                           |
+| -------------------- | ------------- | ------------------------------------------- |
+| auth-service         | PostgreSQL    | `users`, `sessions`, `roles`, `permissions` |
+| user-service         | PostgreSQL    | `profiles`, `preferences`, `avatar`         |
+| workspace-service    | PostgreSQL    | `workspaces`, `memberships`, `invitations`  |
+| chat-service         | MongoDB       | `threads`, `messages`, `reactions`          |
+| document-service     | MongoDB       | `documents`, `versions`, `annotations`      |
+| notification-service | MongoDB       | `notifications`, `notification_preferences` |
 
 ### Prisma Schema Location
 
@@ -249,13 +249,13 @@ Each service owns its data exclusively. Cross-service data access must go throug
 
 All background processing uses BullMQ queues via the shared `queue` package.
 
-| Queue | Producer | Consumer | Job Types |
-|---|---|---|---|
-| `notifications` | Any service | notification-service | email, push, in-app |
-| `document-processing` | document-service | ai-platform | parse, chunk, embed |
-| `ai-tasks` | Any service | ai-platform | agent run, RAG query |
-| `cleanup` | Scheduled | Any service | token rotation, temp file cleanup |
-| `audit` | Any service | audit-service (future) | Event recording |
+| Queue                 | Producer         | Consumer               | Job Types                         |
+| --------------------- | ---------------- | ---------------------- | --------------------------------- |
+| `notifications`       | Any service      | notification-service   | email, push, in-app               |
+| `document-processing` | document-service | ai-platform            | parse, chunk, embed               |
+| `ai-tasks`            | Any service      | ai-platform            | agent run, RAG query              |
+| `cleanup`             | Scheduled        | Any service            | token rotation, temp file cleanup |
+| `audit`               | Any service      | audit-service (future) | Event recording                   |
 
 ### Job Conventions
 
@@ -268,14 +268,14 @@ All background processing uses BullMQ queues via the shared `queue` package.
 
 ## 8. Shared Packages
 
-| Package | Contents | Consumers |
-|---|---|---|
-| `@nexus/auth` | JWT sign/verify, RBAC middleware, token utilities | All services |
-| `@nexus/cache` | Redis client singleton, TTL cache decorator, invalidation | All services |
-| `@nexus/database` | Prisma client, migration utilities, seed helpers | PostgreSQL services |
-| `@nexus/events` | Event publisher, subscriber, typed event schemas | All services |
-| `@nexus/logger` | Pino logger with request context, correlation IDs | All services |
-| `@nexus/queue` | BullMQ queue factory, worker base class, retry config | Producer/consumer services |
+| Package           | Contents                                                  | Consumers                  |
+| ----------------- | --------------------------------------------------------- | -------------------------- |
+| `@nexus/auth`     | JWT sign/verify, RBAC middleware, token utilities         | All services               |
+| `@nexus/cache`    | Redis client singleton, TTL cache decorator, invalidation | All services               |
+| `@nexus/database` | Prisma client, migration utilities, seed helpers          | PostgreSQL services        |
+| `@nexus/events`   | Event publisher, subscriber, typed event schemas          | All services               |
+| `@nexus/logger`   | Pino logger with request context, correlation IDs         | All services               |
+| `@nexus/queue`    | BullMQ queue factory, worker base class, retry config     | Producer/consumer services |
 
 ---
 
@@ -307,14 +307,14 @@ LOG_LEVEL=info|debug|warn|error
 
 ## 10. Observability
 
-| Concern | Implementation | Status |
-|---|---|---|
-| Structured logging | Pino with `@nexus/logger` | [TODO: finalize format] |
-| Correlation IDs | `x-correlation-id` header propagated through all services | [TODO: implement] |
-| Health checks | `GET /health` endpoint on every service | [TODO: implement] |
-| Readiness probes | `GET /ready` (checks DB + Redis) | [TODO: implement] |
-| Metrics | Prometheus `/metrics` endpoint | [TODO: implement] |
-| Distributed traces | OpenTelemetry SDK | [TODO: implement] |
+| Concern            | Implementation                                            | Status                  |
+| ------------------ | --------------------------------------------------------- | ----------------------- |
+| Structured logging | Pino with `@nexus/logger`                                 | [TODO: finalize format] |
+| Correlation IDs    | `x-correlation-id` header propagated through all services | [TODO: implement]       |
+| Health checks      | `GET /health` endpoint on every service                   | [TODO: implement]       |
+| Readiness probes   | `GET /ready` (checks DB + Redis)                          | [TODO: implement]       |
+| Metrics            | Prometheus `/metrics` endpoint                            | [TODO: implement]       |
+| Distributed traces | OpenTelemetry SDK                                         | [TODO: implement]       |
 
 ---
 
@@ -338,27 +338,27 @@ LOG_LEVEL=info|debug|warn|error
 
 ### Error Codes (Partial)
 
-| Code | HTTP Status | Meaning |
-|---|---|---|
-| `VALIDATION_ERROR` | 400 | Request body/params failed validation |
-| `UNAUTHORIZED` | 401 | Missing or invalid auth token |
-| `FORBIDDEN` | 403 | Insufficient permissions |
-| `NOT_FOUND` | 404 | Resource does not exist |
-| `CONFLICT` | 409 | Resource already exists |
-| `RATE_LIMITED` | 429 | Too many requests |
-| `INTERNAL_ERROR` | 500 | Unexpected server error |
-| `AI_UNAVAILABLE` | 503 | AI provider temporarily unavailable |
+| Code               | HTTP Status | Meaning                               |
+| ------------------ | ----------- | ------------------------------------- |
+| `VALIDATION_ERROR` | 400         | Request body/params failed validation |
+| `UNAUTHORIZED`     | 401         | Missing or invalid auth token         |
+| `FORBIDDEN`        | 403         | Insufficient permissions              |
+| `NOT_FOUND`        | 404         | Resource does not exist               |
+| `CONFLICT`         | 409         | Resource already exists               |
+| `RATE_LIMITED`     | 429         | Too many requests                     |
+| `INTERNAL_ERROR`   | 500         | Unexpected server error               |
+| `AI_UNAVAILABLE`   | 503         | AI provider temporarily unavailable   |
 
 ---
 
 ## 12. Testing Strategy
 
-| Level | Tool | Coverage Target |
-|---|---|---|
-| Unit | Jest | 80% per service |
-| Integration | Jest + Testcontainers | Key service flows |
-| Contract | Pact (future) | Inter-service API contracts |
-| Load | k6 | API gateway, chat service |
+| Level       | Tool                  | Coverage Target             |
+| ----------- | --------------------- | --------------------------- |
+| Unit        | Jest                  | 80% per service             |
+| Integration | Jest + Testcontainers | Key service flows           |
+| Contract    | Pact (future)         | Inter-service API contracts |
+| Load        | k6                    | API gateway, chat service   |
 
 See [Testing Strategy](./testing.md) for full details.
 
@@ -366,14 +366,14 @@ See [Testing Strategy](./testing.md) for full details.
 
 ## 13. Architectural Tradeoffs
 
-| Decision | Benefit | Cost |
-|---|---|---|
-| Microservices over monolith | Independent scaling and deployment | Operational overhead, network latency |
-| Node.js for all backend | Unified language with frontend | Suboptimal for CPU-bound work (offload to Python AI) |
-| Shared Prisma schema | Single source of DB truth | Coupling between services sharing PostgreSQL |
-| MongoDB for chat/docs | Flexible schema for unstructured data | No ACID transactions across collections |
-| BullMQ over Kafka | Simpler operational model | Limited throughput at very large scale |
-| HTTP between services | Debuggable, familiar | Latency vs. in-process calls |
+| Decision                    | Benefit                               | Cost                                                 |
+| --------------------------- | ------------------------------------- | ---------------------------------------------------- |
+| Microservices over monolith | Independent scaling and deployment    | Operational overhead, network latency                |
+| Node.js for all backend     | Unified language with frontend        | Suboptimal for CPU-bound work (offload to Python AI) |
+| Shared Prisma schema        | Single source of DB truth             | Coupling between services sharing PostgreSQL         |
+| MongoDB for chat/docs       | Flexible schema for unstructured data | No ACID transactions across collections              |
+| BullMQ over Kafka           | Simpler operational model             | Limited throughput at very large scale               |
+| HTTP between services       | Debuggable, familiar                  | Latency vs. in-process calls                         |
 
 ---
 

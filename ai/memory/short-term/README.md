@@ -9,13 +9,13 @@ It is fast, ephemeral, and scoped to a single session.
 
 ### Characteristics
 
-| Property    | Value                                  |
-|-------------|----------------------------------------|
-| Backend     | Redis                                  |
-| TTL         | Configurable (default: 2 hours)        |
-| Scope       | Single session                         |
-| Capacity    | Limited by token budget                |
-| Access      | Read/write every turn                  |
+| Property | Value                           |
+| -------- | ------------------------------- |
+| Backend  | Redis                           |
+| TTL      | Configurable (default: 2 hours) |
+| Scope    | Single session                  |
+| Capacity | Limited by token budget         |
+| Access   | Read/write every turn           |
 
 ### What is stored
 

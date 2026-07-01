@@ -1,6 +1,7 @@
 # Weekend Sprint
 
 ## Completed
+
 - Monorepo setup
 - Auth service bootstrap
 - Environment config
@@ -13,6 +14,7 @@
 - Validation middleware
 
 ## Remaining Today
+
 - API response contract
 - Swagger/OpenAPI
 - JWT architecture

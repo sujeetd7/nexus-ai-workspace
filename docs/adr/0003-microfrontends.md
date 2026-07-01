@@ -50,14 +50,14 @@ The shell application (`frontend/apps/web/`) is responsible for:
 
 ### Microfrontend Decomposition
 
-| MFE | Route Prefix | Team | Key Features |
-|---|---|---|---|
-| `shell` (host) | `/` (global) | Platform | Layout, nav, auth |
-| `chat-mfe` | `/chat/*` | Chat Team | Threads, messages, AI chat |
-| `document-mfe` | `/docs/*` | Docs Team | Document list, editor, AI tools |
-| `workspace-mfe` | `/workspace/*` | Workspace Team | Teams, settings, integrations |
-| `copilot-mfe` | Sidebar overlay | AI Team | AI assistant, suggestions |
-| `admin-mfe` | `/admin/*` | Platform Team | Admin dashboard, user management |
+| MFE             | Route Prefix    | Team           | Key Features                     |
+| --------------- | --------------- | -------------- | -------------------------------- |
+| `shell` (host)  | `/` (global)    | Platform       | Layout, nav, auth                |
+| `chat-mfe`      | `/chat/*`       | Chat Team      | Threads, messages, AI chat       |
+| `document-mfe`  | `/docs/*`       | Docs Team      | Document list, editor, AI tools  |
+| `workspace-mfe` | `/workspace/*`  | Workspace Team | Teams, settings, integrations    |
+| `copilot-mfe`   | Sidebar overlay | AI Team        | AI assistant, suggestions        |
+| `admin-mfe`     | `/admin/*`      | Platform Team  | Admin dashboard, user management |
 
 ### Composition Mechanism
 
@@ -68,23 +68,23 @@ The shell application (`frontend/apps/web/`) is responsible for:
 
 ### Cross-MFE State Sharing
 
-| Method | Use Case |
-|---|---|
-| Redux global store (shell-owned) | Auth state, active workspace, user profile |
-| Custom DOM events | Cross-MFE notifications (e.g., `notification:new`) |
-| URL / React Router | Navigation state |
-| Shell context providers | Theme, locale |
+| Method                           | Use Case                                           |
+| -------------------------------- | -------------------------------------------------- |
+| Redux global store (shell-owned) | Auth state, active workspace, user profile         |
+| Custom DOM events                | Cross-MFE notifications (e.g., `notification:new`) |
+| URL / React Router               | Navigation state                                   |
+| Shell context providers          | Theme, locale                                      |
 
 ### Shared Package Strategy (`frontend/packages/`)
 
 All truly shared code lives in versioned packages, not in MFEs:
 
-| Package | Shared Content |
-|---|---|
-| `@nexus/ui-kit` | All UI components, Tailwind design tokens |
-| `@nexus/auth-sdk` | Auth hooks, token management, route guards |
-| `@nexus/socket-client` | Typed Socket.io client |
-| `@nexus/analytics` | Event tracking abstraction |
+| Package                | Shared Content                             |
+| ---------------------- | ------------------------------------------ |
+| `@nexus/ui-kit`        | All UI components, Tailwind design tokens  |
+| `@nexus/auth-sdk`      | Auth hooks, token management, route guards |
+| `@nexus/socket-client` | Typed Socket.io client                     |
+| `@nexus/analytics`     | Event tracking abstraction                 |
 
 ---
 
@@ -95,12 +95,14 @@ All truly shared code lives in versioned packages, not in MFEs:
 **Description:** A single React application (`frontend/apps/web/`) containing all feature code, built and deployed as one unit.
 
 **Pros:**
+
 - Simplest development model
 - Shared state is trivial (same process)
 - No Module Federation configuration complexity
 - Fastest initial development velocity
 
 **Cons:**
+
 - Single deployment unit: any change triggers full redeployment
 - Bundle size grows unbounded as features are added
 - Teams block each other: broken code in one domain can prevent unrelated features from shipping
@@ -113,10 +115,12 @@ All truly shared code lives in versioned packages, not in MFEs:
 **Description:** Each feature domain is a fully separate React application, served from different URLs or subdomains. Navigation between apps requires full page loads.
 
 **Pros:**
+
 - Maximum isolation — truly independent
 - No federation complexity
 
 **Cons:**
+
 - Full page reload between features destroys user experience
 - No shared state without external store (e.g., shared Redis session)
 - Shared UI component behavior is inconsistent without strict version discipline
@@ -129,6 +133,7 @@ All truly shared code lives in versioned packages, not in MFEs:
 **Description:** Shell application + dynamically loaded MFE modules via Module Federation.
 
 **Pros:**
+
 - Independent deployment per MFE
 - Single-page navigation experience (no page reloads)
 - Shared singleton dependencies (React, Redux) prevent duplication
@@ -136,6 +141,7 @@ All truly shared code lives in versioned packages, not in MFEs:
 - Team ownership boundaries enforced by build boundaries
 
 **Cons:**
+
 - More complex build configuration (Module Federation setup)
 - Runtime composition means errors in one MFE can affect the shell if not properly isolated
 - Debugging across MFE boundaries is harder
@@ -175,11 +181,11 @@ All truly shared code lives in versioned packages, not in MFEs:
 
 ### Risks
 
-| Risk | Likelihood | Mitigation |
-|---|---|---|
-| Module Federation bundle version mismatch | Medium | Pinned shared deps, CI version check |
-| Performance regression from large MFE bundles | Low | Bundle size budgets in CI |
-| Cross-MFE state desync | Low | Strict Redux slice ownership rules |
+| Risk                                          | Likelihood | Mitigation                           |
+| --------------------------------------------- | ---------- | ------------------------------------ |
+| Module Federation bundle version mismatch     | Medium     | Pinned shared deps, CI version check |
+| Performance regression from large MFE bundles | Low        | Bundle size budgets in CI            |
+| Cross-MFE state desync                        | Low        | Strict Redux slice ownership rules   |
 
 ---
 

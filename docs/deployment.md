@@ -33,23 +33,23 @@ This document defines the deployment architecture, CI/CD pipeline, environment s
 
 ### Environments
 
-| Environment | Purpose | Deploy Trigger | Approvals |
-|---|---|---|---|
-| **local** | Developer workstation | Manual (`pnpm dev`) | None |
-| **development** | Integration testing | Push to `develop` branch | None |
-| **staging** | Pre-production validation | Merge to `main` | Auto |
-| **production** | Live system | Manual promotion from staging | 2 approvals |
+| Environment     | Purpose                   | Deploy Trigger                | Approvals   |
+| --------------- | ------------------------- | ----------------------------- | ----------- |
+| **local**       | Developer workstation     | Manual (`pnpm dev`)           | None        |
+| **development** | Integration testing       | Push to `develop` branch      | None        |
+| **staging**     | Pre-production validation | Merge to `main`               | Auto        |
+| **production**  | Live system               | Manual promotion from staging | 2 approvals |
 
 ### Environment Configuration
 
-| Config | Local | Development | Staging | Production |
-|---|---|---|---|---|
-| AI Provider | Mock / real | Real (low tier) | Real (standard) | Real (full) |
-| Log Level | debug | debug | info | warn |
-| Database | Local Docker | Cloud dev instance | Cloud staging | Cloud production |
-| Redis | Local Docker | Cloud dev | Cloud staging | Cloud production |
-| TLS | None | Let's Encrypt | Let's Encrypt | ACM / Managed |
-| Rate Limits | Disabled | Relaxed | Production-like | Production |
+| Config      | Local        | Development        | Staging         | Production       |
+| ----------- | ------------ | ------------------ | --------------- | ---------------- |
+| AI Provider | Mock / real  | Real (low tier)    | Real (standard) | Real (full)      |
+| Log Level   | debug        | debug              | info            | warn             |
+| Database    | Local Docker | Cloud dev instance | Cloud staging   | Cloud production |
+| Redis       | Local Docker | Cloud dev          | Cloud staging   | Cloud production |
+| TLS         | None         | Let's Encrypt      | Let's Encrypt   | ACM / Managed    |
+| Rate Limits | Disabled     | Relaxed            | Production-like | Production       |
 
 ---
 
@@ -57,12 +57,12 @@ This document defines the deployment architecture, CI/CD pipeline, environment s
 
 ### Base Image Strategy
 
-| Service Type | Base Image | Rationale |
-|---|---|---|
-| Node.js services | `node:22-alpine` | Minimal, audited |
-| Python AI services | `python:3.12-slim` | Slim base, fewer vulnerabilities |
-| Build stages | `node:22-alpine` | Multi-stage to keep final image small |
-| Production final | `node:22-alpine` or distroless | Minimal attack surface |
+| Service Type       | Base Image                     | Rationale                             |
+| ------------------ | ------------------------------ | ------------------------------------- |
+| Node.js services   | `node:22-alpine`               | Minimal, audited                      |
+| Python AI services | `python:3.12-slim`             | Slim base, fewer vulnerabilities      |
+| Build stages       | `node:22-alpine`               | Multi-stage to keep final image small |
+| Production final   | `node:22-alpine` or distroless | Minimal attack surface                |
 
 ### Multi-Stage Dockerfile Pattern
 
@@ -111,21 +111,21 @@ CMD ["node", "dist/index.js"]
 
 ### Services Defined (`docker-compose.yml`)
 
-| Service | Image | Port | Dependencies |
-|---|---|---|---|
-| `api-gateway` | Local build | 4000 | auth, chat, doc, user, workspace, notification |
-| `auth-service` | Local build | 4001 | postgres, redis |
-| `chat-service` | Local build | 4002 | mongodb, redis |
-| `document-service` | Local build | 4003 | mongodb, redis |
-| `user-service` | Local build | 4004 | postgres |
-| `workspace-service` | Local build | 4005 | postgres |
-| `notification-service` | Local build | 4006 | mongodb, redis |
-| `ai-platform` | Local build | 8000 | chromadb, redis, postgres |
-| `mcp-registry` | Local build | 9000 | — |
-| `postgres` | `postgres:16-alpine` | 5432 | — |
-| `mongodb` | `mongo:7` | 27017 | — |
-| `redis` | `redis:7-alpine` | 6379 | — |
-| `chromadb` | `chromadb/chroma:latest` | 8001 | — |
+| Service                | Image                    | Port  | Dependencies                                   |
+| ---------------------- | ------------------------ | ----- | ---------------------------------------------- |
+| `api-gateway`          | Local build              | 4000  | auth, chat, doc, user, workspace, notification |
+| `auth-service`         | Local build              | 4001  | postgres, redis                                |
+| `chat-service`         | Local build              | 4002  | mongodb, redis                                 |
+| `document-service`     | Local build              | 4003  | mongodb, redis                                 |
+| `user-service`         | Local build              | 4004  | postgres                                       |
+| `workspace-service`    | Local build              | 4005  | postgres                                       |
+| `notification-service` | Local build              | 4006  | mongodb, redis                                 |
+| `ai-platform`          | Local build              | 8000  | chromadb, redis, postgres                      |
+| `mcp-registry`         | Local build              | 9000  | —                                              |
+| `postgres`             | `postgres:16-alpine`     | 5432  | —                                              |
+| `mongodb`              | `mongo:7`                | 27017 | —                                              |
+| `redis`                | `redis:7-alpine`         | 6379  | —                                              |
+| `chromadb`             | `chromadb/chroma:latest` | 8001  | —                                              |
 
 ### Local Development Commands
 
@@ -173,17 +173,18 @@ nexus-ai-workspace/
 
 ### Namespace Strategy
 
-| Namespace | Contents |
-|---|---|
-| `nexus-backend` | All backend microservices |
-| `nexus-ai` | AI platform services |
-| `nexus-mcp` | MCP servers and registry |
-| `nexus-infra` | Monitoring, ingress, cert-manager |
-| `nexus-data` | Database StatefulSets (non-production: managed DB in prod) |
+| Namespace       | Contents                                                   |
+| --------------- | ---------------------------------------------------------- |
+| `nexus-backend` | All backend microservices                                  |
+| `nexus-ai`      | AI platform services                                       |
+| `nexus-mcp`     | MCP servers and registry                                   |
+| `nexus-infra`   | Monitoring, ingress, cert-manager                          |
+| `nexus-data`    | Database StatefulSets (non-production: managed DB in prod) |
 
 ### Resource Definitions (Per Service)
 
 Each service has:
+
 - `Deployment` — Pod spec, image, environment, probes
 - `Service` — ClusterIP for internal access
 - `HorizontalPodAutoscaler` — CPU/memory-based scaling
@@ -290,13 +291,13 @@ Jobs (sequential):
 
 ### Branch Strategy
 
-| Branch | Purpose | Deploys To |
-|---|---|---|
-| `feature/*` | Feature development | — (PR checks only) |
-| `develop` | Integration branch | development |
-| `main` | Release branch | staging (automatic) |
-| `release/v*` | Release cut | production (manual) |
-| `hotfix/*` | Emergency fixes | production (expedited) |
+| Branch       | Purpose             | Deploys To             |
+| ------------ | ------------------- | ---------------------- |
+| `feature/*`  | Feature development | — (PR checks only)     |
+| `develop`    | Integration branch  | development            |
+| `main`       | Release branch      | staging (automatic)    |
+| `release/v*` | Release cut         | production (manual)    |
+| `hotfix/*`   | Emergency fixes     | production (expedited) |
 
 ---
 
@@ -362,12 +363,12 @@ kubectl rollout status deployment/{service-name} -n nexus-backend
 
 ### Decision Criteria for Rollback
 
-| Signal | Threshold | Action |
-|---|---|---|
-| Error rate increase | > 5% above baseline | Immediate rollback |
-| P99 latency spike | > 2x baseline sustained 5 min | Investigate → rollback |
-| AI quality degradation | > 10% drop in RAGAS score | Rollback AI service |
-| Health check failures | > 2 consecutive failures | Kubernetes auto-restart |
+| Signal                 | Threshold                     | Action                  |
+| ---------------------- | ----------------------------- | ----------------------- |
+| Error rate increase    | > 5% above baseline           | Immediate rollback      |
+| P99 latency spike      | > 2x baseline sustained 5 min | Investigate → rollback  |
+| AI quality degradation | > 10% drop in RAGAS score     | Rollback AI service     |
+| Health check failures  | > 2 consecutive failures      | Kubernetes auto-restart |
 
 ---
 
@@ -436,13 +437,13 @@ terraform fmt -check -recursive
 
 ### Key Dashboards
 
-| Dashboard | Key Signals |
-|---|---|
-| Platform Overview | Request rate, error rate, P99 latency per service |
-| AI Platform | Inference latency, token usage, RAG quality scores |
-| Chat Service | WebSocket connections, message throughput, error rate |
-| Database | Query latency, connection pool, slow queries |
-| CI/CD | Deployment frequency, change failure rate, MTTR |
+| Dashboard         | Key Signals                                           |
+| ----------------- | ----------------------------------------------------- |
+| Platform Overview | Request rate, error rate, P99 latency per service     |
+| AI Platform       | Inference latency, token usage, RAG quality scores    |
+| Chat Service      | WebSocket connections, message throughput, error rate |
+| Database          | Query latency, connection pool, slow queries          |
+| CI/CD             | Deployment frequency, change failure rate, MTTR       |
 
 ### Alert Runbooks
 
@@ -456,34 +457,34 @@ terraform fmt -check -recursive
 
 ### Horizontal Pod Autoscaling (HPA)
 
-| Service | Min Replicas | Max Replicas | Scale Metric |
-|---|---|---|---|
-| api-gateway | 2 | 20 | CPU > 70% |
-| auth-service | 2 | 10 | CPU > 70% |
-| chat-service | 2 | 15 | CPU > 70% + WebSocket connections |
-| ai-platform | 1 | 8 | CPU > 60% (GPU-intensive) |
-| mcp-registry | 2 | 5 | CPU > 70% |
+| Service      | Min Replicas | Max Replicas | Scale Metric                      |
+| ------------ | ------------ | ------------ | --------------------------------- |
+| api-gateway  | 2            | 20           | CPU > 70%                         |
+| auth-service | 2            | 10           | CPU > 70%                         |
+| chat-service | 2            | 15           | CPU > 70% + WebSocket connections |
+| ai-platform  | 1            | 8            | CPU > 60% (GPU-intensive)         |
+| mcp-registry | 2            | 5            | CPU > 70%                         |
 
 ### Database Scaling
 
-| Database | Strategy | Timeline |
-|---|---|---|
-| PostgreSQL | Read replicas (RDS multi-AZ) | Phase 2 |
-| MongoDB | Atlas auto-scaling | Phase 2 |
-| Redis | Cluster mode | Phase 3 |
-| ChromaDB | Horizontal sharding evaluation | Phase 3 |
+| Database   | Strategy                       | Timeline |
+| ---------- | ------------------------------ | -------- |
+| PostgreSQL | Read replicas (RDS multi-AZ)   | Phase 2  |
+| MongoDB    | Atlas auto-scaling             | Phase 2  |
+| Redis      | Cluster mode                   | Phase 3  |
+| ChromaDB   | Horizontal sharding evaluation | Phase 3  |
 
 ---
 
 ## 12. Disaster Recovery
 
-| Scenario | RTO | RPO | Procedure |
-|---|---|---|---|
-| Single service failure | 2 minutes | 0 | Kubernetes auto-restart |
-| Database failure (primary) | 30 minutes | 5 minutes | RDS/Atlas failover to replica |
-| Region failure | 4 hours | 15 minutes | Cross-region failover ([TODO: Phase 4]) |
-| Full cluster failure | 2 hours | 30 minutes | Restore from snapshots |
-| Security breach | 1 hour | Depends | Incident response playbook |
+| Scenario                   | RTO        | RPO        | Procedure                               |
+| -------------------------- | ---------- | ---------- | --------------------------------------- |
+| Single service failure     | 2 minutes  | 0          | Kubernetes auto-restart                 |
+| Database failure (primary) | 30 minutes | 5 minutes  | RDS/Atlas failover to replica           |
+| Region failure             | 4 hours    | 15 minutes | Cross-region failover ([TODO: Phase 4]) |
+| Full cluster failure       | 2 hours    | 30 minutes | Restore from snapshots                  |
+| Security breach            | 1 hour     | Depends    | Incident response playbook              |
 
 ### Recovery Testing
 
@@ -495,13 +496,13 @@ terraform fmt -check -recursive
 
 ## 13. Architectural Tradeoffs
 
-| Decision | Benefit | Cost |
-|---|---|---|
-| Kubernetes over Docker Compose in prod | Scalability, resilience, ecosystem | Operational complexity |
-| Kustomize over Helm | Simpler overlay model, no templating | Less reusable than Helm charts |
-| Canary deployments | Safe rollout, easy rollback | More complex pipeline |
-| Managed DB services in prod | No DB ops burden | Higher cloud cost |
-| GitHub Actions over Jenkins | Native to GitHub, managed | Vendor lock-in |
+| Decision                               | Benefit                              | Cost                           |
+| -------------------------------------- | ------------------------------------ | ------------------------------ |
+| Kubernetes over Docker Compose in prod | Scalability, resilience, ecosystem   | Operational complexity         |
+| Kustomize over Helm                    | Simpler overlay model, no templating | Less reusable than Helm charts |
+| Canary deployments                     | Safe rollout, easy rollback          | More complex pipeline          |
+| Managed DB services in prod            | No DB ops burden                     | Higher cloud cost              |
+| GitHub Actions over Jenkins            | Native to GitHub, managed            | Vendor lock-in                 |
 
 ---
 

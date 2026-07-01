@@ -1,6 +1,7 @@
 # ADR-XXX
 
 Status:
+
 - Proposed
 - Accepted
 - Deprecated

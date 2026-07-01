@@ -14,63 +14,63 @@ Nexus AI Workspace is an enterprise-grade AI collaboration platform that unifies
 
 ### Core Architecture
 
-| Document | Description | Audience |
-|---|---|---|
-| [Architecture Overview](./architecture.md) | System-level architecture, component interactions, data flows | All Engineers |
-| [Frontend Architecture](./frontend.md) | Microfrontend design, React/React Native, state management | Frontend Engineers |
-| [Backend Architecture](./backend.md) | Microservices design, API gateway, service communication | Backend Engineers |
-| [AI Kernel](./ai-kernel.md) | LangChain, LangGraph, RAG pipeline, inference service | AI/ML Engineers |
-| [MCP Architecture](./mcp.md) | Model Context Protocol servers, registry, SDK | Platform Engineers |
-| [Agent Runtime](./agents.md) | Agent orchestration, memory, tools, multi-agent graphs | AI Engineers |
-| [Database Design](./database.md) | Polyglot persistence, schema design, migration strategy | Backend Engineers |
+| Document                                   | Description                                                   | Audience           |
+| ------------------------------------------ | ------------------------------------------------------------- | ------------------ |
+| [Architecture Overview](./architecture.md) | System-level architecture, component interactions, data flows | All Engineers      |
+| [Frontend Architecture](./frontend.md)     | Microfrontend design, React/React Native, state management    | Frontend Engineers |
+| [Backend Architecture](./backend.md)       | Microservices design, API gateway, service communication      | Backend Engineers  |
+| [AI Kernel](./ai-kernel.md)                | LangChain, LangGraph, RAG pipeline, inference service         | AI/ML Engineers    |
+| [MCP Architecture](./mcp.md)               | Model Context Protocol servers, registry, SDK                 | Platform Engineers |
+| [Agent Runtime](./agents.md)               | Agent orchestration, memory, tools, multi-agent graphs        | AI Engineers       |
+| [Database Design](./database.md)           | Polyglot persistence, schema design, migration strategy       | Backend Engineers  |
 
 ### Operations & Delivery
 
-| Document | Description | Audience |
-|---|---|---|
-| [Security](./security.md) | Auth, RBAC, secrets management, threat model | Security Engineers |
-| [Testing Strategy](./testing.md) | Unit, integration, e2e, AI evaluation, benchmarks | All Engineers |
-| [Deployment](./deployment.md) | Docker, Kubernetes, CI/CD, rollout strategy | DevOps/SRE |
-| [Roadmap](./roadmap.md) | Milestones, epics, feature flags, versioning | Engineering Leaders |
+| Document                         | Description                                       | Audience            |
+| -------------------------------- | ------------------------------------------------- | ------------------- |
+| [Security](./security.md)        | Auth, RBAC, secrets management, threat model      | Security Engineers  |
+| [Testing Strategy](./testing.md) | Unit, integration, e2e, AI evaluation, benchmarks | All Engineers       |
+| [Deployment](./deployment.md)    | Docker, Kubernetes, CI/CD, rollout strategy       | DevOps/SRE          |
+| [Roadmap](./roadmap.md)          | Milestones, epics, feature flags, versioning      | Engineering Leaders |
 
 ### Architecture Decision Records
 
-| ADR | Title | Status |
-|---|---|---|
-| [ADR-000](./adr/ADR-000-template.md) | Template | — |
-| [ADR-001](./adr/ADR-001-monorepo-turborepo.md) | Monorepo with Turborepo | Accepted |
-| [ADR-002](./adr/ADR-002-ai-kernel-langgraph-fastmcp.md) | AI Kernel: LangGraph + FastMCP | Accepted |
+| ADR                                                              | Title                                     | Status   |
+| ---------------------------------------------------------------- | ----------------------------------------- | -------- |
+| [ADR-000](./adr/ADR-000-template.md)                             | Template                                  | —        |
+| [ADR-001](./adr/ADR-001-monorepo-turborepo.md)                   | Monorepo with Turborepo                   | Accepted |
+| [ADR-002](./adr/ADR-002-ai-kernel-langgraph-fastmcp.md)          | AI Kernel: LangGraph + FastMCP            | Accepted |
 | [ADR-003](./adr/ADR-003-backend-microservices-express-prisma.md) | Backend: Microservices + Express + Prisma | Accepted |
-| [ADR-0001](./adr/0001-project-vision.md) | Project Vision & Guiding Principles | Accepted |
-| [ADR-0002](./adr/0002-microservices.md) | Microservices Decomposition Strategy | Accepted |
-| [ADR-0003](./adr/0003-microfrontends.md) | Microfrontend Architecture | Accepted |
-| [ADR-0004](./adr/0004-polyglot-database.md) | Polyglot Database Strategy | Accepted |
-| [ADR-0005](./adr/0005-ai-kernel.md) | AI Kernel Design | Accepted |
-| [ADR-0006](./adr/0006-agent-runtime.md) | Agent Runtime Architecture | Accepted |
+| [ADR-0001](./adr/0001-project-vision.md)                         | Project Vision & Guiding Principles       | Accepted |
+| [ADR-0002](./adr/0002-microservices.md)                          | Microservices Decomposition Strategy      | Accepted |
+| [ADR-0003](./adr/0003-microfrontends.md)                         | Microfrontend Architecture                | Accepted |
+| [ADR-0004](./adr/0004-polyglot-database.md)                      | Polyglot Database Strategy                | Accepted |
+| [ADR-0005](./adr/0005-ai-kernel.md)                              | AI Kernel Design                          | Accepted |
+| [ADR-0006](./adr/0006-agent-runtime.md)                          | Agent Runtime Architecture                | Accepted |
 
 ### Guides
 
-| Guide | Description |
-|---|---|
-| [Getting Started](./guides/getting-started/) | Local setup, prerequisites, first run |
-| [Development Guide](./guides/development/) | Contribution workflow, branching, code standards |
-| [Deployment Guide](./guides/deployment/) | Environment promotion, release checklist |
-| [Security Guide](./guides/security/) | Secrets handling, pen-test process, compliance |
+| Guide                                        | Description                                      |
+| -------------------------------------------- | ------------------------------------------------ |
+| [Getting Started](./guides/getting-started/) | Local setup, prerequisites, first run            |
+| [Development Guide](./guides/development/)   | Contribution workflow, branching, code standards |
+| [Deployment Guide](./guides/deployment/)     | Environment promotion, release checklist         |
+| [Security Guide](./guides/security/)         | Secrets handling, pen-test process, compliance   |
 
 ### API Reference
 
-| Reference | Description |
-|---|---|
-| [REST API](./api/rest/) | OpenAPI specs for all backend services |
-| [WebSocket Events](./api/websocket/) | Real-time event schemas |
-| [MCP Protocol](./api/mcp/) | MCP server contracts and tool definitions |
+| Reference                            | Description                               |
+| ------------------------------------ | ----------------------------------------- |
+| [REST API](./api/rest/)              | OpenAPI specs for all backend services    |
+| [WebSocket Events](./api/websocket/) | Real-time event schemas                   |
+| [MCP Protocol](./api/mcp/)           | MCP server contracts and tool definitions |
 
 ### Runbooks
 
-| Runbook | Trigger |
-|---|---|
-| [Incident Response](./runbooks/incidents/) | Service degradation or outage |
-| [Operations](./runbooks/operations/) | Routine operational procedures |
+| Runbook                                    | Trigger                        |
+| ------------------------------------------ | ------------------------------ |
+| [Incident Response](./runbooks/incidents/) | Service degradation or outage  |
+| [Operations](./runbooks/operations/)       | Routine operational procedures |
 
 ---
 
@@ -136,11 +136,11 @@ All engineers are expected to:
 
 ## Owners
 
-| Area | Owner | Contact |
-|---|---|---|
+| Area                  | Owner                    | Contact             |
+| --------------------- | ------------------------ | ------------------- |
 | Platform Architecture | Principal Staff Engineer | [TODO: add contact] |
-| Frontend | Senior Frontend Lead | [TODO: add contact] |
-| Backend | Senior Backend Lead | [TODO: add contact] |
-| AI Platform | AI/ML Lead | [TODO: add contact] |
-| Infrastructure/SRE | SRE Lead | [TODO: add contact] |
-| Security | Security Lead | [TODO: add contact] |
+| Frontend              | Senior Frontend Lead     | [TODO: add contact] |
+| Backend               | Senior Backend Lead      | [TODO: add contact] |
+| AI Platform           | AI/ML Lead               | [TODO: add contact] |
+| Infrastructure/SRE    | SRE Lead                 | [TODO: add contact] |
+| Security              | Security Lead            | [TODO: add contact] |

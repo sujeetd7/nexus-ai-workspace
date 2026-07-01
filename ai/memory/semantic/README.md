@@ -9,13 +9,13 @@ similarity-based retrieval (Retrieval-Augmented Generation / RAG).
 
 ### Characteristics
 
-| Property    | Value                                              |
-|-------------|----------------------------------------------------|
-| Backend     | ChromaDB (local), Pinecone / Weaviate (cloud)      |
-| TTL         | None (managed by knowledge base lifecycle)         |
-| Scope       | Shared (tenant-scoped) or private (agent-scoped)   |
-| Capacity    | Millions of vectors (depends on backend)           |
-| Access      | Top-K similarity search (ANN)                      |
+| Property | Value                                            |
+| -------- | ------------------------------------------------ |
+| Backend  | ChromaDB (local), Pinecone / Weaviate (cloud)    |
+| TTL      | None (managed by knowledge base lifecycle)       |
+| Scope    | Shared (tenant-scoped) or private (agent-scoped) |
+| Capacity | Millions of vectors (depends on backend)         |
+| Access   | Top-K similarity search (ANN)                    |
 
 ### What is stored
 
@@ -30,9 +30,16 @@ similarity-based retrieval (Retrieval-Augmented Generation / RAG).
 ```typescript
 interface SemanticMemory {
   store(document: KnowledgeDocument): Promise<string>;
-  search(query: string, topK: number, filter?: Record<string, unknown>): Promise<SearchResult[]>;
+  search(
+    query: string,
+    topK: number,
+    filter?: Record<string, unknown>,
+  ): Promise<SearchResult[]>;
   delete(documentId: string): Promise<void>;
-  update(documentId: string, document: Partial<KnowledgeDocument>): Promise<void>;
+  update(
+    documentId: string,
+    document: Partial<KnowledgeDocument>,
+  ): Promise<void>;
 }
 ```
 
@@ -52,12 +59,12 @@ Model Generates Response with Grounded Context
 
 ## Supported Backends
 
-| Backend   | Type        | Notes                                    |
-|-----------|-------------|------------------------------------------|
-| ChromaDB  | Local/Cloud | Self-hosted, great for dev               |
-| Pinecone  | Cloud SaaS  | Managed, high scale                      |
-| Weaviate  | Cloud/Local | Hybrid BM25 + vector search              |
-| pgvector  | PostgreSQL  | Vector extension for existing Postgres   |
+| Backend  | Type        | Notes                                  |
+| -------- | ----------- | -------------------------------------- |
+| ChromaDB | Local/Cloud | Self-hosted, great for dev             |
+| Pinecone | Cloud SaaS  | Managed, high scale                    |
+| Weaviate | Cloud/Local | Hybrid BM25 + vector search            |
+| pgvector | PostgreSQL  | Vector extension for existing Postgres |
 
 ## TODO
 

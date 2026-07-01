@@ -12,23 +12,23 @@ affect prompt pipeline execution.
 
 ## Hooks in This Folder
 
-| Hook           | Priority | Description                                              |
-|----------------|----------|----------------------------------------------------------|
-| `LoggingHook`  | 100      | Structured JSON logging of execution metadata            |
-| `MetricsHook`  | 110      | Token usage, latency, and cost metrics emission          |
+| Hook          | Priority | Description                                     |
+| ------------- | -------- | ----------------------------------------------- |
+| `LoggingHook` | 100      | Structured JSON logging of execution metadata   |
+| `MetricsHook` | 110      | Token usage, latency, and cost metrics emission |
 
 > **Note**: Both hooks also exist in `postprocess/`. This folder provides
 > the observability-focused variant with deeper telemetry integration.
 
 ## Integrations
 
-| System        | Status        | Notes                                     |
-|---------------|---------------|-------------------------------------------|
-| OpenTelemetry | Planned       | Traces and logs via OTEL SDK              |
-| Prometheus    | Planned       | Metrics via OTEL → Prometheus exporter    |
-| Grafana       | Planned       | Dashboards on top of Prometheus           |
-| Langfuse      | Planned       | LLM-specific observability platform       |
-| Phoenix       | Planned       | Arize Phoenix for LLM evaluation tracing  |
+| System        | Status  | Notes                                    |
+| ------------- | ------- | ---------------------------------------- |
+| OpenTelemetry | Planned | Traces and logs via OTEL SDK             |
+| Prometheus    | Planned | Metrics via OTEL → Prometheus exporter   |
+| Grafana       | Planned | Dashboards on top of Prometheus          |
+| Langfuse      | Planned | LLM-specific observability platform      |
+| Phoenix       | Planned | Arize Phoenix for LLM evaluation tracing |
 
 ## TODO
 

@@ -80,7 +80,9 @@ export class TokenOptimizationHook implements PromptHook<TokenOptimizationConfig
     // TODO: Implement actual token counting
     // Placeholder: preserve last N turns
     if (context.history.length > this.config.preserveRecentTurns) {
-      const trimmedHistory = context.history.slice(-this.config.preserveRecentTurns);
+      const trimmedHistory = context.history.slice(
+        -this.config.preserveRecentTurns,
+      );
       mutatedContext = { ...mutatedContext, history: trimmedHistory };
       mutated = true;
     }

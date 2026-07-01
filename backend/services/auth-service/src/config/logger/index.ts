@@ -12,10 +12,8 @@ export const logger = winston.createLogger({
     winston.format.errors({
       stack: true,
     }),
-    winston.format.json()
+    winston.format.json(),
   ),
 
-  transports: [
-    new winston.transports.Console(),
-  ],
+  transports: [new winston.transports.Console()],
 });

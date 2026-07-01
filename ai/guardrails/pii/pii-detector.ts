@@ -36,7 +36,7 @@ export interface PIIGuardrailConfig {
 /** Detected PII instance */
 export interface PIIDetection {
   category: string;
-  value: string;      // WARNING: Only log this in secure audit logs
+  value: string; // WARNING: Only log this in secure audit logs
   startIndex: number;
   endIndex: number;
   confidence: number;
@@ -63,12 +63,21 @@ export class PIIGuardrail implements Guardrail<PIIGuardrailConfig> {
 
   // TODO: Replace with Presidio analyzer
   private readonly PATTERNS: Array<{ category: string; pattern: RegExp }> = [
-    { category: "EMAIL", pattern: /\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b/g },
-    { category: "PHONE", pattern: /\b(\+?1[\s\-.]?)?\(?\d{3}\)?[\s\-.]?\d{3}[\s\-.]?\d{4}\b/g },
+    {
+      category: "EMAIL",
+      pattern: /\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b/g,
+    },
+    {
+      category: "PHONE",
+      pattern: /\b(\+?1[\s\-.]?)?\(?\d{3}\)?[\s\-.]?\d{3}[\s\-.]?\d{4}\b/g,
+    },
     { category: "SSN", pattern: /\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b/g },
     { category: "CREDIT_CARD", pattern: /\b(?:\d[ \-]?){13,16}\b/g },
     { category: "IP_ADDRESS", pattern: /\b\d{1,3}(?:\.\d{1,3}){3}\b/g },
-    { category: "API_KEY", pattern: /\b(sk-|pk-|bearer\s+)[A-Za-z0-9_\-]{20,}\b/gi },
+    {
+      category: "API_KEY",
+      pattern: /\b(sk-|pk-|bearer\s+)[A-Za-z0-9_\-]{20,}\b/gi,
+    },
   ];
 
   async initialize(config: PIIGuardrailConfig): Promise<void> {

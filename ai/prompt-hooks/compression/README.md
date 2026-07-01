@@ -10,9 +10,9 @@ preserving the semantic meaning required for high-quality responses.
 
 ## Hooks in This Folder
 
-| Hook                      | Priority | Description                                         |
-|---------------------------|----------|-----------------------------------------------------|
-| `ContextCompressionHook`  | 30       | Semantic dedup + sliding window compression         |
+| Hook                     | Priority | Description                                 |
+| ------------------------ | -------- | ------------------------------------------- |
+| `ContextCompressionHook` | 30       | Semantic dedup + sliding window compression |
 
 ## Compression Strategies
 

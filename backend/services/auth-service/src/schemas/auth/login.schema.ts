@@ -5,5 +5,4 @@ export const loginSchema = z.object({
   password: z.string(),
 });
 
-export type LoginSchemaType =
-  z.infer<typeof loginSchema>;
+export type LoginSchemaType = z.infer<typeof loginSchema>;

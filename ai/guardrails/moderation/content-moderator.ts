@@ -64,7 +64,7 @@ export class ContentModerationGuardrail implements Guardrail<ModerationConfig> {
     const result = await this.moderator.moderate(content);
 
     const flaggedCategories = result.categories.filter(
-      (c) => c.flagged && c.score >= this.config.flagThreshold
+      (c) => c.flagged && c.score >= this.config.flagThreshold,
     );
 
     if (flaggedCategories.length === 0 || !result.flagged) {
@@ -77,7 +77,9 @@ export class ContentModerationGuardrail implements Guardrail<ModerationConfig> {
     }
 
     if (this.config.blockOnFlag) {
-      const categorySummary = flaggedCategories.map((c) => c.category).join(", ");
+      const categorySummary = flaggedCategories
+        .map((c) => c.category)
+        .join(", ");
       return {
         guardrailId: this.id,
         verdict: GuardrailVerdict.BLOCK,

@@ -52,6 +52,7 @@ The AI Kernel is built entirely in Python. The LangChain, LangGraph, LlamaIndex,
 ### Framework: LangChain + LangGraph
 
 **LangChain** provides:
+
 - Chain composition primitives (LCEL — LangChain Expression Language)
 - Provider-agnostic LLM interface (`ChatOpenAI`, `ChatAnthropic`, etc.)
 - Memory implementations (buffer, summary, entity)
@@ -59,6 +60,7 @@ The AI Kernel is built entirely in Python. The LangChain, LangGraph, LlamaIndex,
 - Prompt templates and management
 
 **LangGraph** provides:
+
 - Stateful, cyclic agent graphs (critical for multi-turn agents)
 - Checkpointing for persistent agent state (Redis / PostgreSQL)
 - Streaming events at the graph level (fine-grained control)
@@ -79,12 +81,12 @@ The AI Kernel is built entirely in Python. The LangChain, LangGraph, LlamaIndex,
 
 The AI Kernel is decomposed into specialized FastAPI services:
 
-| Service | Responsibility |
-|---|---|
-| `agent-service` | LangGraph agent execution, session management |
-| `rag-service` | Document indexing, semantic search |
+| Service             | Responsibility                                |
+| ------------------- | --------------------------------------------- |
+| `agent-service`     | LangGraph agent execution, session management |
+| `rag-service`       | Document indexing, semantic search            |
 | `inference-service` | Direct LLM calls, provider routing, streaming |
-| `document-ai` | LlamaParse extraction, enrichment |
+| `document-ai`       | LlamaParse extraction, enrichment             |
 
 Each service is independently deployable. All services are mounted behind the AI platform's internal ASGI router.
 
@@ -109,10 +111,12 @@ Every agent and RAG pipeline change requires evaluation against a golden dataset
 **Description:** Use LangChain chains for all AI workflows, without LangGraph for agent state management.
 
 **Pros:**
+
 - Simpler learning curve
 - Sufficient for simple Q&A and summarization tasks
 
 **Cons:**
+
 - LangChain chains are stateless and acyclic — cannot represent multi-turn agent loops natively
 - Multi-step tool use (ReAct) requires manual implementation without LangGraph's graph primitives
 - Checkpointing for session persistence requires custom implementation
@@ -125,10 +129,12 @@ Every agent and RAG pipeline change requires evaluation against a golden dataset
 **Description:** Use CrewAI as the multi-agent orchestration framework instead of LangGraph.
 
 **Pros:**
+
 - Higher-level abstraction ("roles" and "tasks") maps well to human workflows
 - Faster initial agent setup
 
 **Cons:**
+
 - Less control over execution graph (opinionated role-based model)
 - Less mature checkpointing and state persistence
 - Harder to integrate with custom MCP tool registry
@@ -141,10 +147,12 @@ Every agent and RAG pipeline change requires evaluation against a golden dataset
 **Description:** Use Microsoft AutoGen for multi-agent conversations.
 
 **Pros:**
+
 - Strong multi-agent conversation model
 - Microsoft backing (strategic alignment)
 
 **Cons:**
+
 - Conversation-centric model is less flexible than LangGraph's graph model
 - Harder to integrate with external tools and MCP
 - Less suitable for non-conversational agent workflows (document processing pipelines)
@@ -157,11 +165,13 @@ Every agent and RAG pipeline change requires evaluation against a golden dataset
 **Description:** Call OpenAI/Anthropic SDKs directly without a framework layer.
 
 **Pros:**
+
 - Maximum control
 - No framework abstraction overhead
 - Simpler debugging
 
 **Cons:**
+
 - Implementing memory, tool calling, streaming, provider failover, RAG, and state management from scratch is months of work
 - Not maintainable at our scale — each new capability requires custom implementation
 - LangChain/LangGraph solve exactly these problems with battle-tested implementations
@@ -173,11 +183,13 @@ Every agent and RAG pipeline change requires evaluation against a golden dataset
 **Description:** Implement the AI Kernel in Node.js using the Vercel AI SDK, keeping the entire backend in one language.
 
 **Pros:**
+
 - Single language across backend
 - Strong TypeScript typing
 - Unified deployment
 
 **Cons:**
+
 - Python ML ecosystem is dramatically more mature
 - LlamaIndex, LlamaParse, RAGAS, Hugging Face transformers — Python-native, no equivalent in Node.js
 - LangGraph has no production-ready JavaScript port
@@ -213,12 +225,12 @@ Every agent and RAG pipeline change requires evaluation against a golden dataset
 
 ### Risks
 
-| Risk | Likelihood | Mitigation |
-|---|---|---|
-| LangGraph major breaking change | Low | Pin versions, abstraction layer, keep CHANGELOG |
-| AI provider price increase | Medium | Multi-provider fallback, cost monitoring, GitHub Models as fallback |
-| RAGAS quality regression in CI | Low | Golden dataset maintained alongside codebase |
-| Python AI service becomes bottleneck | Low | Horizontal scaling, async execution |
+| Risk                                 | Likelihood | Mitigation                                                          |
+| ------------------------------------ | ---------- | ------------------------------------------------------------------- |
+| LangGraph major breaking change      | Low        | Pin versions, abstraction layer, keep CHANGELOG                     |
+| AI provider price increase           | Medium     | Multi-provider fallback, cost monitoring, GitHub Models as fallback |
+| RAGAS quality regression in CI       | Low        | Golden dataset maintained alongside codebase                        |
+| Python AI service becomes bottleneck | Low        | Horizontal scaling, async execution                                 |
 
 ---
 

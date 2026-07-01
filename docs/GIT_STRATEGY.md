@@ -1,16 +1,16 @@
 # Branch Strategy
 
 main
-    production
+production
 
 develop
-    integration
+integration
 
 release/*
-    release candidate
+release candidate
 
 hotfix/*
-    emergency fix
+emergency fix
 
 feature/*
-    development
+development

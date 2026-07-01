@@ -63,7 +63,9 @@ export interface PersistentMemory {
   /**
    * Store a memory entry. Overwrites existing entry with the same key.
    */
-  store(entry: Omit<MemoryEntry, "id" | "createdAt" | "updatedAt" | "accessCount">): Promise<MemoryEntry>;
+  store(
+    entry: Omit<MemoryEntry, "id" | "createdAt" | "updatedAt" | "accessCount">,
+  ): Promise<MemoryEntry>;
 
   /**
    * Retrieve a specific memory entry by key.

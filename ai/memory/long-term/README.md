@@ -9,13 +9,13 @@ preferences, and knowledge that the agent or user has accumulated over time.
 
 ### Characteristics
 
-| Property    | Value                                   |
-|-------------|-----------------------------------------|
-| Backend     | MongoDB                                 |
-| TTL         | None (manual deletion / retention policy) |
-| Scope       | User-level or Agent-level               |
-| Capacity    | Unlimited (managed by retention policy) |
-| Access      | Read at session start, write on update  |
+| Property | Value                                     |
+| -------- | ----------------------------------------- |
+| Backend  | MongoDB                                   |
+| TTL      | None (manual deletion / retention policy) |
+| Scope    | User-level or Agent-level                 |
+| Capacity | Unlimited (managed by retention policy)   |
+| Access   | Read at session start, write on update    |
 
 ### What is stored
 
@@ -41,6 +41,7 @@ interface PersistentMemory {
 ## Retention Policy
 
 Entries are tagged with:
+
 - `importance`: 0.0–1.0 (higher = longer retention)
 - `source`: "user" | "agent" | "system"
 - `expiresAt`: Optional absolute expiry

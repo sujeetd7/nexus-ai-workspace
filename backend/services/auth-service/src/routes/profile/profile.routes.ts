@@ -1,36 +1,24 @@
-import {
-  Router,
-  Request,
-  Response,
-} from "express";
+import { Router } from "express";
 
-import {
-  authenticate,
-} from "../../middleware/auth/auth.middleware";
+import { authenticate } from "../../middleware/auth/authenticate.middleware";
 
-const router: Router =
-  Router();
+import { profileController } from "../../controllers/profile/profile.controller";
 
-router.get(
-  "/me",
-  authenticate,
-  (
-    req: Request,
-    res: Response,
-  ) => {
+const router: Router = Router();
 
-    const user =
-      (
-        req as Request & {
-          user: unknown;
-        }
-      ).user;
-
-    return res.json({
-      success: true,
-      user,
-    });
-  },
-);
+/**
+ * @swagger
+ * /profile/me:
+ *   get:
+ *     summary: Get current profile
+ *     tags:
+ *       - Profile
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile
+ */
+router.get("/me", authenticate, profileController.me);
 
 export default router;

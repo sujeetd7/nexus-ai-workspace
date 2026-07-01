@@ -1,40 +1,68 @@
-import swaggerJsdoc from "swagger-jsdoc";
+import swaggerJSDoc from "swagger-jsdoc";
 
-export const swaggerSpec = swaggerJsdoc({
+const options: swaggerJSDoc.Options = {
   definition: {
     openapi: "3.0.0",
 
     info: {
-      title: "Nexus AI Auth Service",
+      title: "Nexus AI Workspace - Auth Service API",
       version: "1.0.0",
-      description: "Enterprise Authentication Service",
+      description: "Enterprise Authentication Service APIs",
     },
 
     servers: [
       {
         url: "http://localhost:3001",
+        description: "Local Development",
       },
     ],
 
     components: {
       securitySchemes: {
-        BearerAuth: {
+        bearerAuth: {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
+        },
+      },
+
+      schemas: {
+        ErrorResponse: {
+          type: "object",
+          properties: {
+            success: {
+              type: "boolean",
+            },
+            error: {
+              type: "object",
+              properties: {
+                code: {
+                  type: "string",
+                },
+                message: {
+                  type: "string",
+                },
+              },
+            },
+            requestId: {
+              type: "string",
+            },
+            timestamp: {
+              type: "string",
+            },
+          },
         },
       },
     },
 
     security: [
       {
-        BearerAuth: [],
+        bearerAuth: [],
       },
     ],
   },
 
-  apis: [
-    "./src/routes/**/*.ts",
-    "./src/controllers/**/*.ts",
-  ],
-});
+  apis: ["./src/routes/**/*.ts"],
+};
+
+export const swaggerSpec = swaggerJSDoc(options);

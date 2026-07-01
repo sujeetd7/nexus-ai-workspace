@@ -36,23 +36,23 @@ prompt-hooks/
 
 ## Core Interfaces
 
-| Interface             | Description                                      |
-|-----------------------|--------------------------------------------------|
-| `PromptHook`          | Base interface for all hooks (pre and post)      |
-| `PromptContext`       | Immutable snapshot of prompt state at each step  |
-| `PromptResult`        | Result returned from the full pipeline           |
-| `HookExecutionResult` | Result from a single hook execution              |
+| Interface             | Description                                     |
+| --------------------- | ----------------------------------------------- |
+| `PromptHook`          | Base interface for all hooks (pre and post)     |
+| `PromptContext`       | Immutable snapshot of prompt state at each step |
+| `PromptResult`        | Result returned from the full pipeline          |
+| `HookExecutionResult` | Result from a single hook execution             |
 
 ## Hook Registry
 
-| Hook                          | Stage       | Category      |
-|-------------------------------|-------------|---------------|
-| `TokenOptimizationHook`       | preprocess  | Optimization  |
-| `PromptInjectionDetectionHook`| preprocess  | Security      |
-| `ContextCompressionHook`      | compression | Compression   |
-| `PIIProtectionHook`           | security    | Security      |
-| `LoggingHook`                 | postprocess | Observability |
-| `MetricsHook`                 | postprocess | Observability |
+| Hook                           | Stage       | Category      |
+| ------------------------------ | ----------- | ------------- |
+| `TokenOptimizationHook`        | preprocess  | Optimization  |
+| `PromptInjectionDetectionHook` | preprocess  | Security      |
+| `ContextCompressionHook`       | compression | Compression   |
+| `PIIProtectionHook`            | security    | Security      |
+| `LoggingHook`                  | postprocess | Observability |
+| `MetricsHook`                  | postprocess | Observability |
 
 ## Design Principles
 

@@ -67,20 +67,20 @@ ai/
 
 ### Leaf Agents (Single-Domain)
 
-| Agent | Domain | Primary Tools | LLM Model |
-|---|---|---|---|
-| `ChatAgent` | Conversational AI | `nexus.memory.*`, `nexus.search` | GPT-4o |
-| `DocumentAgent` | Document QA | `doc.*`, `nexus.search` | GPT-4o |
-| `CodeAgent` | Code intelligence | `code.*`, `github.*` | GPT-4o + Codestral |
-| `ResearchAgent` | Information research | `web_search`, `doc.*`, `url_reader` | GPT-4o |
-| `WorkspaceAgent` | Workspace context | `workspace.*`, `nexus.*` | GPT-4o-mini |
+| Agent            | Domain               | Primary Tools                       | LLM Model          |
+| ---------------- | -------------------- | ----------------------------------- | ------------------ |
+| `ChatAgent`      | Conversational AI    | `nexus.memory.*`, `nexus.search`    | GPT-4o             |
+| `DocumentAgent`  | Document QA          | `doc.*`, `nexus.search`             | GPT-4o             |
+| `CodeAgent`      | Code intelligence    | `code.*`, `github.*`                | GPT-4o + Codestral |
+| `ResearchAgent`  | Information research | `web_search`, `doc.*`, `url_reader` | GPT-4o             |
+| `WorkspaceAgent` | Workspace context    | `workspace.*`, `nexus.*`            | GPT-4o-mini        |
 
 ### Orchestrator Agents
 
-| Agent | Pattern | Spawns | Use Case |
-|---|---|---|---|
+| Agent             | Pattern             | Spawns         | Use Case                                 |
+| ----------------- | ------------------- | -------------- | ---------------------------------------- |
 | `SupervisorAgent` | Supervisor / Router | Any leaf agent | Complex tasks requiring multiple domains |
-| `PlannerAgent` | Plan-and-Execute | Any leaf agent | Long-horizon tasks with step planning |
+| `PlannerAgent`    | Plan-and-Execute    | Any leaf agent | Long-horizon tasks with step planning    |
 
 ---
 
@@ -234,14 +234,14 @@ Response → User
 
 ### Memory Operations
 
-| Operation | When | Implementation |
-|---|---|---|
-| Memory load | Session start | Redis lookup → prepend to messages |
-| Memory update | Each turn end | Async write to Redis |
-| Summarize | Buffer > 50 messages | LLM summarization chain |
-| Entity extraction | Each turn | Extraction chain → Redis set |
-| Long-term store | Significant events | Embedding → ChromaDB upsert |
-| Memory recall | Agent explicit request | `nexus.memory.recall` tool |
+| Operation         | When                   | Implementation                     |
+| ----------------- | ---------------------- | ---------------------------------- |
+| Memory load       | Session start          | Redis lookup → prepend to messages |
+| Memory update     | Each turn end          | Async write to Redis               |
+| Summarize         | Buffer > 50 messages   | LLM summarization chain            |
+| Entity extraction | Each turn              | Extraction chain → Redis set       |
+| Long-term store   | Significant events     | Embedding → ChromaDB upsert        |
+| Memory recall     | Agent explicit request | `nexus.memory.recall` tool         |
 
 ---
 
@@ -274,13 +274,13 @@ Tool results injected into next LLM context as ToolMessage
 
 ### Tool Safety Controls
 
-| Control | Implementation |
-|---|---|
-| Allowlist per agent | Each agent type has explicit tool allowlist |
-| User permission check | Tool server enforces RBAC on invocation |
-| Output size limits | Tool results truncated at 4096 tokens |
-| Timeout | 30-second timeout per tool call |
-| Retry | 2 retries with exponential backoff |
+| Control               | Implementation                              |
+| --------------------- | ------------------------------------------- |
+| Allowlist per agent   | Each agent type has explicit tool allowlist |
+| User permission check | Tool server enforces RBAC on invocation     |
+| Output size limits    | Tool results truncated at 4096 tokens       |
+| Timeout               | 30-second timeout per tool call             |
+| Retry                 | 2 retries with exponential backoff          |
 
 ---
 
@@ -318,14 +318,14 @@ Tool results injected into next LLM context as ToolMessage
 - Events converted to SSE format for HTTP delivery
 - Event types streamed to client:
 
-| Event Type | Payload | Client Action |
-|---|---|---|
-| `token` | `{ content: string }` | Append to message buffer |
-| `tool_start` | `{ tool_name, input }` | Show tool loading indicator |
-| `tool_end` | `{ tool_name, output }` | Hide indicator |
-| `agent_start` | `{ agent_name }` | Show thinking indicator |
-| `agent_end` | `{ metadata }` | Mark response complete |
-| `error` | `{ code, message }` | Show error state |
+| Event Type    | Payload                 | Client Action               |
+| ------------- | ----------------------- | --------------------------- |
+| `token`       | `{ content: string }`   | Append to message buffer    |
+| `tool_start`  | `{ tool_name, input }`  | Show tool loading indicator |
+| `tool_end`    | `{ tool_name, output }` | Hide indicator              |
+| `agent_start` | `{ agent_name }`        | Show thinking indicator     |
+| `agent_end`   | `{ metadata }`          | Mark response complete      |
+| `error`       | `{ code, message }`     | Show error state            |
 
 ### Client Handling
 
@@ -339,13 +339,13 @@ Tool results injected into next LLM context as ToolMessage
 
 ### Error Categories
 
-| Category | Examples | Recovery Strategy |
-|---|---|---|
-| LLM Error | Rate limit, timeout, content filter | Retry with fallback model |
-| Tool Error | Tool server down, permission denied | Retry → skip tool → inform user |
-| State Error | Invalid state transition | Log + reset to last valid checkpoint |
-| Input Error | Malformed request | Return 400 immediately |
-| Memory Error | Redis unavailable | Continue without memory load (log warning) |
+| Category     | Examples                            | Recovery Strategy                          |
+| ------------ | ----------------------------------- | ------------------------------------------ |
+| LLM Error    | Rate limit, timeout, content filter | Retry with fallback model                  |
+| Tool Error   | Tool server down, permission denied | Retry → skip tool → inform user            |
+| State Error  | Invalid state transition            | Log + reset to last valid checkpoint       |
+| Input Error  | Malformed request                   | Return 400 immediately                     |
+| Memory Error | Redis unavailable                   | Continue without memory load (log warning) |
 
 ### Max Iterations Guard
 
@@ -357,16 +357,16 @@ Tool results injected into next LLM context as ToolMessage
 
 ## 10. Agent Observability
 
-| Signal | Details | Tool |
-|---|---|---|
-| Agent invocation count | Per agent type, per user | Prometheus |
-| Invocation latency (E2E) | P50/P95/P99 | Prometheus |
-| TTFB (time to first token) | Per invocation | Prometheus |
-| Tool call count | Per agent, per tool | Prometheus |
-| LLM token usage | Input/output tokens per invocation | Custom metric |
-| Error rate | Per error category | Prometheus |
-| Full trace | Prompt, tools, response | LangSmith |
-| Audit log | User, agent, tools used, response hash | Structured log |
+| Signal                     | Details                                | Tool           |
+| -------------------------- | -------------------------------------- | -------------- |
+| Agent invocation count     | Per agent type, per user               | Prometheus     |
+| Invocation latency (E2E)   | P50/P95/P99                            | Prometheus     |
+| TTFB (time to first token) | Per invocation                         | Prometheus     |
+| Tool call count            | Per agent, per tool                    | Prometheus     |
+| LLM token usage            | Input/output tokens per invocation     | Custom metric  |
+| Error rate                 | Per error category                     | Prometheus     |
+| Full trace                 | Prompt, tools, response                | LangSmith      |
+| Audit log                  | User, agent, tools used, response hash | Structured log |
 
 ---
 
@@ -420,13 +420,13 @@ agents:
 
 ## 13. Architectural Tradeoffs
 
-| Decision | Benefit | Cost |
-|---|---|---|
-| LangGraph over simple chains | Stateful, cyclical, complex workflows | Higher complexity |
-| Tool allowlists per agent | Security, focus | Must maintain per-agent allowlists |
-| Redis for session state | Fast, ephemeral | Data loss on Redis failure |
-| Single agent service | Simple deployment | Harder to scale specific agent types |
-| Streaming from LLM to client | Real-time UX | Complex error handling mid-stream |
+| Decision                     | Benefit                               | Cost                                 |
+| ---------------------------- | ------------------------------------- | ------------------------------------ |
+| LangGraph over simple chains | Stateful, cyclical, complex workflows | Higher complexity                    |
+| Tool allowlists per agent    | Security, focus                       | Must maintain per-agent allowlists   |
+| Redis for session state      | Fast, ephemeral                       | Data loss on Redis failure           |
+| Single agent service         | Simple deployment                     | Harder to scale specific agent types |
+| Streaming from LLM to client | Real-time UX                          | Complex error handling mid-stream    |
 
 ---
 

@@ -7,7 +7,7 @@ export const validate =
     try {
       req.body = schema.parse(req.body);
       next();
-    } catch (error:unknown) {
+    } catch (error: unknown) {
       next(error);
     }
   };

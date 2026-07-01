@@ -1,21 +1,18 @@
 import { Router } from "express";
 
-import {
-  authController,
-} from "./../../controllers/auth/auth.controller";
-import { validate }
-  from "../../middleware/validation/validate.middleware";
+import { validate } from "../../middleware/validation/validate.middleware";
+import { authController } from "./../../controllers/auth/auth.controller";
 
-import { registerSchema }
-  from "../../schemas/auth/register.schema";
+import { registerSchema } from "../../schemas/auth/register.schema";
 
-import { loginSchema }
-  from "../../schemas/auth/login.schema";
+import { loginSchema } from "../../schemas/auth/login.schema";
 
-import { refreshSchema }
-  from "../../schemas/auth/refresh.schema";
+import { authenticate } from "../../middleware/auth/authenticate.middleware";
+import { refreshSchema } from "../../schemas/auth/refresh.schema";
 
-const router:Router = Router();
+const router: Router = Router();
+
+console.log("controller");
 
 /**
  * @swagger
@@ -47,11 +44,7 @@ const router:Router = Router();
  *         description: User registered
  */
 
-router.post(
-  "/register",
-  validate(registerSchema),
-  authController.register
-);
+router.post("/register", validate(registerSchema), authController.register);
 
 /**
  * @swagger
@@ -79,11 +72,7 @@ router.post(
  *         description: Login successful
  */
 
-router.post(
-  "/login",
-  validate(loginSchema),
-  authController.login
-);
+router.post("/login", validate(loginSchema), authController.login);
 
 /**
  * @swagger
@@ -106,11 +95,7 @@ router.post(
  *         description: Token refreshed
  */
 
-router.post(
-  "/refresh",
-  validate(refreshSchema),
-  authController.refresh
-);
+router.post("/refresh", validate(refreshSchema), authController.refresh);
 
 /**
  * @swagger
@@ -126,17 +111,35 @@ router.post(
  *         description: Logout successful
  */
 
-router.post(
-  "/logout",
-  authController.logout
-);
+router.post("/logout", authenticate, authController.logout);
 
+router.get("/sessions", authenticate, authController.sessions);
 
+router.delete("/sessions/:id", authenticate, authController.revokeSession);
 
+router.delete("/sessions", authenticate, authController.logoutAll);
+router.post("/verify-email", authController.verifyEmail);
 
+router.post("/resend-verification", authController.resendVerification);
+/**
+ * @swagger
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Request password reset
+ *     tags:
+ *       - Authentication
+ */
+router.post("/forgot-password", authController.forgotPassword);
 
+/**
+ * @swagger
+ * /auth/reset-password:
+ *   post:
+ *     summary: Reset password
+ *     tags:
+ *       - Authentication
+ */
 
-
-
+router.post("/reset-password", authController.resetPassword);
 
 export default router;

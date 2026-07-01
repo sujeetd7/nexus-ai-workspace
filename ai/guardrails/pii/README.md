@@ -9,14 +9,14 @@ and from leaking in model responses (which could expose sensitive user data).
 
 ## PII Categories
 
-| Category       | Examples                                    | Regulation |
-|----------------|---------------------------------------------|------------|
-| Contact Info   | Email, phone, address                       | GDPR, CCPA |
-| Identity       | Name, SSN, passport, driver's license       | GDPR, CCPA |
-| Financial      | Credit card, bank account, IBAN             | PCI-DSS    |
-| Health         | Medical records, diagnoses, prescriptions   | HIPAA      |
-| Technical      | IP address, device ID, user ID              | GDPR       |
-| Credentials    | Passwords, API keys, secrets                | Security   |
+| Category     | Examples                                  | Regulation |
+| ------------ | ----------------------------------------- | ---------- |
+| Contact Info | Email, phone, address                     | GDPR, CCPA |
+| Identity     | Name, SSN, passport, driver's license     | GDPR, CCPA |
+| Financial    | Credit card, bank account, IBAN           | PCI-DSS    |
+| Health       | Medical records, diagnoses, prescriptions | HIPAA      |
+| Technical    | IP address, device ID, user ID            | GDPR       |
+| Credentials  | Passwords, API keys, secrets              | Security   |
 
 ## Detection Methods
 
@@ -28,6 +28,7 @@ and from leaking in model responses (which could expose sensitive user data).
 ## Recommended Production Tool
 
 **Microsoft Presidio** — Open-source PII detection and anonymization:
+
 - `presidio-analyzer` — Detection
 - `presidio-anonymizer` — Redaction/replacement
 

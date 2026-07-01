@@ -96,7 +96,10 @@ export interface Guardrail<TConfig = unknown> {
    * @param content - The text to evaluate
    * @param context - Optional metadata about the execution context
    */
-  check(content: string, context?: Record<string, unknown>): Promise<GuardrailResult>;
+  check(
+    content: string,
+    context?: Record<string, unknown>,
+  ): Promise<GuardrailResult>;
 
   /**
    * Optional initialization with config.
@@ -134,7 +137,7 @@ export interface ValidationViolation {
 
 export interface ModerationCategory {
   category: string;
-  score: number;       // 0.0–1.0 confidence
+  score: number; // 0.0–1.0 confidence
   flagged: boolean;
 }
 
@@ -178,7 +181,7 @@ export interface GuardrailPipeline {
   run(
     content: string,
     appliesTo: "input" | "output",
-    failFast?: boolean
+    failFast?: boolean,
   ): Promise<{
     finalVerdict: GuardrailVerdict;
     results: GuardrailResult[];

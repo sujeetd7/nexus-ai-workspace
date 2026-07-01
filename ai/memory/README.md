@@ -24,6 +24,7 @@ Enterprise-grade multi-tier memory architecture for AI agents and conversational
 ## Memory Types Explained
 
 ### Short-Term Memory (Working Memory)
+
 - **Scope**: Current session / conversation window
 - **Duration**: Minutes to hours (TTL-based)
 - **Storage**: Redis (in-memory, fast)
@@ -32,6 +33,7 @@ Enterprise-grade multi-tier memory architecture for AI agents and conversational
 - **Analogy**: Human working memory — what you're thinking about right now
 
 ### Long-Term Memory (Persistent Memory)
+
 - **Scope**: Across all sessions for a user/agent
 - **Duration**: Indefinite (until explicitly cleared)
 - **Storage**: MongoDB (persistent, queryable)
@@ -40,6 +42,7 @@ Enterprise-grade multi-tier memory architecture for AI agents and conversational
 - **Analogy**: Human long-term memory — accumulated knowledge over time
 
 ### Episodic Memory (Event Memory)
+
 - **Scope**: Specific past events and interactions
 - **Duration**: Configurable retention policy
 - **Storage**: MongoDB + Vector index
@@ -48,6 +51,7 @@ Enterprise-grade multi-tier memory architecture for AI agents and conversational
 - **Analogy**: Human episodic memory — "I remember when we discussed X"
 
 ### Semantic Memory (Knowledge Memory)
+
 - **Scope**: Domain knowledge and factual information
 - **Duration**: Persistent until updated
 - **Storage**: ChromaDB / Pinecone / Weaviate (vector database)
@@ -74,13 +78,13 @@ memory/
 
 ## Interfaces
 
-| Interface           | Description                                       |
-|---------------------|---------------------------------------------------|
-| `MemoryProvider`    | Base interface for all memory backends            |
-| `ConversationMemory`| Short-term session memory interface               |
-| `EpisodicMemory`    | Past-event retrieval interface                    |
-| `SemanticMemory`    | Vector-based knowledge retrieval interface        |
-| `MemoryStore`       | Low-level storage adapter interface               |
+| Interface            | Description                                |
+| -------------------- | ------------------------------------------ |
+| `MemoryProvider`     | Base interface for all memory backends     |
+| `ConversationMemory` | Short-term session memory interface        |
+| `EpisodicMemory`     | Past-event retrieval interface             |
+| `SemanticMemory`     | Vector-based knowledge retrieval interface |
+| `MemoryStore`        | Low-level storage adapter interface        |
 
 ## TODO
 

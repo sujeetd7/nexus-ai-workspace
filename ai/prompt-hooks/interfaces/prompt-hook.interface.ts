@@ -221,7 +221,10 @@ export interface PromptPipeline {
   register(hook: PromptHook): void;
 
   /** Execute all registered hooks in priority order for the given stage */
-  executeStage(stage: HookStage, context: PromptContext): Promise<HookExecutionResult>;
+  executeStage(
+    stage: HookStage,
+    context: PromptContext,
+  ): Promise<HookExecutionResult>;
 
   /** Execute the full pipeline across all stages */
   execute(context: PromptContext): Promise<PromptResult>;
