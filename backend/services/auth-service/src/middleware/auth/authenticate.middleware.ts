@@ -27,7 +27,8 @@ export async function authenticate(
     };
 
     next();
-  } catch {
+  } catch (error) {
+    console.error("AUTH ERROR:", error);
     next(new ApiError(401, "INVALID_TOKEN", "Invalid or expired token"));
   }
 }

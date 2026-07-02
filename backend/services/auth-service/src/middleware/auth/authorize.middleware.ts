@@ -1,9 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-
 import { UserRole } from "@prisma/client";
+import { NextFunction, Request, Response } from "express";
 import { ApiError } from "../error/api-error";
 
-export function authorize(...roles: UserRole[]) {
+export function authorize(roles: UserRole[]) {
   return (req: Request, _res: Response, next: NextFunction) => {
     if (!req.user) {
       return next(new ApiError(401, "UNAUTHORIZED", "Authentication required"));

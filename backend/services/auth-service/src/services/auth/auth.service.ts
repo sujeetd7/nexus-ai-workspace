@@ -30,7 +30,7 @@ import {
   EmailVerificationEventPublisher,
   emailVerificationEventPublisher,
 } from "../../events/email-verification/email-verification-event.publisher";
-import { emailPublisher } from "../../events/email/email.publisher";
+import { emailPublisher } from "../../events/email/smtp.email.publisher";
 import { AuditEvent, auditService } from "../../security/audit/audit.service";
 import { hashService } from "../../security/hash/hash.service";
 import { passwordResetTokenService } from "../../security/tokens/password-reset-token.service";
@@ -41,12 +41,6 @@ import {
 import { IEmailVerificationRepository } from "../../types/interfaces/email-verification.repository.interface";
 
 export class AuthService {
-  authRepository = new AuthPrismaRepository();
-
-  sessionRepository = new SessionPrismaRepository();
-
-  emailVerificationRepository = new EmailVerificationPrismaRepository();
-
   constructor(
     private readonly users: IUserRepository,
     private readonly passwords: PasswordService,
@@ -377,20 +371,13 @@ export class AuthService {
 
   async logout(refreshToken: string): Promise<void> {
     const hash = hashService.sha256(refreshToken);
-
-    const session = await this.sessions.findByTokenHash(hash);
+    const session = await this.sessions.findAnyByTokenHash(hash);
 
     if (!session) {
       throw new ApiError(401, "INVALID_REFRESH_TOKEN", "Session not found");
     }
 
     await this.sessions.revoke(session.id);
-
-    await auditService.log({
-      event: AuditEvent.LOGOUT,
-      userId: session.userId,
-      metadata: { sessionId: session.id },
-    });
   }
 
   /*
@@ -400,7 +387,17 @@ export class AuthService {
   */
 
   async getSessions(userId: string) {
-    return this.sessions.findByUserId(userId);
+    const sessions = await this.sessions.findByUserId(userId);
+
+    return sessions.map((s) => ({
+      id: s.id,
+      deviceName: s.deviceName,
+      ipAddress: s.ipAddress,
+      userAgent: s.userAgent,
+      createdAt: s.createdAt,
+      lastUsedAt: s.lastUsedAt,
+      current: false,
+    }));
   }
 
   async revokeSession(userId: string, sessionId: string) {
@@ -461,6 +458,13 @@ export class AuthService {
     const accessToken = this.tokens.generateAccessToken(payload);
 
     const refreshToken = this.tokens.generateRefreshToken(payload);
+
+    console.log("\n========== LOGIN ==========");
+    console.log("REFRESH TOKEN:");
+    console.log(refreshToken);
+
+    console.log("\nREFRESH HASH:");
+    console.log(hashService.sha256(refreshToken));
 
     await this.sessions.create({
       userId: user.id,

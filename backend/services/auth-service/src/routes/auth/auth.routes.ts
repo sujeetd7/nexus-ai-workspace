@@ -7,6 +7,8 @@ import { registerSchema } from "../../schemas/auth/register.schema";
 
 import { loginSchema } from "../../schemas/auth/login.schema";
 
+import { forgotPasswordSchema } from "@schemas/auth/forgot-password.schema";
+import { resetPasswordSchema } from "@schemas/auth/reset-password.schema";
 import { authenticate } from "../../middleware/auth/authenticate.middleware";
 import { refreshSchema } from "../../schemas/auth/refresh.schema";
 
@@ -129,7 +131,11 @@ router.post("/resend-verification", authController.resendVerification);
  *     tags:
  *       - Authentication
  */
-router.post("/forgot-password", authController.forgotPassword);
+router.post(
+  "/forgot-password",
+  validate(forgotPasswordSchema),
+  authController.forgotPassword,
+);
 
 /**
  * @swagger
@@ -140,6 +146,10 @@ router.post("/forgot-password", authController.forgotPassword);
  *       - Authentication
  */
 
-router.post("/reset-password", authController.resetPassword);
+router.post(
+  "/reset-password",
+  validate(resetPasswordSchema),
+  authController.resetPassword,
+);
 
 export default router;

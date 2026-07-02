@@ -136,7 +136,11 @@ export class SessionPrismaRepository implements ISessionRepository {
   }
 
   async findAnyByTokenHash(refreshTokenHash: string): Promise<Session | null> {
-    return this.findByRefreshToken(refreshTokenHash);
+    return (await prisma.session.findFirst({
+      where: {
+        refreshTokenHash,
+      },
+    })) as Session | null;
   }
 
   async revokeUserSessions(userId: string): Promise<void> {

@@ -5,13 +5,30 @@ dotenv.config();
 
 const defaultEnv = {
   NODE_ENV: "development",
+
   PORT: 3001,
+
   LOG_LEVEL: "info",
+
   SERVICE_NAME: "auth-service",
+
   AUTH_MAX_FAILED_LOGIN_ATTEMPTS: 5,
+
   AUTH_LOCK_DURATION_MINUTES: 30,
+
   EMAIL_VERIFICATION_TOKEN_TTL_MINUTES: 30,
+
   EMAIL_VERIFICATION_BASE_URL: "http://localhost:3000/verify-email",
+
+  SMTP_HOST: "localhost",
+
+  SMTP_PORT: 1025,
+
+  SMTP_USER: "",
+
+  SMTP_PASS: "",
+
+  SMTP_FROM: "noreply@nexus.ai",
 } as const;
 
 const envSchema = z.object({
@@ -47,24 +64,18 @@ const envSchema = z.object({
     .string()
     .url()
     .default(defaultEnv.EMAIL_VERIFICATION_BASE_URL),
+
+  SMTP_HOST: z.string(),
+
+  SMTP_PORT: z.coerce.number(),
+
+  SMTP_USER: z.string().optional().default(""),
+
+  SMTP_PASS: z.string().optional().default(""),
+
+  SMTP_FROM: z.string(),
 });
 
-const parsedEnv = envSchema.safeParse(process.env);
-
-if (!parsedEnv.success) {
-  const details = parsedEnv.error.issues
-    .map((issue) => {
-      const key = issue.path.join(".") || "ENV";
-
-      return `${key}: ${issue.message}`;
-    })
-    .join("; ");
-
-  console.warn(
-    `Invalid environment configuration. Using safe defaults. ${details}`,
-  );
-}
-
-export const env = parsedEnv.success ? parsedEnv.data : defaultEnv;
+export const env = envSchema.parse(process.env);
 
 export type Env = typeof env;

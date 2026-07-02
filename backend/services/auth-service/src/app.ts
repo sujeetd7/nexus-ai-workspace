@@ -17,6 +17,7 @@ import { notFound } from "./middleware/error/not-found.middleware";
 
 import { errorHandler } from "./middleware/error/error.middleware";
 
+import sessionRoutes from "@routes/session.routes";
 import adminRoutes from "./routes/admin/admin.routes";
 import profileRoutes from "./routes/profile/profile.routes";
 
@@ -74,6 +75,7 @@ export default function createApp(): Express {
   app.use("/profile", profileRoutes);
 
   app.use("/admin", adminRoutes);
+  app.use("/api/v1/auth", sessionRoutes);
 
   /*
     404 HANDLER

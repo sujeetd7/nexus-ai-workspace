@@ -1,12 +1,11 @@
+import { emailPublisher } from "events/email/smtp.email.publisher";
 import { env } from "../../config/env";
 import {
   EmailVerificationRequestedEvent,
   IEmailVerificationEventPublisher,
 } from "../../types/interfaces/email-verification-event-publisher.interface";
 
-export class EmailVerificationEventPublisher
-  implements IEmailVerificationEventPublisher
-{
+export class EmailVerificationEventPublisher implements IEmailVerificationEventPublisher {
   async publishRequested(
     event: EmailVerificationRequestedEvent,
   ): Promise<void> {
@@ -20,6 +19,20 @@ export class EmailVerificationEventPublisher
           ? undefined
           : event.verificationToken.slice(0, 8),
       expiresAt: event.expiresAt,
+      timestamp: new Date(),
+    });
+
+    await emailPublisher.publishVerificationEmail(
+      event.email,
+      event.verificationToken,
+    );
+
+    console.log({
+      event: "EMAIL_VERIFICATION_SENT",
+      userId: event.userId,
+      metadata: {
+        expiresAt: event.expiresAt,
+      },
       timestamp: new Date(),
     });
   }
