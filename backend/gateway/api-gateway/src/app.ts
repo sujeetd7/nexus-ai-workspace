@@ -1,4 +1,4 @@
-import Fastify from "fastify";
+const fastify = require("fastify") as any;
 
 import authProxy from "./plugins/auth.proxy";
 
@@ -10,7 +10,7 @@ import { requestIdMiddleware } from "./middleware/request-id.middleware";
 
 import { loggerMiddleware } from "./middleware/logger.middleware";
 
-export const app = Fastify({
+export const app = fastify({
   logger: true,
 });
 

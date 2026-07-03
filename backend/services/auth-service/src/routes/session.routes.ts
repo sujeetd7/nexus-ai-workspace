@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 import { sessionController } from "../controllers/session.controller";
 import { authenticate } from "../middleware/auth/authenticate.middleware";
 
@@ -9,7 +9,8 @@ router.get("/sessions", authenticate, sessionController.getSessions);
 router.delete(
   "/sessions/:sessionId",
   authenticate,
-  sessionController.revokeSession,
+  (req: Request<{ sessionId: string }>, res: Response) =>
+    sessionController.revokeSession(req, res),
 );
 
 router.post("/logout-all", authenticate, sessionController.logoutAll);

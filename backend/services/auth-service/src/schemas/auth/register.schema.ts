@@ -1,5 +1,5 @@
-import { UserRole } from "@prisma/client";
 import { z } from "zod";
+import { UserRole } from "../../types/auth/roles";
 
 export const registerSchema = z.object({
   email: z.string().email(),

@@ -1,9 +1,4 @@
-import { FastifyReply, FastifyRequest } from "fastify";
-
-export async function loggerMiddleware(
-  req: FastifyRequest,
-  reply: FastifyReply,
-) {
+export async function loggerMiddleware(req: any, reply: any) {
   const start = Date.now();
 
   reply.raw.on("finish", () => {

@@ -1,5 +1,5 @@
-import { UserRole } from "@prisma/client";
 import { Permission } from "../../types/auth/permissions";
+import { UserRole } from "../../types/auth/roles";
 
 export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
   [UserRole.ADMIN]: [

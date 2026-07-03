@@ -72,6 +72,9 @@ importers:
 
   backend/services/auth-service:
     dependencies:
+      '@prisma/client':
+        specifier: ^5.22.0
+        version: 5.22.0(prisma@5.22.0)
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
@@ -157,6 +160,9 @@ importers:
       jest:
         specifier: ^30.4.2
         version: 30.4.2(@types/node@26.0.1)
+      prisma:
+        specifier: ^5.22.0
+        version: 5.22.0
       ts-jest:
         specifier: ^29.4.11
         version: 29.4.11(@babel/core@7.29.7)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.7))(esbuild@0.28.1)(jest-util@30.4.1)(jest@30.4.2(@types/node@26.0.1))(typescript@5.9.3)

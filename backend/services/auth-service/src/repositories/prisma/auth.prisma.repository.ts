@@ -7,7 +7,7 @@ import {
 
 import { User } from "../../types/interfaces/auth.interface";
 
-import { UserRole } from "@prisma/client";
+import { UserRole } from "../../types/auth/roles";
 
 export class AuthPrismaRepository implements IUserRepository {
   async findByEmail(email: string): Promise<User | null> {

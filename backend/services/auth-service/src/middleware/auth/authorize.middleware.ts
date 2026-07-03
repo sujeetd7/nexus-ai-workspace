@@ -1,5 +1,5 @@
-import { UserRole } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
+import { UserRole } from "../../types/auth/roles";
 import { ApiError } from "../error/api-error";
 
 export function authorize(roles: UserRole[]) {

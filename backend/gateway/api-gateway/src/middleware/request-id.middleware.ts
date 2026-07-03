@@ -1,10 +1,5 @@
 import crypto from "crypto";
-import { FastifyReply, FastifyRequest } from "fastify";
-
-export async function requestIdMiddleware(
-  req: FastifyRequest,
-  reply: FastifyReply,
-) {
+export async function requestIdMiddleware(req: any, reply: any) {
   const requestId = crypto.randomUUID();
 
   req.requestId = requestId;

@@ -1,6 +1,4 @@
-import { FastifyInstance } from "fastify";
-
-export async function systemHealth(fastify: FastifyInstance) {
+export async function systemHealth(fastify: any) {
   fastify.get("/system/health", async () => {
     const auth = await fetch("http://localhost:3001/health");
 

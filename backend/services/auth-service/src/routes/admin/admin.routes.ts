@@ -4,8 +4,8 @@ import { authenticate } from "../../middleware/auth/authenticate.middleware";
 
 import { authorize } from "../../middleware/auth/authorize.middleware";
 
-import { UserRole } from "@prisma/client";
 import { adminController } from "../../controllers/admin/admin.controller";
+import { UserRole } from "../../types/auth/roles";
 
 const router: Router = Router();
 
@@ -25,7 +25,7 @@ const router: Router = Router();
 router.get(
   "/dashboard",
   authenticate,
-  authorize(UserRole.ADMIN),
+  authorize([UserRole.ADMIN]),
   adminController.dashboard,
 );
 

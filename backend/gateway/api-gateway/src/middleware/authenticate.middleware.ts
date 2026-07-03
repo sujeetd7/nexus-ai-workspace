@@ -1,9 +1,8 @@
-import { FastifyReply, FastifyRequest } from "fastify";
 import jwt from "jsonwebtoken";
 import { env } from "../config/env";
 
-export async function authenticate(req: FastifyRequest, reply: FastifyReply) {
-  const authHeader = req.headers.authorization;
+export async function authenticate(req: any, reply: any) {
+  const authHeader = req.headers?.authorization;
 
   if (!authHeader) {
     return reply.status(401).send({
