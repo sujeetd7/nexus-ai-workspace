@@ -1,7 +1,10 @@
 import dotenv from "dotenv";
 import { z } from "zod";
 
-dotenv.config();
+// dotenv.config();
+dotenv.config({
+  override: true,
+});
 
 const defaultEnv = {
   NODE_ENV: "development",
@@ -75,6 +78,11 @@ const envSchema = z.object({
 
   SMTP_FROM: z.string(),
 });
+console.log("AUTH ENV FILE LOADED");
+console.log(__filename);
+console.log("RAW PORT =", process.env.PORT);
+console.log("CWD =", process.cwd());
+console.log("ENV FILE LOADED");
 
 export const env = envSchema.parse(process.env);
 
