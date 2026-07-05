@@ -1,5 +1,10 @@
 import { Router } from "express";
 import { WorkspaceController } from "../controllers/workspace.controller";
+import workspaceAuditRoutes from "./workspace-audit.routes";
+import workspaceBillingRoutes from "./workspace-billing.routes";
+import workspaceInvitationRoutes from "./workspace-invitation.routes";
+import workspacePermissionRoutes from "./workspace-permission.routes";
+import workspaceSettingRoutes from "./workspace-setting.routes";
 
 const router = Router();
 
@@ -33,5 +38,12 @@ router.delete(
   "/workspaces/:id",
   workspaceController.delete.bind(workspaceController),
 );
+
+router.use("/workspaces", workspaceInvitationRoutes);
+router.use("/workspaces", workspacePermissionRoutes);
+router.use("/workspaces", workspaceSettingRoutes);
+
+router.use("/workspaces", workspaceBillingRoutes);
+router.use("/workspaces", workspaceAuditRoutes);
 
 export default router;
