@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Prompt {
+
+  id              String @id @default(uuid())
+
+  workspaceId     String
+
+  createdBy       String
+
+  name            String
+
+  description     String?
+
+  category        String?
+
+  isPublic        Boolean @default(false)
+
+  createdAt       DateTime @default(now())
+
+  updatedAt       DateTime @updatedAt
+
+  versions        PromptVersion[]
+
+}
+
+model PromptVersion {
+
+  id              String @id @default(uuid())
+
+  promptId        String
+
+  version         Int
+
+  content         String
+
+  model           String
+
+  temperature     Float @default(0.7)
+
+  createdAt       DateTime @default(now())
+
+  prompt          Prompt @relation(fields:[promptId],references:[id])
+
+  executions      PromptExecution[]
+}
+
+model PromptExecution {
+
+  id              String @id @default(uuid())
+
+  promptVersionId String
+
+  input           Json
+
+  output          Json?
+
+  tokens          Int?
+
+  latency         Int?
+
+  createdAt       DateTime @default(now())
+
+  promptVersion   PromptVersion @relation(fields:[promptVersionId],references:[id])
+}
