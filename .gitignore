@@ -29,3 +29,11 @@ Thumbs.db
 
 # IDE
 .vscode/settings.json
+
+# prisma generated
+src/generated/
+
+# Ignore generated folders inside backend services
+/backend/services/*/src/generated/
+/backend/services/user-service/src/generated/
+/backend/services/document-service/src/generated/
