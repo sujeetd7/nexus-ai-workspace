@@ -1,3 +1,5 @@
+import { EmbedAIDto } from "../dto/embed-ai.dto";
+import { EmbedResponseDto } from "../dto/embed-response.dto";
 import { ExecuteAIDto } from "../dto/execute-ai.dto";
 import { StreamEventDto } from "../dto/stream-event.dto";
 
@@ -16,11 +18,12 @@ export interface AIExecutionResult {
 
   model: string;
 }
-
 export interface AIProvider {
   execute(request: ExecuteAIDto): Promise<AIExecutionResult>;
 
   stream(request: ExecuteAIDto): AsyncGenerator<StreamEventDto>;
+
+  embed(request: EmbedAIDto): Promise<EmbedResponseDto>;
 
   health(): Promise<boolean>;
 }

@@ -3,10 +3,12 @@ import { Request, Response } from "express";
 import { ExecuteAIDto } from "../dto/execute-ai.dto";
 import { StreamEventType } from "../dto/stream-event.dto";
 
+import { EmbeddingService } from "@services/embedding.service";
 import { AIService } from "../services/ai.service";
 
 export class AIController {
   private readonly service = new AIService();
+  private readonly embeddingService = new EmbeddingService();
 
   execute = async (req: Request, res: Response) => {
     const dto = req.body as ExecuteAIDto;
@@ -40,5 +42,11 @@ export class AIController {
     const result = await this.service.health(provider);
 
     res.json(result);
+  };
+
+  embed = async (req: Request, res: Response) => {
+    const result = await this.embeddingService.generate(req.body);
+
+    res.status(200).json(result);
   };
 }

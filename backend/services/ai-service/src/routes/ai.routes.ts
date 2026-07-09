@@ -12,5 +12,6 @@ router.post(
   controller.stream,
 );
 router.get("/provider-health", controller.health);
+router.post("/embed", controller.embed);
 
 export default router;

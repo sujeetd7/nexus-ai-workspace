@@ -9,7 +9,12 @@ export class ProviderManager {
     const healthy = await provider.health();
 
     if (!healthy) {
-      throw new ProviderError(`${providerName} provider is unavailable`);
+      throw new ProviderError(
+        providerName,
+        503,
+        "provider_unavailable",
+        `${providerName} provider is unavailable`,
+      );
     }
 
     return provider;
