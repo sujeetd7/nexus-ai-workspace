@@ -7,32 +7,25 @@ export class MockProvider implements AIProvider {
   async execute(request: ExecuteAIDto): Promise<AIExecutionResult> {
     return {
       text: `Mock Response : ${request.prompt}`,
-
       promptTokens: 10,
-
       completionTokens: 20,
-
       totalTokens: 30,
-
       durationMs: 100,
-
       provider: "mock",
-
-      model: request.model ?? "mock",
+      model: "mock",
     };
   }
 
   async *stream(request: ExecuteAIDto): AsyncGenerator<StreamEventDto> {
-    const words = `Mock streaming response for ${request.prompt}`.split(" ");
+    const words = "Mock streaming response".split(" ");
 
     for (const word of words) {
-      await new Promise((resolve) => setTimeout(resolve, 150));
-
       yield {
         type: StreamEventType.TOKEN,
-
         content: word + " ",
       };
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
     yield {

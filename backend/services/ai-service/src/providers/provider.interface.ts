@@ -18,18 +18,9 @@ export interface AIExecutionResult {
 }
 
 export interface AIProvider {
-  /**
-   * Executes a normal (non-streaming) AI request.
-   */
   execute(request: ExecuteAIDto): Promise<AIExecutionResult>;
 
-  /**
-   * Streams AI events.
-   */
   stream(request: ExecuteAIDto): AsyncGenerator<StreamEventDto>;
 
-  /**
-   * Checks whether the provider is available.
-   */
   health(): Promise<boolean>;
 }

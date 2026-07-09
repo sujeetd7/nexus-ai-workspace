@@ -18,6 +18,4 @@ export interface StreamEventDto {
   type: StreamEventType;
 
   content?: string;
-
-  metadata?: Record<string, unknown>;
 }

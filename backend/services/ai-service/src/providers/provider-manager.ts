@@ -1,3 +1,4 @@
+import { ProviderError } from "../errors/provider.error";
 import { ProviderFactory } from "./provider.factory";
 import { AIProvider } from "./provider.interface";
 
@@ -8,7 +9,7 @@ export class ProviderManager {
     const healthy = await provider.health();
 
     if (!healthy) {
-      throw new Error(`${providerName} provider is unavailable`);
+      throw new ProviderError(`${providerName} provider is unavailable`);
     }
 
     return provider;
