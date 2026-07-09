@@ -1,0 +1,23 @@
+export enum StreamEventType {
+  TOKEN = "token",
+
+  TOOL_CALL = "tool_call",
+
+  TOOL_RESULT = "tool_result",
+
+  REASONING = "reasoning",
+
+  CITATION = "citation",
+
+  ERROR = "error",
+
+  DONE = "done",
+}
+
+export interface StreamEventDto {
+  type: StreamEventType;
+
+  content?: string;
+
+  metadata?: Record<string, unknown>;
+}
