@@ -1,11 +1,15 @@
 import { Router } from "express";
-import { app } from "src/app";
-import { errorMiddleware } from "src/middleware/error.middleware";
 import aiRoutes from "./ai.routes";
+import documentRoutes from "./document-index.routes";
+import ragRoutes from "./rag.routes";
+import vectorRoutes from "./vector.routes";
 
 const router = Router();
 
 router.use("/", aiRoutes);
-app.use(errorMiddleware);
+router.use("/vector", vectorRoutes);
+
+router.use("/rag", ragRoutes);
+router.use("/documents", documentRoutes);
 
 export default router;

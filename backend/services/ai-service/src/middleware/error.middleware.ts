@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { ProviderError } from "../errors/provider.error";
+import logger from "../utils/logger";
 
 export function errorMiddleware(
   err: unknown,
@@ -17,7 +18,7 @@ export function errorMiddleware(
   }
 
   console.error(err);
-
+  logger.error(err);
   return res.status(500).json({
     code: "internal_server_error",
     message: "Internal Server Error",

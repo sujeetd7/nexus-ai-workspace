@@ -1,12 +1,11 @@
 import { ChromaVectorStore } from "../vector/chroma-vector-store";
 
 export class VectorRepository {
-  private readonly store =
-    new ChromaVectorStore();
+  private readonly store = new ChromaVectorStore();
 
-  async save(...) {}
+  // async save(...) {}
 
-  async search(...) {}
+  // async search(...) {}
 
-  async delete(...) {}
+  // async delete(...) {}
 }

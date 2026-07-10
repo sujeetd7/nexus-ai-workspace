@@ -1,14 +1,12 @@
-export interface VectorDocument {
-  id: string;
-  document: string;
-  embedding: number[];
-  metadata?: Record<string, unknown>;
-}
+import { SearchVectorResultDto } from "src/dto/search-vector-result.dto";
 
-export interface SearchResult {
+export interface VectorRecord {
   id: string;
-  score: number;
+
+  embedding: number[];
+
   document: string;
+
   metadata?: Record<string, unknown>;
 }
 
@@ -17,15 +15,36 @@ export interface VectorStore {
 
   deleteCollection(name: string): Promise<void>;
 
-  upsert(collection: string, documents: VectorDocument[]): Promise<void>;
+  upsert(
+    collection: string,
+    id: string,
+    embedding: number[],
+    document: string,
+    metadata?: Record<string, unknown>,
+  ): Promise<void>;
+
+  upsertBatch(
+    collectionName: string,
+    ids: string[],
+    embeddings: number[][],
+    documents: string[],
+    metadatas?: Record<string, string | number | boolean | null>[],
+  ): Promise<void>;
 
   search(
     collection: string,
     embedding: number[],
-    limit?: number,
-  ): Promise<SearchResult[]>;
+    limit: number,
+  ): Promise<SearchVectorResultDto[]>;
 
   delete(collection: string, ids: string[]): Promise<void>;
+
+  deleteByMetadata(
+    collection: string,
+    filter: Record<string, unknown>,
+  ): Promise<void>;
+
+  getCollectionCount(collection: string): Promise<number>;
 
   health(): Promise<boolean>;
 }

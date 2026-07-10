@@ -8,11 +8,38 @@ dotenv.config({
   path: path.resolve(__dirname, "../../../../.env"),
 });
 
-import { app } from "./app";
+// Validate required environment
+import { validateEnv } from "./config/env";
+validateEnv();
 
-console.log(process.env.CLAUDE_API_KEY);
+import { app } from "./app";
+import logger from "./utils/logger";
+
 const PORT = Number(process.env.PORT) || 3007;
 
-app.listen(PORT, () => {
-  console.log(`User service running on ${PORT}`);
+const server = app.listen(PORT, () => {
+  logger.info(`AI service running on ${PORT}`);
+});
+
+// Graceful shutdown
+function shutdown(code = 0) {
+  logger.info("Shutting down server...");
+  server.close(() => {
+    logger.info("Server closed");
+    process.exit(code);
+  });
+  // Force exit after timeout
+  setTimeout(() => process.exit(code), 10000).unref();
+}
+
+process.on("SIGINT", () => shutdown(0));
+process.on("SIGTERM", () => shutdown(0));
+
+process.on("unhandledRejection", (reason) => {
+  logger.error("Unhandled Rejection:", (reason as any)?.message ?? reason);
+});
+
+process.on("uncaughtException", (err) => {
+  logger.error("Uncaught Exception:", (err as any)?.message ?? err);
+  shutdown(1);
 });
