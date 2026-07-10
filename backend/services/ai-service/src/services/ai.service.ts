@@ -17,8 +17,14 @@ export class AIService {
   private readonly providerManager = new ProviderManager();
 
   async execute(dto: ExecuteAIDto) {
+    if (!dto || !dto.prompt) {
+      throw new Error("Validation: prompt is required");
+    }
+
     dto.provider ??= "ollama";
     dto.model ??= ProviderConfig.getDefaultModel(dto.provider);
+    dto.workspaceId ??= "system";
+    dto.userId ??= "system";
 
     const result = await this.orchestrator.execute(dto);
 
@@ -28,19 +34,35 @@ export class AIService {
       result.totalTokens,
     );
 
-    return this.repository.create({
-      workspaceId: dto.workspaceId,
-      userId: dto.userId,
-      provider: result.provider,
-      model: result.model,
-      prompt: dto.prompt,
-      response: result.text,
+    try {
+      await this.repository.create({
+        workspaceId: dto.workspaceId,
+        userId: dto.userId,
+        provider: result.provider,
+        model: result.model,
+        prompt: dto.prompt,
+        response: result.text,
+        promptTokens: result.promptTokens,
+        completionTokens: result.completionTokens,
+        totalTokens: result.totalTokens,
+        durationMs: result.durationMs,
+        status: "SUCCESS",
+      });
+    } catch (err) {
+      // Log and continue — still return provider result to callers
+      // eslint-disable-next-line no-console
+      console.error("AIExecutionRepository.create failed:", err);
+    }
+
+    return {
+      text: result.text,
       promptTokens: result.promptTokens,
       completionTokens: result.completionTokens,
       totalTokens: result.totalTokens,
       durationMs: result.durationMs,
-      status: "SUCCESS",
-    });
+      provider: result.provider,
+      model: result.model,
+    };
   }
 
   async *stream(dto: ExecuteAIDto): AsyncGenerator<StreamEventDto> {

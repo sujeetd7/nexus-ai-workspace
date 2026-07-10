@@ -40,11 +40,18 @@ model PromptVersion {
 
   version         Int
 
-  content         String
+  systemPrompt    String?
+
+  userPrompt      String?
 
   model           String
 
+  provider        String?
+
   temperature     Float @default(0.7)
+
+  isPublished     Boolean @default(false)
+  publishedAt     DateTime?
 
   createdAt       DateTime @default(now())
 
@@ -55,7 +62,7 @@ model PromptVersion {
 
 model PromptExecution {
 
-  id              String @id @default(uuid())
+  id              String   @id @default(uuid())
 
   promptVersionId String
 
@@ -63,11 +70,19 @@ model PromptExecution {
 
   output          Json?
 
+  provider        String?
+
+  model           String?
+
+  status          String   @default("SUCCESS")
+
   tokens          Int?
 
   latency         Int?
 
+  error           String?
+
   createdAt       DateTime @default(now())
 
-  promptVersion   PromptVersion @relation(fields:[promptVersionId],references:[id])
+  promptVersion   PromptVersion @relation(fields: [promptVersionId], references: [id])
 }

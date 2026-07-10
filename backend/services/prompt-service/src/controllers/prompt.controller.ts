@@ -23,6 +23,42 @@ export class PromptController {
     res.json(execution);
   };
 
+  executePublished = async (req: Request, res: Response) => {
+    const result = await this.service.executePublished(req.body);
+
+    res.json(result);
+  };
+
+  rollback = async (req: Request, res: Response) => {
+    const result = await this.service.rollback(req.body);
+
+    res.json(result);
+  };
+
+  history = async (_req: Request, res: Response) => {
+    res.json(await this.service.executionHistory());
+  };
+
+  historyByPrompt = async (req: Request, res: Response) => {
+    res.json(
+      await this.service.executionHistoryByPrompt(
+        req.params.promptId as string,
+      ),
+    );
+  };
+
+  execution = async (req: Request, res: Response) => {
+    res.json(
+      await this.service.executionDetails(req.params.executionId as string),
+    );
+  };
+
+  playground = async (req: Request, res: Response) => {
+    const result = await this.service.playground(req.body);
+
+    res.json(result);
+  };
+
   list = async (req: Request, res: Response) => {
     const prompts = await this.service.list();
 
@@ -41,5 +77,11 @@ export class PromptController {
     res.json({
       message: "deleted",
     });
+  };
+
+  publish = async (req: Request, res: Response) => {
+    const result = await this.service.publish(req.params.versionId as string);
+
+    res.json(result);
   };
 }

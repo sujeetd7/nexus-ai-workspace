@@ -1,31 +1,41 @@
 export interface CreatePromptDto {
   workspaceId: string;
-
   createdBy: string;
-
   name: string;
-
   description?: string;
-
   category?: string;
-
   isPublic?: boolean;
 }
 
 export interface CreatePromptVersionDto {
   promptId: string;
-
   version: number;
-
-  content: string;
-
-  model: string;
-
+  systemPrompt?: string;
+  userPrompt?: string;
+  provider?: string;
+  model?: string;
   temperature?: number;
 }
 
 export interface ExecutePromptDto {
-  promptVersionId: string;
+  promptId: string;
+  variables: Record<string, unknown>;
+}
 
-  input: any;
+export interface PublishPromptVersionDto {
+  versionId: string;
+}
+
+export interface RollbackPromptVersionDto {
+  promptId: string;
+  version: number;
+}
+export interface RollbackPromptDto {
+  promptId: string;
+  version: number;
+}
+
+export interface PlaygroundPromptDto {
+  versionId: string;
+  variables: Record<string, unknown>;
 }
