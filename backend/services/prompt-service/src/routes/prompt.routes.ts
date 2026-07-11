@@ -13,6 +13,7 @@ router.post("/prompts/version", controller.createVersion);
 router.post("/prompts/execute", controller.execute);
 
 router.get("/prompts", controller.list);
+router.get("/prompts/analytics", controller.analytics);
 
 router.get("/prompts/:id", controller.get);
 
@@ -30,5 +31,6 @@ router.get("/prompts/:promptId/executions", controller.historyByPrompt);
 
 router.get("/prompts/execution/:executionId", controller.execution);
 router.post("/prompts/playground", controller.playground);
+router.post("/prompts/compare", controller.compare);
 
 export default router;

@@ -60,7 +60,9 @@ export class PromptController {
   };
 
   list = async (req: Request, res: Response) => {
-    const prompts = await this.service.list();
+    const prompts = await this.service.list(
+      req.query as Record<string, string | undefined>,
+    );
 
     res.json(prompts);
   };
@@ -81,6 +83,20 @@ export class PromptController {
 
   publish = async (req: Request, res: Response) => {
     const result = await this.service.publish(req.params.versionId as string);
+
+    res.json(result);
+  };
+
+  compare = async (req: Request, res: Response) => {
+    const result = await this.service.compare(req.body);
+
+    res.json(result);
+  };
+
+  analytics = async (req: Request, res: Response) => {
+    const result = await this.service.analytics(
+      req.query.promptId as string | undefined,
+    );
 
     res.json(result);
   };

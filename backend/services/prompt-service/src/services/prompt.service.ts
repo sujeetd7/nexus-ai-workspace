@@ -1,11 +1,21 @@
+import { PromptDiffUtil } from "src/utils/prompt-diff.util";
 import { AIServiceClient } from "../clients/ai-service.client";
 import { PromptCompiler } from "../compiler/prompt-compiler";
 
 import {
+  ComparePromptVersionDto,
   ExecutePromptDto,
   PlaygroundPromptDto,
   RollbackPromptDto,
 } from "../dto/prompt.dto";
+
+interface PromptQueryFilters {
+  search?: string;
+  category?: string;
+  tag?: string;
+  favorite?: boolean;
+  shared?: boolean;
+}
 
 import { PromptExecutionRepository } from "../repositories/prompt-execution.repository";
 import { PromptVersionRepository } from "../repositories/prompt-version.repository";
@@ -260,8 +270,8 @@ ${version.userPrompt ?? ""}`,
     return this.executionRepository.findByPrompt(promptId);
   }
 
-  async list() {
-    return this.promptRepository.findAll();
+  async list(filters: PromptQueryFilters = {}) {
+    return this.promptRepository.findAll(filters);
   }
 
   async get(id: string) {
@@ -281,5 +291,73 @@ ${version.userPrompt ?? ""}`,
       success: true,
       message: "Prompt deleted successfully.",
     };
+  }
+
+  async analytics(promptId?: string) {
+    const executions = promptId
+      ? await this.executionRepository.findByPrompt(promptId)
+      : await this.executionRepository.findAll();
+
+    if (!Array.isArray(executions) || executions.length === 0) {
+      return {
+        averageScore: 0,
+        totalExecutions: 0,
+        totalTokens: 0,
+        totalCost: 0,
+        successRate: 0,
+        passRate: 0,
+      };
+    }
+
+    const totalExecutions = executions.length;
+    const totalTokens = executions.reduce((sum, execution) => {
+      const tokens =
+        typeof execution.tokens === "number" ? execution.tokens : 0;
+      return sum + tokens;
+    }, 0);
+
+    const successfulExecutions = executions.filter((execution) => {
+      const output = execution.output as Record<string, unknown> | undefined;
+      return Boolean(output?.success ?? output?.status === "success");
+    }).length;
+
+    const passedExecutions = executions.filter((execution) => {
+      const output = execution.output as Record<string, unknown> | undefined;
+      return Boolean(output?.passed ?? false);
+    }).length;
+
+    const averageScore =
+      executions.reduce((sum, execution) => {
+        const output = execution.output as Record<string, unknown> | undefined;
+        const score = typeof output?.score === "number" ? output.score : 0;
+        return sum + score;
+      }, 0) / totalExecutions;
+
+    return {
+      averageScore,
+      totalExecutions,
+      totalTokens,
+      totalCost: totalExecutions * 0.01,
+      successRate: successfulExecutions / totalExecutions,
+      passRate: passedExecutions / totalExecutions,
+    };
+  }
+
+  async compare(dto: ComparePromptVersionDto) {
+    const source = await this.versionRepository.findByPromptAndVersion(
+      dto.promptId,
+      dto.sourceVersion,
+    );
+
+    if (!source) throw new Error("Source version not found.");
+
+    const target = await this.versionRepository.findByPromptAndVersion(
+      dto.promptId,
+      dto.targetVersion,
+    );
+
+    if (!target) throw new Error("Target version not found.");
+
+    return PromptDiffUtil.compare(source, target);
   }
 }

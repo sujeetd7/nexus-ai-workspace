@@ -1,5 +1,13 @@
 import { prisma } from "@config/database/prisma";
 
+interface PromptQueryFilters {
+  search?: string;
+  category?: string;
+  tag?: string;
+  favorite?: boolean;
+  shared?: boolean;
+}
+
 export class PromptRepository {
   async create(data: any) {
     return prisma.prompt.create({
@@ -7,8 +15,36 @@ export class PromptRepository {
     });
   }
 
-  async findAll() {
+  async findAll(filters: PromptQueryFilters = {}) {
+    const where: Record<string, unknown> = {};
+
+    if (filters.category) {
+      where.category = filters.category;
+    }
+
+    if (filters.tag) {
+      where.tags = {
+        has: filters.tag,
+      };
+    }
+
+    if (filters.favorite !== undefined) {
+      where.isFavorite = filters.favorite;
+    }
+
+    if (filters.shared !== undefined) {
+      where.isPublic = filters.shared;
+    }
+
+    if (filters.search) {
+      where.OR = [
+        { name: { contains: filters.search, mode: "insensitive" } },
+        { description: { contains: filters.search, mode: "insensitive" } },
+      ];
+    }
+
     return prisma.prompt.findMany({
+      where,
       include: {
         versions: true,
       },

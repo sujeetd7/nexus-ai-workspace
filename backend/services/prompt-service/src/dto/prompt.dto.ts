@@ -39,3 +39,9 @@ export interface PlaygroundPromptDto {
   versionId: string;
   variables: Record<string, unknown>;
 }
+
+export interface ComparePromptVersionDto {
+  promptId: string;
+  sourceVersion: number;
+  targetVersion: number;
+}
