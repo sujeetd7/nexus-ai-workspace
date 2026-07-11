@@ -1,18 +1,44 @@
 import { prisma } from "@config/database/prisma";
+import {
+  CreateDocumentDto,
+  ListDocumentsDto,
+  UpdateDocumentDto,
+} from "../dto/document.dto";
 
 export class DocumentRepository {
-  async create(data: any) {
+  async create(data: CreateDocumentDto) {
     return prisma.document.create({
       data,
     });
   }
 
-  async findAll() {
+  async findAll(filter: ListDocumentsDto = {}) {
+    const where: Record<string, unknown> = {};
+
+    if (filter.workspaceId) {
+      where.workspaceId = filter.workspaceId;
+    }
+
+    if (filter.status) {
+      where.status = filter.status;
+    }
+
+    if (filter.search) {
+      where.OR = [
+        { filename: { contains: filter.search, mode: "insensitive" } },
+        { mimeType: { contains: filter.search, mode: "insensitive" } },
+      ];
+    }
+
     return prisma.document.findMany({
+      where,
       include: {
         versions: true,
         tags: true,
       },
+      skip: filter.skip ?? 0,
+      take: filter.take ?? 50,
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -28,7 +54,7 @@ export class DocumentRepository {
     });
   }
 
-  async update(id: string, data: any) {
+  async update(id: string, data: UpdateDocumentDto) {
     return prisma.document.update({
       where: {
         id,

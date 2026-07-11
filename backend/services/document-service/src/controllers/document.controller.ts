@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { DocumentService } from "../services/document.service";
 
 export class DocumentController {
-  private service = new DocumentService();
+  private readonly service = new DocumentService();
 
   create = async (req: Request, res: Response) => {
     const document = await this.service.create(req.body);
@@ -12,7 +12,9 @@ export class DocumentController {
   };
 
   list = async (req: Request, res: Response) => {
-    const documents = await this.service.list();
+    const documents = await this.service.list(
+      req.query as Record<string, string | undefined>,
+    );
 
     res.json(documents);
   };
