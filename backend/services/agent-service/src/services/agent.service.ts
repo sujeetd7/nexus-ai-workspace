@@ -7,17 +7,24 @@ import { UpdateAgentRequest } from "../dto/requests/update-agent.request";
 
 import { AgentRepository } from "../repositories/agent.repository";
 
+import slugify from "slugify";
+
 export class AgentService {
   private readonly repository = new AgentRepository();
 
   async create(data: CreateAgentRequest) {
-    const existing = await this.repository.findBySlug(data.slug);
+    const slug = slugify(data.name, {
+      lower: true,
+      strict: true,
+    });
+
+    const existing = await this.repository.findBySlug(slug);
 
     if (existing) {
       throw new ConflictError(`Agent '${data.slug}' already exists.`);
     }
 
-    return this.repository.create(data);
+    return this.repository.create({ ...data, slug });
   }
 
   async list(query: ListAgentsRequest) {
