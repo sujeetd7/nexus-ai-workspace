@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { healthRouter } from "./health.routes";
 
-export const router = Router();
+import agentRoutes from "./agent.routes";
+import healthRoutes from "./health.routes";
 
-router.use("/health", healthRouter);
+const router = Router();
+
+router.use(healthRoutes);
+
+router.use(agentRoutes);
 
 export default router;
