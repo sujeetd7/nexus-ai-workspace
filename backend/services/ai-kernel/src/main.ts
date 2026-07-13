@@ -1,9 +1,16 @@
 import { IKernelExecutionRequest } from "./kernel/execution-request.interface";
 import { KernelBuilder } from "./kernel/kernel-builder";
 import { IKernel } from "./kernel/kernel.interface";
+import { MemoryModule } from "./memory/memory.module";
+import { PipelineModule } from "./pipeline/pipeline.module";
+import { ProviderModule } from "./providers/provider.module";
 
 async function bootstrap() {
-  const kernel: IKernel = new KernelBuilder().build();
+  const kernel: IKernel = new KernelBuilder()
+    .addModule(new PipelineModule())
+    .addModule(new MemoryModule())
+    .addModule(new ProviderModule())
+    .build();
   await kernel.start();
 
   // Example usage (this would typically come from an HTTP controller)

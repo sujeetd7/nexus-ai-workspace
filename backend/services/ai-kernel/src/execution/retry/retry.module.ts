@@ -1,5 +1,5 @@
 import { DefaultRetryPolicy } from "./default-retry.policy";
-import { RetryExecutor } from "./retry-executor";
+import { RetryExecutor } from "./retry.executor";
 
 export class RetryModule {
   private readonly executor: RetryExecutor;

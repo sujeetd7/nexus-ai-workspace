@@ -2,6 +2,7 @@ import { IKernelContext, IMemory } from "../../kernel/kernel-context.interface";
 import { IKernel } from "../../kernel/kernel.interface";
 import { IMemoryModule } from "../../memory/memory-module.interface";
 import { IPipelineStage } from "../pipeline.interface";
+import { PipelinePayload } from "../types/pipeline-payload.interface";
 
 export class MemoryLoaderStage implements IPipelineStage {
   public readonly name = "MemoryLoaderStage";
@@ -13,8 +14,8 @@ export class MemoryLoaderStage implements IPipelineStage {
 
   public async execute(
     context: IKernelContext,
-    payload: any,
-  ): Promise<IKernelContext> {
+    payload: PipelinePayload,
+  ): Promise<PipelinePayload> {
     console.log(
       `[${this.name}] Loading memory for context:`,
       context.requestId,
@@ -41,19 +42,19 @@ export class MemoryLoaderStage implements IPipelineStage {
     const retrievedDocuments =
       (request?.metadata?.retrievedDocuments as any[]) || [];
 
-    const enrichedContext: IKernelContext = {
-      ...context,
-      memory: loadedMemory,
-      retrievedDocuments: [
-        ...context.retrievedDocuments,
-        ...retrievedDocuments,
-      ], // Merge with any existing
-    };
+    const mergedDocuments = [
+      ...context.retrievedDocuments,
+      ...retrievedDocuments,
+    ];
 
     console.log(
-      `[${this.name}] Memory loaded. Conversation history length: ${enrichedContext.memory.conversationHistory.length}, Short-term memory keys: ${Object.keys(enrichedContext.memory.shortTermMemory).length}, Retrieved documents count: ${enrichedContext.retrievedDocuments.length}`,
+      `[${this.name}] Memory loaded. Conversation history length: ${loadedMemory.conversationHistory.length}, Short-term memory keys: ${Object.keys(loadedMemory.shortTermMemory).length}, Retrieved documents count: ${mergedDocuments.length}`,
     );
 
-    return enrichedContext; // Return the enriched context directly
+    return {
+      ...payload,
+      memory: loadedMemory,
+      retrievedDocuments: mergedDocuments,
+    };
   }
 }

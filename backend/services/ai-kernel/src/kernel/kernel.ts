@@ -75,7 +75,10 @@ export class Kernel implements IKernel {
     };
 
     try {
-      const resultContext = await pipeline.execute(initialContext, request);
+      const resultContext = await pipeline.execute(initialContext, {
+        request,
+        context: initialContext,
+      });
 
       return {
         status: "success",

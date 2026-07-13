@@ -14,7 +14,9 @@ export class LLMCallStage implements IPipelineStage {
     const providerModule =
       this.kernel.getModule<IProviderModule>("ProviderModule");
 
-    const provider = providerModule.getProvider(payload.providerName);
+    const providerName = payload.providerConfig?.provider ?? "ollama";
+
+    const provider = providerModule.getProvider(providerName);
 
     const response = await provider.execute({
       provider: payload.executionPlan.provider ?? "ollama",
@@ -32,11 +34,11 @@ export class LLMCallStage implements IPipelineStage {
     return {
       ...payload,
 
-      llmOutput: response.text,
-
-      usage: response.usage,
-
-      finishReason: response.finishReason,
+      llmResponse: {
+        ...response,
+        provider: providerName,
+        model: payload.executionPlan.model,
+      },
     };
   }
 }
