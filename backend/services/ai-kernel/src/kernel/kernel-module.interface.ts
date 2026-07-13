@@ -1,5 +1,6 @@
+import { IKernel } from "./kernel.interface";
 
-import { IKernel } from './kernel.interface';
+export type { IKernel } from "./kernel.interface";
 
 export interface IKernelModule {
   name: string;
