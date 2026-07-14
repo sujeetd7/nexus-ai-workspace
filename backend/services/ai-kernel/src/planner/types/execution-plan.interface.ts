@@ -1,3 +1,5 @@
+import type { ExecutionStep } from "../../execution/interfaces/execution-step.interface";
+
 export type ExecutionPriority = "low" | "normal" | "high" | "critical";
 
 export type ExecutionStatus =
@@ -5,6 +7,13 @@ export type ExecutionStatus =
 
 export interface ExecutionPlan {
   id: string;
+
+  action?: string;
+
+  details?: {
+    parallelSteps?: ExecutionPlan[];
+    [key: string]: unknown;
+  };
 
   provider: string;
 
@@ -31,18 +40,4 @@ export interface ExecutionPlan {
   steps: ExecutionStep[];
 }
 
-export interface ExecutionStep {
-  id: string;
-
-  name: string;
-
-  type: "memory" | "rag" | "tool" | "llm" | "agent" | "output";
-
-  enabled: boolean;
-
-  status: ExecutionStatus;
-
-  dependsOn: string[];
-
-  metadata?: Record<string, any>;
-}
+export type { ExecutionStep };

@@ -1,20 +1,29 @@
-import { IExecutor, IExecutorRegistry } from "./executor-registry.interface";
+import {
+  IExecutionExecutor,
+  IExecutorRegistry,
+} from "./executor-registry.interface";
 
-/**
- * A concrete implementation of `IExecutorRegistry` that manages registered executors.
- */
 export class ExecutorRegistry implements IExecutorRegistry {
-  private executors: Map<string, IExecutor> = new Map();
+  private readonly executors = new Map<string, IExecutionExecutor>();
 
-  public getExecutor(action: string): IExecutor | undefined {
-    return this.executors.get(action);
+  public registerExecutor(
+    stepType: string,
+    executor: IExecutionExecutor,
+  ): void {
+    this.executors.set(stepType, executor);
+
+    console.log(`[ExecutorRegistry] Registered '${stepType}' executor`);
   }
 
-  public registerExecutor(action: string, executor: IExecutor): void {
-    if (this.executors.has(action)) {
-      console.warn(`Executor for action '${action}' is being overwritten.`);
-    }
-    this.executors.set(action, executor);
-    console.log(`Executor for action '${action}' registered.`);
+  public getExecutor(stepType: string): IExecutionExecutor | undefined {
+    return this.executors.get(stepType);
+  }
+
+  public hasExecutor(stepType: string): boolean {
+    return this.executors.has(stepType);
+  }
+
+  public listExecutors(): string[] {
+    return [...this.executors.keys()];
   }
 }

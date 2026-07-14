@@ -48,7 +48,7 @@ export class KernelBuilder {
   }
 
   public build(): Kernel {
-    const requiredModules = ["PipelineModule"];
+    const requiredModules = ["PipelineModule", "ExecutionModule"];
 
     for (const moduleName of requiredModules) {
       if (!this.modules.some((module) => module.name === moduleName)) {

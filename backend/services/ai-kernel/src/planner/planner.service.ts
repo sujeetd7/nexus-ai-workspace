@@ -13,6 +13,7 @@ export class PlannerService {
         enabled: true,
         status: "pending",
         dependsOn: [],
+        metadata: {},
       });
     }
 
@@ -24,6 +25,7 @@ export class PlannerService {
         enabled: true,
         status: "pending",
         dependsOn: [],
+        metadata: {},
       });
     }
 
@@ -61,6 +63,12 @@ export class PlannerService {
 
     return {
       id: randomUUID(),
+
+      action: "multi_step",
+
+      details: {
+        parallelSteps: [],
+      },
 
       provider: request.provider,
 

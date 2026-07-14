@@ -9,27 +9,28 @@ export class OutputParserStage implements IPipelineStage {
     context: IKernelContext,
     payload: PipelinePayload,
   ): Promise<PipelinePayload> {
-    console.log(`[${this.name}] Parsing LLM response...`);
+    console.log(`[${this.name}] Parsing execution result...`);
 
-    if (!payload.llmResponse) {
-      throw new Error("LLM response missing.");
+    const executionResult = payload.executionResult;
+
+    if (!executionResult) {
+      throw new Error("ExecutionResult missing.");
     }
 
     const parsedOutput = {
-      text: payload.llmResponse.text,
-
-      provider: payload.llmResponse.provider,
-
-      model: payload.llmResponse.model,
-
-      finishReason: payload.llmResponse.finishReason,
-
-      usage: payload.llmResponse.usage,
+      success: executionResult.success,
+      output: executionResult.output,
+      error: executionResult.error,
+      finishReason: executionResult.finishReason,
+      tokens: executionResult.tokens,
+      cost: executionResult.cost,
+      latencyMs: executionResult.latencyMs,
+      providerMetadata: executionResult.providerMetadata,
+      toolCalls: executionResult.toolCalls,
     };
 
     return {
       ...payload,
-
       parsedOutput,
     };
   }

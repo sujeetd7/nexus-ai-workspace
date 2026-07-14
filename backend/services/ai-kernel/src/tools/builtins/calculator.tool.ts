@@ -17,6 +17,28 @@ export class CalculatorTool implements ITool {
 
   readonly tags = ["math"];
 
+  readonly inputSchema = {
+    type: "object",
+
+    properties: {
+      operation: {
+        type: "string",
+
+        enum: ["add", "subtract", "multiply", "divide"],
+      },
+
+      a: {
+        type: "number",
+      },
+
+      b: {
+        type: "number",
+      },
+    },
+
+    required: ["operation", "a", "b"],
+  };
+
   async execute(input: {
     operation: "add" | "subtract" | "multiply" | "divide";
     a: number;

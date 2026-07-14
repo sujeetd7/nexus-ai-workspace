@@ -2,8 +2,8 @@ import { randomUUID } from "crypto";
 
 import { IKernelContext } from "../../kernel/kernel-context.interface";
 import { IKernel } from "../../kernel/kernel.interface";
+import { ExecutionPlan } from "../../planner/types/execution-plan.interface";
 import { IPipelineStage } from "../pipeline.interface";
-import { ExecutionPlan } from "../types/execution-plan.interface";
 import { PipelinePayload } from "../types/pipeline-payload.interface";
 
 export class PlannerExecutorStage implements IPipelineStage {
@@ -21,9 +21,21 @@ export class PlannerExecutorStage implements IPipelineStage {
     const provider =
       request?.provider ?? request?.metadata?.provider ?? "ollama";
 
-    const model = request?.model ?? request?.metadata?.model ?? "llama3";
+    const model =
+      request?.model ??
+      request?.metadata?.model ??
+      process.env.OLLAMA_MODEL ??
+      "llama3.2";
 
     const executionPlan: ExecutionPlan = {
+      id: randomUUID(),
+
+      action: "multi_step",
+
+      details: {
+        parallelSteps: [],
+      },
+
       provider,
 
       model,
@@ -39,14 +51,55 @@ export class PlannerExecutorStage implements IPipelineStage {
 
       requiresRAG: (payload.retrievedDocuments?.length ?? 0) > 0,
 
+      requiresAgent: false,
+
+      priority: "normal",
+
+      createdAt: new Date(),
+
       maxTokens: request?.maxTokens ?? request?.metadata?.maxTokens ?? 4096,
 
       steps: [
         {
           id: randomUUID(),
+          name: "Load Memory",
+          type: "memory",
+          enabled: true,
+          status: "pending",
+          dependsOn: [],
+          metadata: {},
+        },
+
+        {
+          id: randomUUID(),
+          name: "Execute Tools",
+          type: "tool",
+          enabled: true,
+          status: "pending",
+          dependsOn: [],
+          metadata: {
+            tools: request?.tools?.length > 0 ? request.tools : [],
+          },
+        },
+
+        {
+          id: randomUUID(),
           name: "LLM Generation",
           type: "llm",
           enabled: true,
+          status: "pending",
+          dependsOn: [],
+          metadata: {},
+        },
+
+        {
+          id: randomUUID(),
+          name: "Prepare Output",
+          type: "output",
+          enabled: true,
+          status: "pending",
+          dependsOn: [],
+          metadata: {},
         },
       ],
     };

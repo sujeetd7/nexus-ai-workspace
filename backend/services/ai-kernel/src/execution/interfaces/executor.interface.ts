@@ -1,7 +1,7 @@
 import { IKernelContext } from "../../kernel/kernel-context.interface";
 import { ExecutionStep } from "./execution-step.interface";
 
-export interface IExecutor {
+export interface IStepExecutor {
   supports(type: string): boolean;
 
   execute(

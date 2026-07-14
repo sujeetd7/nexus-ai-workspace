@@ -1,4 +1,4 @@
-﻿# API cURL snippets — ai-service & ai-kernel
+﻿# API cURL snippets — ai-service, ai-kernel & prompt-service
 
 ## AI-Service (http://localhost:3007)
 
@@ -40,3 +40,51 @@
   `curl -X POST http://localhost:3010/api/v1/kernel/execute -H "Content-Type: application/json" -d '{"input":"Summarize this","plan":{"stream":false},"options":{}}'`  
   PowerShell:
   `$payload = @{ input='Summarize this'; plan = @{ stream = $false }; options = @{} }; Invoke-RestMethod -Uri 'http://localhost:3010/api/v1/kernel/execute' -Method Post -ContentType 'application/json' -Body ($payload | ConvertTo-Json -Depth 10)`
+
+---
+
+## Prompt Service (via AI Kernel)
+
+Preferred usage: invoke prompt rendering through the AI Kernel so the kernel's `PromptIntegrationModule` (which calls the Prompt Service) is the single source of truth. Send a kernel execute request containing `promptKey` and `variables`.
+
+- **Render Prompt via Kernel (POST /api/v1/kernel/execute)**
+  POSIX (curl):
+  `curl -X POST http://localhost:3010/api/v1/kernel/execute -H "Content-Type: application/json" -d '{"promptKey":"assistant.default","variables":{"question":"Explain RAG"},"workspaceId":"workspace-123","promptVersion":"v2"}'`
+
+  PowerShell:
+  `$payload = @{ promptKey='assistant.default'; variables = @{ question = 'Explain RAG' }; workspaceId='workspace-123'; promptVersion='v2' }; Invoke-RestMethod -Uri 'http://localhost:3010/api/v1/kernel/execute' -Method Post -ContentType 'application/json' -Body ($payload | ConvertTo-Json -Depth 10)`
+
+Notes:
+
+- The kernel will call the Prompt Service `render` endpoint on your behalf when `promptKey` is present.
+- The kernel request body may include `promptVersion` and `workspaceId` to request a specific prompt version or workspace override.
+- For listing prompts, prompt metadata, or direct Prompt Service admin endpoints, call the Prompt Service API directly (if you run admin tooling). Runtime prompt rendering and execution should go through the kernel.
+
+---
+
+## Kernel Admin (Prompt metadata via AI Kernel)
+
+Use these endpoints when you want to access prompt metadata through the kernel (proxies to the Prompt Service). These are intended for admin or tooling usage.
+
+- **List Prompts (GET /api/v1/kernel/prompts)**
+  - POSIX:
+    `curl http://localhost:3010/api/v1/kernel/prompts`
+  - PowerShell:
+    `Invoke-RestMethod -Uri 'http://localhost:3010/api/v1/kernel/prompts' -Method Get`
+
+- **Get Prompt By ID (GET /api/v1/kernel/prompts/{id})**
+  - POSIX:
+    `curl http://localhost:3010/api/v1/kernel/prompts/<PROMPT_ID>`
+  - PowerShell:
+    `Invoke-RestMethod -Uri 'http://localhost:3010/api/v1/kernel/prompts/<PROMPT_ID>' -Method Get`
+
+- **Get Prompt Versions (GET /api/v1/kernel/prompts/{id}/versions)**
+  - POSIX:
+    `curl http://localhost:3010/api/v1/kernel/prompts/<PROMPT_ID>/versions`
+  - PowerShell:
+    `Invoke-RestMethod -Uri 'http://localhost:3010/api/v1/kernel/prompts/<PROMPT_ID>/versions' -Method Get`
+
+Notes:
+
+- These endpoints proxy to the Prompt Service and require the kernel's `PromptIntegrationModule` to be initialized and healthy.
+- They are intended for admin tooling; runtime prompt rendering should use the `POST /api/v1/kernel/execute` flow with `promptKey`.

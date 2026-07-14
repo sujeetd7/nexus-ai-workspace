@@ -40,4 +40,18 @@ export class ToolRegistry {
       tags: tool.tags ?? [],
     }));
   }
+
+  public definitions() {
+    return this.getAll().map((tool) => ({
+      type: "function",
+      function: {
+        name: tool.name,
+        description: tool.description,
+        parameters: tool.inputSchema ?? {
+          type: "object",
+          properties: {},
+        },
+      },
+    }));
+  }
 }

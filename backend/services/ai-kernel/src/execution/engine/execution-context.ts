@@ -1,5 +1,5 @@
 import { IKernelContext } from "../../kernel/kernel-context.interface";
-import { IPlan } from "../../planner/planner-module.interface";
+import { ExecutionPlan } from "../../planner/types/execution-plan.interface";
 
 /**
  * Represents the context for a single step of execution within the AI Kernel.
@@ -8,7 +8,7 @@ import { IPlan } from "../../planner/planner-module.interface";
  */
 export class ExecutionContext {
   public readonly kernelContext: IKernelContext;
-  public readonly plan: IPlan;
+  public readonly plan: ExecutionPlan;
   public readonly payload: any; // The input payload for the current execution step
   public readonly cancellationToken?: AbortSignal; // For future cancellation support
   public readonly startTime: number;
@@ -18,7 +18,7 @@ export class ExecutionContext {
 
   constructor(
     kernelContext: IKernelContext,
-    plan: IPlan,
+    plan: ExecutionPlan,
     payload: any,
     cancellationToken?: AbortSignal,
   ) {

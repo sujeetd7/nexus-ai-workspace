@@ -81,13 +81,21 @@ export class Kernel implements IKernel {
       });
 
       return {
-        status: "success",
-        output: resultContext?.parsedOutput?.text || "",
-        tokens: resultContext?.tokensUsed || 0,
-        latency: resultContext?.latencyMs || 0,
-        executionId: resultContext?.requestId || initialContext.requestId,
-        toolOutputs: resultContext?.toolOutputs || {},
-        finishReason: resultContext?.finishReason || "unknown",
+        status: resultContext.parsedOutput.success ? "success" : "failed",
+
+        output: resultContext.parsedOutput.output,
+
+        tokens: resultContext.parsedOutput.tokens,
+
+        latency: resultContext.parsedOutput.latencyMs,
+
+        executionId: initialContext.requestId,
+
+        toolOutputs: resultContext.parsedOutput.toolCalls,
+
+        finishReason: resultContext.parsedOutput.finishReason,
+
+        providerMetadata: resultContext.parsedOutput.providerMetadata,
       };
     } catch (error) {
       console.error("Error occurred while executing kernel:", error);

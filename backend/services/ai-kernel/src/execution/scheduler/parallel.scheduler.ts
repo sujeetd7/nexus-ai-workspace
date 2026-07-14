@@ -1,4 +1,4 @@
-import { IPlan } from "../../planner/planner-module.interface";
+import { ExecutionPlan } from "../../planner/types/execution-plan.interface";
 import { ExecutionContext } from "../engine/execution-context";
 import { ExecutionResult } from "../engine/execution-result";
 import { IScheduler } from "./scheduler";
@@ -21,13 +21,13 @@ export class ParallelScheduler implements IScheduler {
     // could contain an array of plans for each parallel step.
 
     // If no specific parallel steps are defined, we'll execute the main plan as a single parallel task.
-    const parallelSteps: IPlan[] =
+    const parallelSteps: ExecutionPlan[] =
       context.plan.action === "multi_step" &&
       context.plan.details?.parallelSteps
-        ? (context.plan.details.parallelSteps as IPlan[])
+        ? context.plan.details.parallelSteps
         : [context.plan]; // Treat the single plan as one parallel step
 
-    const executionPromises = parallelSteps.map(async (stepPlan: IPlan) => {
+    const executionPromises = parallelSteps.map(async (stepPlan) => {
       const stepContext = new ExecutionContext(
         context.kernelContext,
         stepPlan, // The specific plan for this parallel step
