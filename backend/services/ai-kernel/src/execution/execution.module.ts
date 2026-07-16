@@ -9,7 +9,8 @@ import { UUIDTool } from "../tools/builtins/uuid.tool";
 import { JsonTool } from "../tools/builtins/json.tool";
 import { HttpTool } from "../tools/builtins/http.tool";
 import { ToolRegistry } from "../tools/registry/tool-registry";
-import { ToolExecutor } from "../tools/runtime/tool-executor";
+import { EnhancedToolRegistry } from "../mcp/bridge/enhanced-tool-registry";
+import { EnhancedToolExecutor } from "../tools/runtime/enhanced-tool-executor";
 import { DocumentExecutor } from "./executor/document.executor";
 import { MemoryExecutor } from "./executor/memory.executor";
 import { OutputExecutor } from "./executor/output.executor";
@@ -30,8 +31,25 @@ export class ExecutionModule implements IKernelModule {
   public async init(kernel: IKernel): Promise<void> {
     console.log("ExecutionModule initialized.");
 
-    const toolRegistry = new ToolRegistry();
-    const toolExecutor = new ToolExecutor(toolRegistry);
+    // Check if MCP is available
+    let toolRegistry: ToolRegistry;
+    try {
+      const mcpModule = kernel.getModule("MCPModule") as any;
+      if (mcpModule && mcpModule.getEnhancedToolRegistry) {
+        // Use enhanced registry with MCP support
+        const enhancedRegistry = mcpModule.getEnhancedToolRegistry();
+        toolRegistry = enhancedRegistry.getBuiltinRegistry();
+        console.log("Using enhanced tool registry with MCP support");
+      } else {
+        throw new Error("MCP not available");
+      }
+    } catch (error) {
+      // Fall back to basic registry
+      toolRegistry = new ToolRegistry();
+      console.log("Using basic tool registry (MCP not available)");
+    }
+    
+    const toolExecutor = new EnhancedToolExecutor(toolRegistry);
 
     // Register built-in tools
     toolRegistry.register(new CalculatorTool());

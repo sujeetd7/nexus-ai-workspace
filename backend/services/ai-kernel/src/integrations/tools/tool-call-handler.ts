@@ -1,10 +1,17 @@
 import { ToolRegistry } from "../../tools/registry/tool-registry";
-import { ToolExecutor } from "../../tools/runtime/tool-executor";
+import { EnhancedToolExecutor } from "../../tools/runtime/enhanced-tool-executor";
 
 export interface ToolExecutionRequest {
   name: string;
   arguments: string;
   callId: string;
+  context?: {
+    workspaceId?: string;
+    userId?: string;
+    traceId?: string;
+    sessionId?: string;
+    conversationId?: string;
+  };
 }
 
 export interface ToolExecutionResult {
@@ -22,7 +29,7 @@ export interface ToolCallHandler {
 export class KernelToolCallHandler implements ToolCallHandler {
   constructor(
     private readonly toolRegistry: ToolRegistry,
-    private readonly toolExecutor: ToolExecutor
+    private readonly toolExecutor: EnhancedToolExecutor
   ) {}
 
   async executeTools(requests: ToolExecutionRequest[]): Promise<ToolExecutionResult[]> {
@@ -50,6 +57,16 @@ export class KernelToolCallHandler implements ToolCallHandler {
           tool: request.name,
           input: parsedArguments,
           requestId: request.callId,
+          context: request.context ? {
+            workspaceId: request.context.workspaceId,
+            userId: request.context.userId,
+            traceId: request.context.traceId,
+            sessionId: request.context.sessionId,
+            metadata: {
+              conversationId: request.context.conversationId,
+              source: "tool_call_handler"
+            }
+          } : undefined
         });
 
         results.push({

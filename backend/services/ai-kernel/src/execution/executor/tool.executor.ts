@@ -3,7 +3,7 @@ import { ExecutionResult } from "../engine/execution-result";
 import { IExecutionExecutor } from "./executor.interface";
 
 import { ToolRegistry } from "../../tools/registry/tool-registry";
-import { ToolExecutor as RuntimeToolExecutor } from "../../tools/runtime/tool-executor";
+import { EnhancedToolExecutor } from "../../tools/runtime/enhanced-tool-executor";
 
 export class ToolExecutionExecutor implements IExecutionExecutor {
   constructor(private readonly registry: ToolRegistry) {}
@@ -11,7 +11,7 @@ export class ToolExecutionExecutor implements IExecutionExecutor {
   public async execute(context: ExecutionContext): Promise<ExecutionResult> {
     console.log("[ToolExecutionExecutor]");
 
-    const runtime = new RuntimeToolExecutor(this.registry);
+    const runtime = new EnhancedToolExecutor(this.registry);
 
     const toolNames: string[] =
       context.payload.currentStep?.metadata?.tools ??
@@ -25,6 +25,16 @@ export class ToolExecutionExecutor implements IExecutionExecutor {
         tool: toolName,
         input: context.payload.request,
         requestId: context.requestId,
+        context: {
+          workspaceId: context.payload.request?.workspaceId,
+          userId: context.payload.request?.userId,
+          traceId: context.traceId,
+          sessionId: context.payload.request?.sessionId,
+          metadata: {
+            conversationId: context.payload.request?.conversationId,
+            source: "execution_engine"
+          }
+        }
       });
 
       results.push(response);

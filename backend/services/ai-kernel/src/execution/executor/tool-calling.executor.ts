@@ -4,7 +4,7 @@ import { ExecutionResult } from "../engine/execution-result";
 import { AIServiceClient } from "../../integrations/ai-service/ai-service.client";
 import { KernelToolCallHandler } from "../../integrations/tools/tool-call-handler";
 import { ToolRegistry } from "../../tools/registry/tool-registry";
-import { ToolExecutor } from "../../tools/runtime/tool-executor";
+import { EnhancedToolExecutor } from "../../tools/runtime/enhanced-tool-executor";
 
 export interface ToolCall {
   id: string;
@@ -31,7 +31,7 @@ export class ToolCallingExecutor implements IExecutionExecutor {
   constructor(
     private readonly aiServiceClient: AIServiceClient,
     private readonly toolRegistry: ToolRegistry,
-    private readonly toolExecutor: ToolExecutor
+    private readonly toolExecutor: EnhancedToolExecutor
   ) {}
 
   async execute(context: ExecutionContext): Promise<ExecutionResult> {
@@ -58,7 +58,7 @@ export class ToolCallingExecutor implements IExecutionExecutor {
         temperature: context.plan.temperature,
         maxTokens: context.plan.maxTokens,
         stream: false,
-      }, toolCallHandler);
+      }, toolCallHandler, context);
 
       return ExecutionResult.builder(context.requestId)
         .setSuccess(true)
@@ -84,7 +84,8 @@ export class ToolCallingExecutor implements IExecutionExecutor {
 
   private async executeWithToolCalling(
     request: ToolCallExecuteRequest,
-    toolCallHandler: KernelToolCallHandler
+    toolCallHandler: KernelToolCallHandler,
+    context?: ExecutionContext
   ): Promise<any> {
     let currentPrompt = request.prompt;
     let toolExecutionCount = 0;
@@ -124,6 +125,13 @@ export class ToolCallingExecutor implements IExecutionExecutor {
           name: call.function.name,
           arguments: call.function.arguments,
           callId: call.id,
+          context: context ? {
+            workspaceId: context.kernelContext.workspaceId,
+            userId: context.kernelContext.userId,
+            traceId: context.traceId,
+            sessionId: context.payload.request?.sessionId,
+            conversationId: context.kernelContext.conversationId,
+          } : undefined,
         }))
       );
       
