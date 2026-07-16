@@ -25,5 +25,11 @@
       "@generated/*": ["src/generated/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "src/integrations/document/document-cache.ts",
+    "src/integrations/document/__tests__/**",
+    "src/scripts/test-document-api.ts",
+    "src/tools/test-tool-calling.ts"
+  ]
 }

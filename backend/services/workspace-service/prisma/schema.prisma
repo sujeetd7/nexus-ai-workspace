@@ -21,6 +21,8 @@ model Workspace {
   WorkspaceInvitation WorkspaceInvitation[]
   WorkspaceSetting    WorkspaceSetting?
   WorkspaceBilling    WorkspaceBilling?
+  WorkspacePermission WorkspacePermission[]
+  WorkspaceAuditLog   WorkspaceAuditLog[]
 }
 
 model WorkspaceMember {
@@ -29,7 +31,7 @@ model WorkspaceMember {
   userId      String
   role        WorkspaceRole
   joinedAt    DateTime      @default(now())
-  workspace   Workspace     @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@unique([workspaceId, userId])
 }
@@ -58,7 +60,7 @@ model WorkspaceInvitation {
   expiresAt   DateTime
   createdAt   DateTime         @default(now())
 
-  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@index([workspaceId])
 }
@@ -71,11 +73,12 @@ enum InvitationStatus {
 }
 
 model WorkspacePermission {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   workspaceId String
   userId      String
   permission  String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@unique([workspaceId, userId, permission])
 }
@@ -89,7 +92,7 @@ model WorkspaceSetting {
   maxMembers         Int     @default(10)
   storageQuotaGb     Int     @default(5)
 
-  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }
 
 model WorkspaceBilling {
@@ -99,15 +102,16 @@ model WorkspaceBilling {
   credits       Int    @default(0)
   storageUsedGb Int    @default(0)
 
-  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }
 
 model WorkspaceAuditLog {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   workspaceId String
   actorId     String
   action      String
   resource    String
   metadata    Json?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime  @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }

@@ -18,4 +18,12 @@ export interface StreamEventDto {
   type: StreamEventType;
 
   content?: string;
+  
+  data?: {
+    totalTokens?: number;
+    promptTokens?: number;
+    completionTokens?: number;
+    finishReason?: string;
+    [key: string]: any;
+  };
 }

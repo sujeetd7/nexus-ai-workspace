@@ -1,4 +1,4 @@
-import { SearchVectorResultDto } from "src/dto/search-vector-result.dto";
+import { SearchVectorResultDto } from "../dto/search-vector-result.dto";
 
 export interface VectorRecord {
   id: string;

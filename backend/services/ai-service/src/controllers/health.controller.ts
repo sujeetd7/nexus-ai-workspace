@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
-import { ProviderManager } from "../providers/provider-manager";
+import { ProviderFactory } from "../providers/provider.factory";
 import logger from "../utils/logger";
 import { ChromaVectorStore } from "../vector/chroma-vector-store";
 
 const vectorStore = new ChromaVectorStore();
-const providerManager = new ProviderManager();
 
 export async function health(req: Request, res: Response) {
   const provider = (req.query.provider as string) ?? "ollama";
@@ -13,7 +12,8 @@ export async function health(req: Request, res: Response) {
 
   let providerHealthy = false;
   try {
-    providerHealthy = await providerManager.health(provider);
+    const aiProvider = ProviderFactory.create(provider);
+    providerHealthy = await aiProvider.health();
   } catch (e) {
     logger.debug("provider health check failed", (e as any)?.message ?? e);
   }

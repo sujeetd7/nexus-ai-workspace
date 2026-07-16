@@ -1,19 +1,24 @@
 import {
   ProviderExecuteRequest,
   ProviderExecuteResponse,
+  EmbeddingRequest,
+  EmbeddingResponse,
+  HealthStatus,
+  StreamChunk,
 } from "../../providers/provider.interface";
 
 export interface IAIServiceClient {
   execute(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse>;
-  // streamExecute returns an async iterator of partial responses (SSE events)
-  streamExecute(
-    request: ProviderExecuteRequest,
-  ): AsyncIterable<ProviderExecuteResponse>;
-  // embed returns embedding vectors for given input
-  embed(payload: {
-    input: string[];
-    model?: string;
-  }): Promise<{ embeddings: number[][] }>;
+  generate(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse>;
+  stream(request: ProviderExecuteRequest): AsyncIterable<StreamChunk>;
+  embeddings(request: EmbeddingRequest): Promise<EmbeddingResponse>;
+  health(): Promise<HealthStatus>;
+  providerHealth(provider: string): Promise<HealthStatus>;
+  getAvailableProviders(): Promise<string[]>;
+  
+  // Legacy methods for backward compatibility
+  streamExecute(request: ProviderExecuteRequest): AsyncIterable<ProviderExecuteResponse>;
+  embed(payload: { input: string[]; model?: string; }): Promise<{ embeddings: number[][] }>;
 }
 
 export interface AIServiceClientOptions {

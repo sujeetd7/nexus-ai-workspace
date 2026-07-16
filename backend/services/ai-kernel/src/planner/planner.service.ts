@@ -88,6 +88,8 @@ export class PlannerService {
 
       requiresAgent: false,
 
+      enableToolCalling: request.tools?.length > 0 || request.enableToolCalling,
+
       priority: "normal",
 
       createdAt: new Date(),

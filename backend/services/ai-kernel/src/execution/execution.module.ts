@@ -4,11 +4,19 @@ import { ExecutorRegistry } from "../execution/executor/executor.registry";
 import { LLMExecutor } from "../execution/executor/llm.executor";
 import { IKernel, IKernelModule } from "../kernel/kernel-module.interface";
 import { CalculatorTool } from "../tools/builtins/calculator.tool";
+import { DateTimeTool } from "../tools/builtins/datetime.tool";
+import { UUIDTool } from "../tools/builtins/uuid.tool";
+import { JsonTool } from "../tools/builtins/json.tool";
+import { HttpTool } from "../tools/builtins/http.tool";
 import { ToolRegistry } from "../tools/registry/tool-registry";
+import { ToolExecutor } from "../tools/runtime/tool-executor";
+import { DocumentExecutor } from "./executor/document.executor";
 import { MemoryExecutor } from "./executor/memory.executor";
 import { OutputExecutor } from "./executor/output.executor";
 import { RagExecutor } from "./executor/rag.executor";
 import { ToolExecutionExecutor } from "./executor/tool.executor";
+import { ToolCallingExecutor } from "./executor/tool-calling.executor";
+import { AIServiceIntegrationModule } from "../integrations/ai-service/ai-service-integration.module";
 
 export class ExecutionModule implements IKernelModule {
   public readonly name = "ExecutionModule";
@@ -23,11 +31,22 @@ export class ExecutionModule implements IKernelModule {
     console.log("ExecutionModule initialized.");
 
     const toolRegistry = new ToolRegistry();
+    const toolExecutor = new ToolExecutor(toolRegistry);
+
+    // Register built-in tools
+    toolRegistry.register(new CalculatorTool());
+    toolRegistry.register(new DateTimeTool());
+    toolRegistry.register(new UUIDTool());
+    toolRegistry.register(new JsonTool());
+    toolRegistry.register(new HttpTool());
 
     // Register executors
     this.executorRegistry.registerExecutor("memory", new MemoryExecutor());
 
-    toolRegistry.register(new CalculatorTool());
+    this.executorRegistry.registerExecutor(
+      "document",
+      new DocumentExecutor(kernel),
+    );
 
     this.executorRegistry.registerExecutor(
       "tool",
@@ -38,8 +57,17 @@ export class ExecutionModule implements IKernelModule {
 
     this.executorRegistry.registerExecutor("llm", new LLMExecutor(kernel));
 
+    // Register tool-calling executor
+    const aiServiceModule = kernel.getModule<AIServiceIntegrationModule>("AIServiceIntegrationModule");
+    if (aiServiceModule) {
+      const aiServiceClient = aiServiceModule.getClient();
+      this.executorRegistry.registerExecutor(
+        "tool_calling",
+        new ToolCallingExecutor(aiServiceClient, toolRegistry, toolExecutor)
+      );
+    }
+
     this.executorRegistry.registerExecutor("output", new OutputExecutor());
-    // Future: Register ToolExecutor, MemoryExecutor, etc.
 
     // Initialize the ExecutionEngine with the registry and a default scheduler
     this.executionEngine = new ExecutionEngine(this.executorRegistry);

@@ -6,8 +6,8 @@ import { AIOrchestrator } from "../orchestrators/ai-orchestrator";
 
 import { VectorService } from "./vector.service";
 
-import { CitationBuilder } from "src/rag/citation-builder";
-import { ContextBuilder } from "src/rag/context-builder";
+import { CitationBuilder } from "../rag/citation-builder";
+import { ContextBuilder } from "../rag/context-builder";
 import { PromptBuilder } from "../utils/prompt-builder";
 
 export class RagService {

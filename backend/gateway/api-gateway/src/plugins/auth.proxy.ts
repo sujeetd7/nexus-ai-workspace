@@ -1,13 +1,8 @@
-import fastifyProxy from "@fastify/http-proxy";
-import fp from "fastify-plugin";
+import { createProxy } from "./create-proxy";
 import { env } from "../config/env";
 
-export default fp(async (fastify: any) => {
-  console.log("AUTH UPSTREAM:", env.AUTH_SERVICE_URL);
-
-  await fastify.register(fastifyProxy as any, {
-    upstream: env.AUTH_SERVICE_URL,
-    prefix: "/api/v1/auth",
-    rewritePrefix: "/api/v1/auth",
-  });
+export default createProxy("auth", {
+  prefix: "/api/v1/auth",
+  upstream: env.AUTH_SERVICE_URL,
+  rewritePrefix: "/api/v1/auth",
 });

@@ -25,7 +25,7 @@ export class PlannerExecutorStage implements IPipelineStage {
       request?.model ??
       request?.metadata?.model ??
       process.env.OLLAMA_MODEL ??
-      "llama3.2";
+      "qwen2.5-coder:1.5b";
 
     const executionPlan: ExecutionPlan = {
       id: randomUUID(),

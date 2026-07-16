@@ -1,53 +1,104 @@
 import { IKernel } from "../kernel/kernel.interface";
-import { OllamaProvider } from "./clients/ollama.provider";
-
 import { IProviderModule } from "./provider-module.interface";
-
 import {
   ILLMProvider,
   ProviderExecuteRequest,
   ProviderExecuteResponse,
+  EmbeddingRequest,
+  EmbeddingResponse,
+  HealthStatus,
+  StreamChunk,
 } from "./provider.interface";
+import { AIServiceIntegrationModule } from "../integrations/ai-service/ai-service-integration.module";
 
-import { AIServiceClient } from "../integrations/ai-service/ai-service.client";
-import { AIServiceClientOptions } from "../integrations/ai-service/ai-service.interface";
+// AI Service Provider Wrapper - delegates all calls to AI Service
+class AIServiceProviderWrapper implements ILLMProvider {
+  readonly name: string;
+  
+  constructor(
+    providerName: string,
+    private aiServiceClient: any
+  ) {
+    this.name = providerName;
+  }
+
+  async generate(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse> {
+    return this.aiServiceClient.generate({
+      ...request,
+      provider: this.name,
+    });
+  }
+
+  async *stream(request: ProviderExecuteRequest): AsyncIterable<StreamChunk> {
+    yield* this.aiServiceClient.stream({
+      ...request,
+      provider: this.name,
+    });
+  }
+
+  async embeddings(request: EmbeddingRequest): Promise<EmbeddingResponse> {
+    return this.aiServiceClient.embeddings(request);
+  }
+
+  async health(): Promise<HealthStatus> {
+    return this.aiServiceClient.providerHealth(this.name);
+  }
+
+  async models(): Promise<any[]> {
+    // Delegate to AI Service - models are managed there
+    return [];
+  }
+
+  // Legacy method for backward compatibility
+  async execute(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse> {
+    return this.generate(request);
+  }
+}
 
 export class ProviderModule implements IProviderModule {
   public readonly name = "ProviderModule";
 
   private readonly providers = new Map<string, ILLMProvider>();
-
   private kernel!: IKernel;
-  private aiServiceClient?: AIServiceClient;
+  private aiServiceModule?: AIServiceIntegrationModule;
 
   async init(kernel: IKernel): Promise<void> {
     this.kernel = kernel;
 
-    // register a local provider as a fallback
-    this.registerProvider("ollama", new OllamaProvider());
+    // Get AI Service integration module
+    try {
+      this.aiServiceModule = kernel.getModule<AIServiceIntegrationModule>(
+        "AIServiceIntegrationModule"
+      );
 
-    // If AI service is configured, create a client to delegate provider calls
-    const url = process.env.AI_SERVICE_URL;
-    if (url) {
-      const opts: AIServiceClientOptions = {
-        url,
-        apiKey: process.env.AI_SERVICE_KEY,
-        timeoutMs: process.env.AI_SERVICE_TIMEOUT
-          ? Number(process.env.AI_SERVICE_TIMEOUT)
-          : undefined,
-      };
+      if (this.aiServiceModule) {
+        const aiServiceClient = this.aiServiceModule.getClient();
+        
+        // Initialize providers from AI Service
+        const availableProviders = await aiServiceClient.getAvailableProviders();
+        
+        // Create AI Service delegating wrappers
+        for (const providerName of availableProviders) {
+          const wrapper = new AIServiceProviderWrapper(providerName, aiServiceClient);
+          this.providers.set(providerName, wrapper);
+        }
 
-      try {
-        this.aiServiceClient = new AIServiceClient(
-          opts as AIServiceClientOptions,
-        );
-      } catch (err) {
-        // swallow - we'll fallback to local providers
-        console.warn(
-          "AIServiceClient init failed, falling back to local providers",
-          err,
-        );
+        console.log(`ProviderModule: Registered ${availableProviders.length} providers from AI Service`);
       }
+    } catch (error) {
+      console.warn("Failed to initialize AI Service providers:", error);
+      
+      // Fallback configuration
+      const defaultWrapper = new AIServiceProviderWrapper("ollama", {
+        generate: this.createFallbackMethod("generate"),
+        stream: this.createFallbackStream(),
+        embeddings: this.createFallbackMethod("embeddings"),
+        providerHealth: this.createFallbackMethod("health"),
+        getAvailableProviders: () => Promise.resolve(["ollama"]),
+      });
+      
+      this.providers.set("ollama", defaultWrapper);
+      console.warn("ProviderModule: Using fallback provider configuration");
     }
   }
 
@@ -55,48 +106,31 @@ export class ProviderModule implements IProviderModule {
     this.providers.clear();
   }
 
-  public registerProvider(name: string, provider: ILLMProvider): void {
-    if (this.providers.has(name)) {
-      throw new Error(`${name} already registered`);
-    }
-
-    this.providers.set(name, provider);
-  }
+  // Provider registration is handled automatically via AI Service
+  // Manual registration is no longer supported
 
   public getProvider(name: string): ILLMProvider {
     const provider = this.providers.get(name);
 
     if (!provider) {
-      throw new Error(`Provider '${name}' not found.`);
+      throw new Error(`Provider '${name}' not found. Available providers: ${this.listProviders().join(", ")}`);
     }
 
     return provider;
   }
 
   public getToolDefinitions() {
-    const toolModule = this.kernel.getModule<any>("ToolModule");
-
-    return toolModule.getRegistry().definitions();
+    try {
+      const toolModule = this.kernel.getModule<any>("ToolModule");
+      return toolModule.getRegistry().definitions();
+    } catch (error) {
+      console.warn("ToolModule not available:", error);
+      return [];
+    }
   }
 
-  async execute(
-    request: ProviderExecuteRequest,
-  ): Promise<ProviderExecuteResponse> {
-    // Prefer delegating to centralized AI-Service when available
-    if (this.aiServiceClient) {
-      try {
-        return await this.aiServiceClient.execute(request);
-      } catch (err) {
-        console.warn(
-          "AIService call failed, falling back to local provider",
-          err,
-        );
-        // continue to local provider fallback
-      }
-    }
-
+  async execute(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse> {
     const provider = this.getProvider(request.provider);
-
     return provider.execute(request);
   }
 
@@ -105,6 +139,19 @@ export class ProviderModule implements IProviderModule {
   }
 
   public listProviders(): string[] {
-    return [...this.providers.keys()];
+    return Array.from(this.providers.keys());
+  }
+
+  // Fallback methods when AI Service is not available
+  private createFallbackMethod(methodName: string) {
+    return async (...args: any[]) => {
+      throw new Error(`${methodName} not available: AI Service is not connected`);
+    };
+  }
+
+  private createFallbackStream() {
+    return async function* (...args: any[]) {
+      throw new Error(`Stream not available: AI Service is not connected`);
+    };
   }
 }

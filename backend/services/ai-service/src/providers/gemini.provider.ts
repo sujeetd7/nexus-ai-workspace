@@ -26,36 +26,40 @@ export class GeminiProvider implements AIProvider {
     try {
       const started = Date.now();
 
+      // For now, use simple API without tools (older version limitation)
       const response = await this.getClient().models.generateContent({
-        model: request.model!,
+        model: request.model || "gemini-pro",
         contents: request.prompt,
       });
 
       return {
         text: response.text ?? "",
-        promptTokens: 0,
+        promptTokens: 0, // Not available in older API
         completionTokens: 0,
         totalTokens: 0,
         durationMs: Date.now() - started,
         provider: "gemini",
-        model: request.model!,
+        model: request.model || "gemini-pro",
+        // Tool calls not supported in older API
+        finishReason: "stop",
       };
     } catch (error) {
       ProviderErrorHandler.handle("gemini", error);
     }
   }
 
+
   async *stream(request: ExecuteAIDto): AsyncGenerator<StreamEventDto> {
     try {
       const stream = await this.getClient().models.generateContentStream({
-        model: request.model!,
+        model: request.model || "gemini-pro",
         contents: request.prompt,
       });
 
       for await (const chunk of stream) {
         if (chunk.text) {
           yield {
-            type: StreamEventType.DONE,
+            type: StreamEventType.TOKEN,
             content: chunk.text,
           };
         }
@@ -72,7 +76,7 @@ export class GeminiProvider implements AIProvider {
   async embed(request: EmbedAIDto): Promise<EmbedResponseDto> {
     try {
       const response = await this.getClient().models.embedContent({
-        model: request.model ?? process.env.GEMINI_EMBEDDING_MODEL!,
+        model: request.model ?? "embedding-001",
         contents: Array.isArray(request.input)
           ? request.input.join("\n")
           : request.input,
@@ -80,11 +84,8 @@ export class GeminiProvider implements AIProvider {
 
       return {
         provider: "gemini",
-
-        model: request.model ?? process.env.GEMINI_EMBEDDING_MODEL!,
-
+        model: request.model ?? "embedding-001",
         dimensions: response.embeddings?.[0]?.values?.length ?? 0,
-
         embeddings: response.embeddings?.map((e) => e.values ?? []) ?? [],
       };
     } catch (error) {

@@ -3,9 +3,9 @@ import Anthropic from "@anthropic-ai/sdk";
 import { ExecuteAIDto } from "../dto/execute-ai.dto";
 import { StreamEventDto, StreamEventType } from "../dto/stream-event.dto";
 
-import { EmbedAIDto } from "src/dto/embed-ai.dto";
-import { EmbedResponseDto } from "src/dto/embed-response.dto";
-import { ProviderError } from "src/errors/provider.error";
+import { EmbedAIDto } from "../dto/embed-ai.dto";
+import { EmbedResponseDto } from "../dto/embed-response.dto";
+import { ProviderError } from "../errors/provider.error";
 import { ProviderErrorHandler } from "./provider-error-handler";
 import { AIExecutionResult, AIProvider } from "./provider.interface";
 
@@ -26,31 +26,57 @@ export class ClaudeProvider implements AIProvider {
     try {
       const started = Date.now();
 
-      const response = await this.getClient().messages.create({
+      const messageRequest: any = {
         model: request.model!,
-        max_tokens: 4096,
+        max_tokens: request.maxTokens || 4096,
         messages: [
           {
             role: "user",
             content: request.prompt,
           },
         ],
-      });
+        temperature: request.temperature ?? 0.7,
+      };
 
-      const text =
-        response.content
-          .filter((c) => c.type === "text")
-          .map((c) => c.text)
-          .join("") ?? "";
+      // Add tools if provided
+      if (request.tools && request.tools.length > 0) {
+        messageRequest.tools = request.tools.map(tool => ({
+          name: tool.function.name,
+          description: tool.function.description,
+          input_schema: tool.function.parameters,
+        }));
+      }
+
+      const response = await this.getClient().messages.create(messageRequest);
+
+      // Extract text content
+      const textContent = response.content
+        .filter((c) => c.type === "text")
+        .map((c) => (c as any).text)
+        .join("");
+
+      // Extract tool calls
+      const toolCalls = response.content
+        .filter((c) => c.type === "tool_use")
+        .map((c: any, index: number) => ({
+          id: c.id || `call_${index}`,
+          type: "function" as const,
+          function: {
+            name: c.name,
+            arguments: JSON.stringify(c.input),
+          },
+        }));
 
       return {
-        text,
+        text: textContent,
         promptTokens: response.usage.input_tokens,
         completionTokens: response.usage.output_tokens,
         totalTokens: response.usage.input_tokens + response.usage.output_tokens,
         durationMs: Date.now() - started,
         provider: "claude",
         model: request.model!,
+        toolCalls: toolCalls.length > 0 ? toolCalls : undefined,
+        finishReason: response.stop_reason || "stop",
       };
     } catch (error) {
       ProviderErrorHandler.handle("claude", error);

@@ -4,8 +4,8 @@ import { UpsertVectorDto } from "../dto/upsert-vector.dto";
 
 import { EmbeddingService } from "./embedding.service";
 
-import { IndexBatchDto } from "src/dto/index-batch.dto";
-import { SearchVectorDto } from "src/dto/search-vector.dto";
+import { IndexBatchDto } from "../dto/index-batch.dto";
+import { SearchVectorDto } from "../dto/search-vector.dto";
 import { ChromaVectorStore } from "../vector/chroma-vector-store";
 
 export class VectorService {

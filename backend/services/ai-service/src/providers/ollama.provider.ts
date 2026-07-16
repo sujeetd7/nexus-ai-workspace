@@ -15,39 +15,80 @@ export class OllamaProvider implements AIProvider {
     const started = Date.now();
     try {
       return retry(async () => {
+        // Enhance prompt with tool information for Ollama
+        let enhancedPrompt = request.prompt;
+        
+        if (request.tools && request.tools.length > 0) {
+          enhancedPrompt = this.buildToolPrompt(request.prompt, request.tools);
+        }
+
         const { data } = await axios.post(
           `${process.env.OLLAMA_BASE_URL}/api/generate`,
           {
             model: request.model ?? process.env.DEFAULT_MODEL,
-
-            prompt: request.prompt,
-
+            prompt: enhancedPrompt,
             stream: false,
+            options: {
+              temperature: request.temperature ?? 0.7,
+              num_predict: request.maxTokens,
+            },
           },
           {
             timeout: 60000,
           },
         );
 
+        // Parse tool calls from response if tools were available
+        const toolCalls = request.tools ? this.parseToolCalls(data.response) : undefined;
+
         return {
           text: data.response,
-
           promptTokens: data.prompt_eval_count ?? 0,
-
           completionTokens: data.eval_count ?? 0,
-
           totalTokens: (data.prompt_eval_count ?? 0) + (data.eval_count ?? 0),
-
           durationMs: Date.now() - started,
-
           provider: "ollama",
-
           model: request.model ?? process.env.DEFAULT_MODEL ?? "unknown",
+          toolCalls,
+          finishReason: "stop",
         };
       });
     } catch (error) {
       ProviderErrorHandler.handle("ollama", error);
     }
+  }
+
+  private buildToolPrompt(originalPrompt: string, tools: any[]): string {
+    let prompt = originalPrompt;
+    
+    prompt += "\n\nYou have access to the following tools:";
+    
+    for (const tool of tools) {
+      prompt += `\n\nTool: ${tool.function.name}`;
+      prompt += `\nDescription: ${tool.function.description}`;
+      prompt += `\nParameters: ${JSON.stringify(tool.function.parameters)}`;
+    }
+    
+    prompt += "\n\nTo use a tool, respond with a JSON object in this format:";
+    prompt += '\n{"tool_calls": [{"id": "call_1", "type": "function", "function": {"name": "tool_name", "arguments": "{\"param\": \"value\"}"}}]}';
+    prompt += "\n\nIf you don't need to use any tools, respond normally.";
+    
+    return prompt;
+  }
+
+  private parseToolCalls(response: string): any[] | undefined {
+    try {
+      // Look for JSON tool call format
+      const jsonMatch = response.match(/\{[\s\S]*"tool_calls"[\s\S]*\}/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        return parsed.tool_calls;
+      }
+    } catch (error) {
+      // Ignore parsing errors - no tool calls found
+    }
+    
+    return undefined;
   }
 
   async *stream(request: ExecuteAIDto): AsyncGenerator<StreamEventDto> {

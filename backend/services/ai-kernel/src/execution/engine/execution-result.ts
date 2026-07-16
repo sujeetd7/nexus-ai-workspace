@@ -11,7 +11,7 @@ export class ExecutionResult {
   public readonly cost: number;
   public readonly latencyMs: number;
   public readonly toolCalls: IToolCall[];
-  public readonly providerMetadata: Record<string, any>; // Metadata from the LLM provider
+  public readonly providerMetadata: Record<string, any>;
   public readonly finishReason: string; // e.g., "stop", "length", "tool_calls"
   public readonly executionId: string; // The requestId from the ExecutionContext
 

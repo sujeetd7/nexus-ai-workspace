@@ -15,12 +15,12 @@ export class ChatController {
   };
 
   getConversation = async (req: Request, res: Response) => {
-    const data = await this.service.getConversation(req.params.id);
+    const data = await this.service.getConversation(req.params.id as string);
     res.json(data);
   };
 
   deleteConversation = async (req: Request, res: Response) => {
-    await this.service.deleteConversation(req.params.id);
+    await this.service.deleteConversation(req.params.id as string);
     res.json({ message: "Conversation deleted" });
   };
 
@@ -30,7 +30,7 @@ export class ChatController {
   };
 
   listMembers = async (req: Request, res: Response) => {
-    const data = await this.service.getMembers(req.params.id);
+    const data = await this.service.getMembers(req.params.id as string);
     res.json(data);
   };
 
@@ -40,7 +40,7 @@ export class ChatController {
   };
 
   listMessages = async (req: Request, res: Response) => {
-    const data = await this.service.listMessages(req.params.id);
+    const data = await this.service.listMessages(req.params.id as string);
     res.json(data);
   };
 

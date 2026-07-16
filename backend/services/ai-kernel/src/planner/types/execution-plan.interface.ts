@@ -33,6 +33,8 @@ export interface ExecutionPlan {
 
   requiresAgent: boolean;
 
+  enableToolCalling?: boolean;
+
   priority: ExecutionPriority;
 
   createdAt: Date;

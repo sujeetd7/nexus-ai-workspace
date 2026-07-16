@@ -57,7 +57,7 @@ export class ExecutionEngine {
         payload.lastOutput = result.output;
       }
 
-      // Preserve provider metadata.
+      // Preserve metadata from AI Service
       if (result.providerMetadata) {
         payload.executionMetadata = {
           ...payload.executionMetadata,

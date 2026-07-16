@@ -2,6 +2,10 @@ import axios, { AxiosInstance } from "axios";
 import {
   ProviderExecuteRequest,
   ProviderExecuteResponse,
+  EmbeddingRequest,
+  EmbeddingResponse,
+  HealthStatus,
+  StreamChunk,
 } from "../../providers/provider.interface";
 import {
   AIServiceClientOptions,
@@ -29,9 +33,23 @@ export class AIServiceClient implements IAIServiceClient {
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         const resp = await this.client.post("/api/v1/execute", request);
+        const data = resp.data as {
+          text: string;
+          promptTokens?: number;
+          completionTokens?: number;
+          totalTokens?: number;
+        };
 
-        // Expect the AI-Service to return the same shape as ProviderExecuteResponse
-        return resp.data as ProviderExecuteResponse;
+        return {
+          text: data.text,
+          finishReason: "stop",
+          usage: {
+            promptTokens: data.promptTokens ?? 0,
+            completionTokens: data.completionTokens ?? 0,
+            totalTokens: data.totalTokens ?? 0,
+          },
+          raw: resp.data,
+        };
       } catch (err) {
         lastErr = err;
         // simple backoff
@@ -80,5 +98,114 @@ export class AIServiceClient implements IAIServiceClient {
   public async embed(payload: { input: string[]; model?: string }) {
     const resp = await this.client.post("/api/v1/embed", payload);
     return resp.data as { embeddings: number[][] };
+  }
+
+  public async generate(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse> {
+    return this.execute(request);
+  }
+
+  public async *stream(request: ProviderExecuteRequest): AsyncIterable<StreamChunk> {
+    const resp = await this.client.post("/api/v1/stream", request, {
+      responseType: "stream",
+      headers: {
+        "Accept": "text/event-stream",
+      },
+    });
+
+    let buffer = "";
+    const decoder = new TextDecoder();
+
+    for await (const chunk of resp.data) {
+      buffer += decoder.decode(chunk, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        if (line.trim().startsWith("data: ")) {
+          const data = line.trim().substring(6);
+          if (data === "[DONE]") {
+            return;
+          }
+          try {
+            const parsed = JSON.parse(data);
+            yield {
+              text: parsed.content || parsed.text || "",
+              finishReason: parsed.finishReason,
+              usage: parsed.usage,
+            };
+          } catch (error) {
+            // Ignore parse errors
+            console.warn("Failed to parse stream chunk:", error);
+          }
+        }
+      }
+    }
+  }
+
+  public async embeddings(request: EmbeddingRequest): Promise<EmbeddingResponse> {
+    const payload = {
+      input: request.input,
+      model: request.model,
+      provider: "ollama",
+    };
+
+    const resp = await this.client.post("/api/v1/embeddings", payload);
+    
+    return {
+      embeddings: resp.data.embeddings || [],
+      usage: resp.data.usage || {
+        promptTokens: 0,
+        totalTokens: 0,
+      },
+    };
+  }
+
+  public async health(): Promise<HealthStatus> {
+    try {
+      const resp = await this.client.get("/api/v1/health");
+      return {
+        status: resp.status === 200 ? "healthy" : "unhealthy",
+        latency: 0, // Could be measured
+      };
+    } catch (error) {
+      return {
+        status: "unhealthy",
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+  }
+
+  public async getAvailableProviders(): Promise<string[]> {
+    try {
+      const resp = await this.client.get("/api/v1/providers");
+      return resp.data.providers || [];
+    } catch (error) {
+      console.warn("Failed to get available providers:", error);
+      return [];
+    }
+  }
+
+  public async providerHealth(provider: string): Promise<HealthStatus> {
+    try {
+      const resp = await this.client.get(`/api/v1/provider-health?provider=${provider}`);
+      
+      if (resp.data.status) {
+        return {
+          status: resp.data.status,
+          latency: resp.data.latency,
+          error: resp.data.error,
+        };
+      } else {
+        // Legacy format
+        return {
+          status: resp.data.healthy ? "healthy" : "unhealthy",
+        };
+      }
+    } catch (error) {
+      return {
+        status: "unhealthy",
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
   }
 }

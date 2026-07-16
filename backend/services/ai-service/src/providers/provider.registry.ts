@@ -21,4 +21,12 @@ export class ProviderRegistry {
   static register(name: string, provider: AIProvider): void {
     this.providers.set(name, provider);
   }
+
+  static getAvailableProviders(): string[] {
+    return Array.from(this.providers.keys());
+  }
+
+  static getAllProviders(): Map<string, AIProvider> {
+    return new Map(this.providers);
+  }
 }

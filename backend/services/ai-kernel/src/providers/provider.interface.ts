@@ -68,8 +68,55 @@ export interface ProviderExecuteResponse {
   raw?: unknown;
 }
 
+export interface EmbeddingRequest {
+  input: string | string[];
+  model?: string;
+}
+
+export interface EmbeddingResponse {
+  embeddings: number[][];
+  usage?: {
+    promptTokens: number;
+    totalTokens: number;
+  };
+}
+
+export interface ModelInfo {
+  id: string;
+  name: string;
+  contextLength?: number;
+  type: "chat" | "embedding" | "completion";
+}
+
+export interface HealthStatus {
+  status: "healthy" | "unhealthy";
+  latency?: number;
+  error?: string;
+}
+
+export interface StreamChunk {
+  text: string;
+  finishReason?: string;
+  usage?: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+}
+
 export interface ILLMProvider {
   readonly name: string;
 
+  generate(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse>;
+  
+  stream(request: ProviderExecuteRequest): AsyncIterable<StreamChunk>;
+  
+  embeddings(request: EmbeddingRequest): Promise<EmbeddingResponse>;
+  
+  health(): Promise<HealthStatus>;
+  
+  models(): Promise<ModelInfo[]>;
+
+  // Legacy method for backward compatibility
   execute(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse>;
 }

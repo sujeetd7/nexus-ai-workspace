@@ -8,8 +8,8 @@ const router = Router();
 
 router.use(healthRoutes);
 
-router.use(agentRoutes);
-
 router.use(runtimeRoutes);
+
+router.use(agentRoutes);
 
 export default router;

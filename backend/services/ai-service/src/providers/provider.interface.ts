@@ -1,6 +1,6 @@
 import { EmbedAIDto } from "../dto/embed-ai.dto";
 import { EmbedResponseDto } from "../dto/embed-response.dto";
-import { ExecuteAIDto } from "../dto/execute-ai.dto";
+import { ExecuteAIDto, ToolCall } from "../dto/execute-ai.dto";
 import { StreamEventDto } from "../dto/stream-event.dto";
 
 export interface AIExecutionResult {
@@ -17,6 +17,10 @@ export interface AIExecutionResult {
   provider: string;
 
   model: string;
+
+  toolCalls?: ToolCall[];
+
+  finishReason?: string;
 }
 export interface AIProvider {
   execute(request: ExecuteAIDto): Promise<AIExecutionResult>;

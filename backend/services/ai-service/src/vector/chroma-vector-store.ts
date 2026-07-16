@@ -1,4 +1,4 @@
-import { SearchVectorResultDto } from "src/dto/search-vector-result.dto";
+import { SearchVectorResultDto } from "../dto/search-vector-result.dto";
 import logger from "../utils/logger";
 import { chromaClient } from "./chroma.client";
 import { VectorStore } from "./vector-store.interface";
