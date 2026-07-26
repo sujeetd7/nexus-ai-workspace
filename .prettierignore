@@ -1,9 +1,5 @@
-﻿node_modules/
-dist/
-.next/
-build/
-coverage/
-*.lock
+﻿node_modules
+dist
+coverage
+build
 pnpm-lock.yaml
-*.min.js
-*.generated.ts

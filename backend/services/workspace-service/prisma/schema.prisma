@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Workspace {
+  id                  String                @id @default(uuid())
+  name                String
+  slug                String                @unique
+  description         String?
+  ownerId             String
+  status              WorkspaceStatus       @default(ACTIVE)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  members             WorkspaceMember[]
+  WorkspaceInvitation WorkspaceInvitation[]
+  WorkspaceSetting    WorkspaceSetting?
+  WorkspaceBilling    WorkspaceBilling?
+  WorkspacePermission WorkspacePermission[]
+  WorkspaceAuditLog   WorkspaceAuditLog[]
+}
+
+model WorkspaceMember {
+  id          String        @id @default(uuid())
+  workspaceId String
+  userId      String
+  role        WorkspaceRole
+  joinedAt    DateTime      @default(now())
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+}
+
+enum WorkspaceStatus {
+  ACTIVE
+  ARCHIVED
+  SUSPENDED
+}
+
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  DEVELOPER
+  VIEWER
+}
+
+model WorkspaceInvitation {
+  id          String           @id @default(uuid())
+  workspaceId String
+  email       String
+  invitedBy   String
+  role        WorkspaceRole
+  status      InvitationStatus @default(PENDING)
+  token       String           @unique
+  expiresAt   DateTime
+  createdAt   DateTime         @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+model WorkspacePermission {
+  id          String    @id @default(uuid())
+  workspaceId String
+  userId      String
+  permission  String
+  createdAt   DateTime  @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId, permission])
+}
+
+model WorkspaceSetting {
+  id          String @id @default(uuid())
+  workspaceId String @unique
+
+  allowGuests        Boolean @default(false)
+  allowPublicPrompts Boolean @default(false)
+  maxMembers         Int     @default(10)
+  storageQuotaGb     Int     @default(5)
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model WorkspaceBilling {
+  id            String @id @default(uuid())
+  workspaceId   String @unique
+  plan          String
+  credits       Int    @default(0)
+  storageUsedGb Int    @default(0)
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+model WorkspaceAuditLog {
+  id          String    @id @default(uuid())
+  workspaceId String
+  actorId     String
+  action      String
+  resource    String
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}

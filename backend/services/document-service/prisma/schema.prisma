@@ -1,0 +1,69 @@
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Document {
+  id            String   @id @default(uuid())
+
+  workspaceId   String
+
+  uploadedBy    String
+
+  filename      String
+
+  mimeType      String
+
+  size          Int
+
+  storagePath   String
+
+  status        DocumentStatus @default(PROCESSING)
+
+  metadata      Json?
+
+  createdAt     DateTime @default(now())
+
+  updatedAt     DateTime @updatedAt
+
+  versions      DocumentVersion[]
+
+  tags          DocumentTag[]
+}
+
+model DocumentVersion {
+  id            String   @id @default(uuid())
+
+  documentId    String
+
+  version       Int
+
+  storagePath   String
+
+  createdAt     DateTime @default(now())
+
+  document      Document @relation(fields: [documentId], references: [id])
+}
+
+model DocumentTag {
+  id            String   @id @default(uuid())
+
+  documentId    String
+
+  tag           String
+
+  document      Document @relation(fields: [documentId], references: [id])
+}
+
+enum DocumentStatus {
+  PROCESSING
+  READY
+  FAILED
+  ARCHIVED
+}

@@ -1,0 +1,8 @@
+{
+  "provider": "ollama",
+  "model": "qwen2.5-coder:1.5b",
+  "prompt": "Stream a short message",
+  "temperature": 0.2,
+  "stream": true,
+  "maxTokens": 64
+}

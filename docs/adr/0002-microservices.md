@@ -39,16 +39,16 @@ We adopt a **microservices architecture** for the backend, decomposed along doma
 
 ### Service Decomposition
 
-| Service | Domain | Language | Scaling Characteristics |
-|---|---|---|---|
-| `api-gateway` | Routing, auth enforcement | Node.js | Linear with requests |
-| `auth-service` | Identity, JWT, sessions | Node.js | Moderate, highly available |
-| `chat-service` | Real-time messaging | Node.js | High — WebSocket connections |
-| `document-service` | File handling, AI enrichment | Node.js | Bursty — upload events |
-| `user-service` | Profiles, preferences | Node.js | Low — mostly read-heavy |
-| `workspace-service` | Teams, membership | Node.js | Low to moderate |
-| `notification-service` | Email, push, in-app | Node.js | Bursty — event-driven |
-| `ai-platform` | Agent runtime, RAG, inference | Python | High CPU/memory, bursty |
+| Service                | Domain                        | Language | Scaling Characteristics      |
+| ---------------------- | ----------------------------- | -------- | ---------------------------- |
+| `api-gateway`          | Routing, auth enforcement     | Node.js  | Linear with requests         |
+| `auth-service`         | Identity, JWT, sessions       | Node.js  | Moderate, highly available   |
+| `chat-service`         | Real-time messaging           | Node.js  | High — WebSocket connections |
+| `document-service`     | File handling, AI enrichment  | Node.js  | Bursty — upload events       |
+| `user-service`         | Profiles, preferences         | Node.js  | Low — mostly read-heavy      |
+| `workspace-service`    | Teams, membership             | Node.js  | Low to moderate              |
+| `notification-service` | Email, push, in-app           | Node.js  | Bursty — event-driven        |
+| `ai-platform`          | Agent runtime, RAG, inference | Python   | High CPU/memory, bursty      |
 
 ### Decomposition Principles Applied
 
@@ -79,12 +79,14 @@ We adopt a **microservices architecture** for the backend, decomposed along doma
 **Description:** A single deployable Node.js application with strict internal module boundaries. Modules communicate in-process via well-defined interfaces.
 
 **Pros:**
+
 - Simpler operations (one deployment unit)
 - No network latency between modules
 - Easier transactions across domains
 - Faster initial development
 
 **Cons:**
+
 - Single deployment unit means coordinated deploys
 - Hard to scale individual high-load components (chat vs. auth)
 - AI platform (Python) cannot live in a Node.js monolith
@@ -97,10 +99,12 @@ We adopt a **microservices architecture** for the backend, decomposed along doma
 **Description:** An API gateway in front of a single backend monolith, with the AI platform as a separate service.
 
 **Pros:**
+
 - Simpler than full microservices
 - Reduces operational overhead significantly
 
 **Cons:**
+
 - Monolith still has deployment coordination problem
 - Chat service WebSocket scaling becomes awkward inside a monolith
 - Technical debt accrues faster in a monolith under active development
@@ -112,12 +116,14 @@ We adopt a **microservices architecture** for the backend, decomposed along doma
 **Description:** Each domain is an independent deployable service.
 
 **Pros:**
+
 - Independent scaling per service
 - Independent deployment per team
 - Technology fit per workload (Node.js, Python)
 - Failure isolation (chat service down does not affect auth)
 
 **Cons:**
+
 - Operational complexity (service discovery, distributed tracing, health checks)
 - Network latency between services
 - No cross-service ACID transactions
@@ -152,11 +158,11 @@ We adopt a **microservices architecture** for the backend, decomposed along doma
 
 ### Risks
 
-| Risk | Likelihood | Mitigation |
-|---|---|---|
-| Services sharing a database (violating data ownership) | Medium | Code review enforcement, no cross-service DB access policy |
-| Over-decomposition of services (microservice hell) | Low | Strict domain-driven decomposition, no service splits without ADR |
-| Operational complexity outpacing team maturity | Medium | Start with Docker Compose, graduate to Kubernetes incrementally |
+| Risk                                                   | Likelihood | Mitigation                                                        |
+| ------------------------------------------------------ | ---------- | ----------------------------------------------------------------- |
+| Services sharing a database (violating data ownership) | Medium     | Code review enforcement, no cross-service DB access policy        |
+| Over-decomposition of services (microservice hell)     | Low        | Strict domain-driven decomposition, no service splits without ADR |
+| Operational complexity outpacing team maturity         | Medium     | Start with Docker Compose, graduate to Kubernetes incrementally   |
 
 ---
 

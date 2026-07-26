@@ -30,15 +30,15 @@ This document defines the comprehensive testing strategy for Nexus AI Workspace.
 
 ## 1. Testing Philosophy
 
-| Principle | Application |
-|---|---|
-| **Test behavior, not implementation** | Write tests that survive refactoring |
-| **Fast feedback loops** | Unit tests run in < 30 seconds |
-| **Isolation** | Tests do not depend on each other or on external services |
-| **Determinism** | Tests produce the same result on every run |
-| **Meaningful failures** | A failing test clearly explains what broke and why |
-| **AI evaluation is first class** | AI feature quality is measured, not assumed |
-| **Test in production patterns** | Feature flags + canary deployments complement tests |
+| Principle                             | Application                                               |
+| ------------------------------------- | --------------------------------------------------------- |
+| **Test behavior, not implementation** | Write tests that survive refactoring                      |
+| **Fast feedback loops**               | Unit tests run in < 30 seconds                            |
+| **Isolation**                         | Tests do not depend on each other or on external services |
+| **Determinism**                       | Tests produce the same result on every run                |
+| **Meaningful failures**               | A failing test clearly explains what broke and why        |
+| **AI evaluation is first class**      | AI feature quality is measured, not assumed               |
+| **Test in production patterns**       | Feature flags + canary deployments complement tests       |
 
 ---
 
@@ -62,11 +62,11 @@ This document defines the comprehensive testing strategy for Nexus AI Workspace.
 
 ### Layer Distribution Target
 
-| Layer | % of Tests | Run Time Target |
-|---|---|---|
-| Unit | 70% | < 2 minutes |
-| Integration | 25% | < 10 minutes |
-| E2E | 5% | < 20 minutes |
+| Layer       | % of Tests | Run Time Target |
+| ----------- | ---------- | --------------- |
+| Unit        | 70%        | < 2 minutes     |
+| Integration | 25%        | < 10 minutes    |
+| E2E         | 5%         | < 20 minutes    |
 
 ---
 
@@ -74,16 +74,16 @@ This document defines the comprehensive testing strategy for Nexus AI Workspace.
 
 ### Technology Stack
 
-| Tool | Purpose |
-|---|---|
-| **Jest** | Test runner and assertion library |
-| **React Testing Library** | Component behavioral testing |
-| **MSW (Mock Service Worker)** | HTTP request mocking |
-| **Playwright** | End-to-end browser testing |
-| **Storybook** | Component isolation and visual testing |
-| **Chromatic** | Visual regression testing |
-| **Axe-core** | Accessibility testing |
-| **Detox** | React Native E2E testing |
+| Tool                          | Purpose                                |
+| ----------------------------- | -------------------------------------- |
+| **Jest**                      | Test runner and assertion library      |
+| **React Testing Library**     | Component behavioral testing           |
+| **MSW (Mock Service Worker)** | HTTP request mocking                   |
+| **Playwright**                | End-to-end browser testing             |
+| **Storybook**                 | Component isolation and visual testing |
+| **Chromatic**                 | Visual regression testing              |
+| **Axe-core**                  | Accessibility testing                  |
+| **Detox**                     | React Native E2E testing               |
 
 ### Unit Testing
 
@@ -95,11 +95,19 @@ This document defines the comprehensive testing strategy for Nexus AI Workspace.
 
 ```typescript
 // Placeholder test pattern
-describe('MessageBubble', () => {
-  it('renders user message with correct content', () => { /* ... */ });
-  it('renders AI message with streaming indicator', () => { /* ... */ });
-  it('renders error state when send fails', () => { /* ... */ });
-  it('is accessible (no ARIA violations)', () => { /* ... */ });
+describe("MessageBubble", () => {
+  it("renders user message with correct content", () => {
+    /* ... */
+  });
+  it("renders AI message with streaming indicator", () => {
+    /* ... */
+  });
+  it("renders error state when send fails", () => {
+    /* ... */
+  });
+  it("is accessible (no ARIA violations)", () => {
+    /* ... */
+  });
 });
 ```
 
@@ -124,12 +132,12 @@ describe('MessageBubble', () => {
 
 Covers critical user paths only:
 
-| Test | Path |
-|---|---|
-| Auth E2E | Register → Verify email → Login → Dashboard |
-| Chat E2E | Create thread → Send message → Receive AI response |
-| Document E2E | Upload document → Query document with AI |
-| Workspace E2E | Create workspace → Invite member → Member accepts |
+| Test          | Path                                               |
+| ------------- | -------------------------------------------------- |
+| Auth E2E      | Register → Verify email → Login → Dashboard        |
+| Chat E2E      | Create thread → Send message → Receive AI response |
+| Document E2E  | Upload document → Query document with AI           |
+| Workspace E2E | Create workspace → Invite member → Member accepts  |
 
 ### Accessibility Testing
 
@@ -142,14 +150,14 @@ Covers critical user paths only:
 
 ### Technology Stack
 
-| Tool | Purpose |
-|---|---|
-| **Jest** | Test runner (Node.js) |
-| **Supertest** | HTTP integration testing |
+| Tool               | Purpose                                        |
+| ------------------ | ---------------------------------------------- |
+| **Jest**           | Test runner (Node.js)                          |
+| **Supertest**      | HTTP integration testing                       |
 | **Testcontainers** | Real database containers for integration tests |
-| **nock** | HTTP request mocking |
-| **faker.js** | Test data generation |
-| **Pact** | Consumer-driven contract testing (future) |
+| **nock**           | HTTP request mocking                           |
+| **faker.js**       | Test data generation                           |
+| **Pact**           | Consumer-driven contract testing (future)      |
 
 ### Unit Testing
 
@@ -203,14 +211,14 @@ AI testing is unique: **correctness is probabilistic**. The strategy combines de
 
 ### Technology Stack
 
-| Tool | Purpose |
-|---|---|
-| **pytest** | Test runner (Python) |
-| **pytest-asyncio** | Async test support |
-| **RAGAS** | RAG pipeline quality evaluation |
-| **LangSmith** | LLM trace evaluation |
-| **httpx** | HTTP client for FastAPI integration tests |
-| **respx** | HTTP mocking for provider calls |
+| Tool               | Purpose                                   |
+| ------------------ | ----------------------------------------- |
+| **pytest**         | Test runner (Python)                      |
+| **pytest-asyncio** | Async test support                        |
+| **RAGAS**          | RAG pipeline quality evaluation           |
+| **LangSmith**      | LLM trace evaluation                      |
+| **httpx**          | HTTP client for FastAPI integration tests |
+| **respx**          | HTTP mocking for provider calls           |
 
 ### Unit Testing (Python)
 
@@ -256,21 +264,21 @@ The `ai/tests/benchmarks/` directory contains a golden dataset for AI quality ev
 
 #### RAG Evaluation (RAGAS)
 
-| Metric | Definition | Minimum Threshold |
-|---|---|---|
-| Faithfulness | Is the answer grounded in context? | 0.85 |
-| Answer Relevancy | Is the answer relevant to the question? | 0.80 |
-| Context Precision | Are retrieved chunks relevant? | 0.75 |
-| Context Recall | Are all relevant chunks retrieved? | 0.70 |
+| Metric            | Definition                              | Minimum Threshold |
+| ----------------- | --------------------------------------- | ----------------- |
+| Faithfulness      | Is the answer grounded in context?      | 0.85              |
+| Answer Relevancy  | Is the answer relevant to the question? | 0.80              |
+| Context Precision | Are retrieved chunks relevant?          | 0.75              |
+| Context Recall    | Are all relevant chunks retrieved?      | 0.70              |
 
 #### Agent Evaluation (Custom)
 
-| Metric | Definition | Minimum Threshold |
-|---|---|---|
-| Task Success Rate | Agent completes task correctly | 0.90 |
-| Tool Selection Accuracy | Correct tool selected for task | 0.85 |
-| Instruction Following | Agent follows user instructions | 0.90 |
-| Hallucination Rate | Fabricated information detected | < 0.05 |
+| Metric                  | Definition                      | Minimum Threshold |
+| ----------------------- | ------------------------------- | ----------------- |
+| Task Success Rate       | Agent completes task correctly  | 0.90              |
+| Tool Selection Accuracy | Correct tool selected for task  | 0.85              |
+| Instruction Following   | Agent follows user instructions | 0.90              |
+| Hallucination Rate      | Fabricated information detected | < 0.05            |
 
 ### LLM-as-Judge Evaluation
 
@@ -379,15 +387,15 @@ The `ai/tests/benchmarks/` directory contains a golden dataset for AI quality ev
 
 ## 10. Coverage Requirements
 
-| Layer | Minimum Coverage | Tool |
-|---|---|---|
-| Frontend — components | 80% | Jest --coverage |
-| Frontend — Redux slices | 90% | Jest --coverage |
-| Backend — service layer | 80% | Jest --coverage |
-| Backend — middleware | 90% | Jest --coverage |
-| AI — chains + nodes | 75% | pytest-cov |
-| AI — provider adapters | 90% | pytest-cov |
-| MCP servers | 80% | Jest / pytest-cov |
+| Layer                   | Minimum Coverage | Tool              |
+| ----------------------- | ---------------- | ----------------- |
+| Frontend — components   | 80%              | Jest --coverage   |
+| Frontend — Redux slices | 90%              | Jest --coverage   |
+| Backend — service layer | 80%              | Jest --coverage   |
+| Backend — middleware    | 90%              | Jest --coverage   |
+| AI — chains + nodes     | 75%              | pytest-cov        |
+| AI — provider adapters  | 90%              | pytest-cov        |
+| MCP servers             | 80%              | Jest / pytest-cov |
 
 Coverage is a minimum bar, not a target — prefer meaningful tests over coverage padding.
 
@@ -397,22 +405,22 @@ Coverage is a minimum bar, not a target — prefer meaningful tests over coverag
 
 ### Tools
 
-| Tool | Use Case |
-|---|---|
-| k6 | Load testing API gateway and services |
-| Artillery | WebSocket load testing (chat service) |
-| Locust | AI platform load testing (Python-native) |
-| Lighthouse | Frontend Core Web Vitals |
+| Tool       | Use Case                                 |
+| ---------- | ---------------------------------------- |
+| k6         | Load testing API gateway and services    |
+| Artillery  | WebSocket load testing (chat service)    |
+| Locust     | AI platform load testing (Python-native) |
+| Lighthouse | Frontend Core Web Vitals                 |
 
 ### Scenarios
 
-| Scenario | Virtual Users | Duration | Target |
-|---|---|---|---|
-| API gateway baseline | 100 VUs | 5 min | P99 < 200ms |
-| Chat message send | 500 VUs | 10 min | P99 < 500ms |
-| Concurrent AI chat | 50 VUs | 5 min | TTFB P90 < 1000ms |
-| Document upload | 20 VUs | 5 min | < 30s for 10MB file |
-| WebSocket connections | 1000 VUs | 5 min | No drops, P99 < 100ms |
+| Scenario              | Virtual Users | Duration | Target                |
+| --------------------- | ------------- | -------- | --------------------- |
+| API gateway baseline  | 100 VUs       | 5 min    | P99 < 200ms           |
+| Chat message send     | 500 VUs       | 10 min   | P99 < 500ms           |
+| Concurrent AI chat    | 50 VUs        | 5 min    | TTFB P90 < 1000ms     |
+| Document upload       | 20 VUs        | 5 min    | < 30s for 10MB file   |
+| WebSocket connections | 1000 VUs      | 5 min    | No drops, P99 < 100ms |
 
 ### Benchmark Baselines
 
@@ -425,14 +433,14 @@ Coverage is a minimum bar, not a target — prefer meaningful tests over coverag
 
 See [Security Architecture](./security.md) for full details.
 
-| Test | Tool | Frequency |
-|---|---|---|
-| SAST | ESLint security + Bandit | Every PR |
-| Dependency scan | pnpm audit + pip-audit | Every PR |
-| Container scan | Trivy | Every build |
-| Secret scan | gitleaks | Every commit |
-| DAST | OWASP ZAP | Monthly |
-| Pen test | External vendor | Annually |
+| Test            | Tool                     | Frequency    |
+| --------------- | ------------------------ | ------------ |
+| SAST            | ESLint security + Bandit | Every PR     |
+| Dependency scan | pnpm audit + pip-audit   | Every PR     |
+| Container scan  | Trivy                    | Every build  |
+| Secret scan     | gitleaks                 | Every commit |
+| DAST            | OWASP ZAP                | Monthly      |
+| Pen test        | External vendor          | Annually     |
 
 ---
 

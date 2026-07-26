@@ -1,0 +1,39 @@
+export enum AuditEvent {
+  LOGIN_SUCCESS = "LOGIN_SUCCESS",
+  LOGIN_FAILED = "LOGIN_FAILED",
+  ACCOUNT_LOCKED = "ACCOUNT_LOCKED",
+  PASSWORD_RESET = "PASSWORD_RESET",
+  PASSWORD_CHANGED = "PASSWORD_CHANGED",
+  TOKEN_REFRESH = "TOKEN_REFRESH",
+  TOKEN_REPLAY = "TOKEN_REPLAY",
+  LOGOUT = "LOGOUT",
+  LOGOUT_ALL = "LOGOUT_ALL",
+  EMAIL_VERIFICATION_SENT = "EMAIL_VERIFICATION_SENT",
+  EMAIL_VERIFIED = "EMAIL_VERIFIED",
+  EMAIL_VERIFICATION_FAILED = "EMAIL_VERIFICATION_FAILED",
+  PASSWORD_RESET_REQUESTED = "PASSWORD_RESET_REQUESTED",
+  PASSWORD_RESET_UNKNOWN_EMAIL = "PASSWORD_RESET_UNKNOWN_EMAIL",
+  FORGOT_PASSWORD_REQUESTED = "FORGOT_PASSWORD_REQUESTED",
+  FORGOT_PASSWORD_UNKNOWN_EMAIL = "FORGOT_PASSWORD_UNKNOWN_EMAIL",
+  PASSWORD_RESET_COMPLETED = "PASSWORD_RESET_COMPLETED",
+  PASSWORD_RESET_FAILED = "PASSWORD_RESET_FAILED",
+}
+
+export interface AuditLogInput {
+  event: AuditEvent;
+  userId?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export class AuditService {
+  async log(input: AuditLogInput) {
+    console.log({
+      event: input.event,
+      userId: input.userId,
+      metadata: input.metadata,
+      timestamp: new Date(),
+    });
+  }
+}
+
+export const auditService = new AuditService();

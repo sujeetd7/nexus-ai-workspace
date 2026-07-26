@@ -21,13 +21,13 @@ nexus-ai-workspace/
 
 ## Tech Stack
 
-| Layer | Technologies |
-|-------|-------------|
-| **Frontend** | React 18, React Native, TypeScript, Redux Toolkit + RTK Query, React Hook Form, Zod, Tailwind CSS, Socket.io |
-| **Backend** | Node.js 20, Express, TypeScript, Prisma, PostgreSQL 16, MongoDB 7, Redis 7, BullMQ, JWT + Refresh Tokens, RBAC |
-| **AI Platform** | Python 3.12, FastAPI, LangChain, LangGraph, FastMCP, RAG, ChromaDB, LlamaIndex, LlamaParse, OpenAI, GitHub Models |
-| **Infrastructure** | Docker, Docker Compose, Kubernetes, Terraform, GitHub Actions, Turborepo, pnpm |
-| **Quality** | ESLint, Prettier, Husky, lint-staged, Commitlint, Jest, pytest, CodeQL |
+| Layer              | Technologies                                                                                                      |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| **Frontend**       | React 18, React Native, TypeScript, Redux Toolkit + RTK Query, React Hook Form, Zod, Tailwind CSS, Socket.io      |
+| **Backend**        | Node.js 20, Express, TypeScript, Prisma, PostgreSQL 16, MongoDB 7, Redis 7, BullMQ, JWT + Refresh Tokens, RBAC    |
+| **AI Platform**    | Python 3.12, FastAPI, LangChain, LangGraph, FastMCP, RAG, ChromaDB, LlamaIndex, LlamaParse, OpenAI, GitHub Models |
+| **Infrastructure** | Docker, Docker Compose, Kubernetes, Terraform, GitHub Actions, Turborepo, pnpm                                    |
+| **Quality**        | ESLint, Prettier, Husky, lint-staged, Commitlint, Jest, pytest, CodeQL                                            |
 
 ## Quick Start
 

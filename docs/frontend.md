@@ -54,14 +54,14 @@ frontend/
 
 ### Decomposition
 
-| Microfrontend | Owner | Routes | Description |
-|---|---|---|---|
-| `shell` | Platform Team | `/` | App shell, navigation, layout |
-| `chat-mfe` | Chat Team | `/chat/*` | Chat workspace, threads, AI chat |
-| `document-mfe` | Docs Team | `/docs/*` | Document editor, AI document tools |
+| Microfrontend   | Owner          | Routes         | Description                         |
+| --------------- | -------------- | -------------- | ----------------------------------- |
+| `shell`         | Platform Team  | `/`            | App shell, navigation, layout       |
+| `chat-mfe`      | Chat Team      | `/chat/*`      | Chat workspace, threads, AI chat    |
+| `document-mfe`  | Docs Team      | `/docs/*`      | Document editor, AI document tools  |
 | `workspace-mfe` | Workspace Team | `/workspace/*` | Team spaces, settings, integrations |
-| `copilot-mfe` | AI Team | `/copilot/*` | AI assistant sidebar, suggestions |
-| `admin-mfe` | Platform Team | `/admin/*` | Admin dashboard, user management |
+| `copilot-mfe`   | AI Team        | `/copilot/*`   | AI assistant sidebar, suggestions   |
+| `admin-mfe`     | Platform Team  | `/admin/*`     | Admin dashboard, user management    |
 
 ### Composition Pattern
 
@@ -72,20 +72,20 @@ frontend/
 
 ### Communication
 
-| Pattern | Use Case | Implementation |
-|---|---|---|
+| Pattern            | Use Case                            | Implementation                         |
+| ------------------ | ----------------------------------- | -------------------------------------- |
 | Redux global store | Shared auth state, user preferences | RTK slices with strict slice ownership |
-| Custom events | Cross-MFE notifications | DOM `CustomEvent` with typed payloads |
-| URL params | Navigation state | React Router v6 |
-| Shared context | Theme, locale | React Context (shell-provided) |
+| Custom events      | Cross-MFE notifications             | DOM `CustomEvent` with typed payloads  |
+| URL params         | Navigation state                    | React Router v6                        |
+| Shared context     | Theme, locale                       | React Context (shell-provided)         |
 
 ### Tradeoffs
 
-| Benefit | Cost |
-|---|---|
+| Benefit                           | Cost                                      |
+| --------------------------------- | ----------------------------------------- |
 | Independent deployability per MFE | Increased bundle configuration complexity |
-| Team ownership boundaries | Shared state synchronization overhead |
-| Incremental technology migration | Runtime composition debugging difficulty |
+| Team ownership boundaries         | Shared state synchronization overhead     |
+| Incremental technology migration  | Runtime composition debugging difficulty  |
 
 ---
 
@@ -138,13 +138,13 @@ features/chat/
 
 ### Technology: Redux Toolkit + RTK Query
 
-| State Category | Location | Technology |
-|---|---|---|
-| Server state (fetched data) | RTK Query cache | RTK Query |
-| UI state (modals, panels) | Feature slice | Redux Toolkit |
-| Auth state | Auth slice | Redux Toolkit |
-| Form state | Component-local | React Hook Form |
-| Real-time state | Socket slice | Redux Toolkit + Socket.io |
+| State Category              | Location        | Technology                |
+| --------------------------- | --------------- | ------------------------- |
+| Server state (fetched data) | RTK Query cache | RTK Query                 |
+| UI state (modals, panels)   | Feature slice   | Redux Toolkit             |
+| Auth state                  | Auth slice      | Redux Toolkit             |
+| Form state                  | Component-local | React Hook Form           |
+| Real-time state             | Socket slice    | Redux Toolkit + Socket.io |
 
 ### Redux Store Structure
 
@@ -162,14 +162,14 @@ features/chat/
 
 ### RTK Query API Slices
 
-| Slice | Base URL | Key Endpoints |
-|---|---|---|
-| `authApi` | `/api/auth` | login, logout, refresh, register |
-| `chatApi` | `/api/chat` | threads, messages, send |
-| `documentApi` | `/api/documents` | list, upload, get, delete |
-| `workspaceApi` | `/api/workspace` | list, create, members |
-| `userApi` | `/api/users` | profile, preferences, search |
-| `copilotApi` | `/api/ai` | complete, stream, feedback |
+| Slice          | Base URL         | Key Endpoints                    |
+| -------------- | ---------------- | -------------------------------- |
+| `authApi`      | `/api/auth`      | login, logout, refresh, register |
+| `chatApi`      | `/api/chat`      | threads, messages, send          |
+| `documentApi`  | `/api/documents` | list, upload, get, delete        |
+| `workspaceApi` | `/api/workspace` | list, create, members            |
+| `userApi`      | `/api/users`     | profile, preferences, search     |
+| `copilotApi`   | `/api/ai`        | complete, stream, feedback       |
 
 ### Guidelines
 
@@ -198,14 +198,14 @@ features/chat/
 
 ### Error Handling
 
-| Error Type | Handling Strategy |
-|---|---|
-| 400 Bad Request | Form-level validation error display |
-| 401 Unauthorized | Auto refresh → retry → redirect to login |
-| 403 Forbidden | Toast notification, log to analytics |
+| Error Type       | Handling Strategy                          |
+| ---------------- | ------------------------------------------ |
+| 400 Bad Request  | Form-level validation error display        |
+| 401 Unauthorized | Auto refresh → retry → redirect to login   |
+| 403 Forbidden    | Toast notification, log to analytics       |
 | 429 Rate Limited | Exponential backoff with user notification |
-| 500 Server Error | Global error boundary, retry option |
-| Network Error | Offline banner, queue failed requests |
+| 500 Server Error | Global error boundary, retry option        |
+| Network Error    | Offline banner, queue failed requests      |
 
 ---
 
@@ -220,15 +220,15 @@ features/chat/
 
 ### Event Taxonomy
 
-| Namespace | Event | Direction | Payload |
-|---|---|---|---|
-| `/chat` | `message:send` | Client → Server | `MessagePayload` |
-| `/chat` | `message:receive` | Server → Client | `MessagePayload` |
-| `/chat` | `typing:start` | Client → Server | `TypingPayload` |
-| `/chat` | `typing:stop` | Client → Server | `TypingPayload` |
-| `/copilot` | `stream:token` | Server → Client | `TokenPayload` |
-| `/copilot` | `stream:end` | Server → Client | `StreamEndPayload` |
-| `/notifications` | `notify:push` | Server → Client | `NotificationPayload` |
+| Namespace        | Event             | Direction       | Payload               |
+| ---------------- | ----------------- | --------------- | --------------------- |
+| `/chat`          | `message:send`    | Client → Server | `MessagePayload`      |
+| `/chat`          | `message:receive` | Server → Client | `MessagePayload`      |
+| `/chat`          | `typing:start`    | Client → Server | `TypingPayload`       |
+| `/chat`          | `typing:stop`     | Client → Server | `TypingPayload`       |
+| `/copilot`       | `stream:token`    | Server → Client | `TokenPayload`        |
+| `/copilot`       | `stream:end`      | Server → Client | `StreamEndPayload`    |
+| `/notifications` | `notify:push`     | Server → Client | `NotificationPayload` |
 
 ---
 
@@ -245,12 +245,12 @@ features/chat/
 
 ```typescript
 // Placeholder pattern — do not implement yet
-const schema = z.object({ /* from shared/schemas/zod */ });
+const schema = z.object({/* from shared/schemas/zod */});
 type FormValues = z.infer<typeof schema>;
 
 const { register, handleSubmit, formState } = useForm<FormValues>({
   resolver: zodResolver(schema),
-  defaultValues: { /* ... */ },
+  defaultValues: {/* ... */},
 });
 ```
 
@@ -262,15 +262,15 @@ const { register, handleSubmit, formState } = useForm<FormValues>({
 
 Built on top of **Radix UI primitives** + **Tailwind CSS** + **class-variance-authority (CVA)**.
 
-| Component Category | Examples |
-|---|---|
-| Primitives | Button, Input, Badge, Avatar, Tooltip |
-| Layout | Container, Grid, Stack, Divider |
-| Feedback | Toast, Alert, Skeleton, Spinner |
-| Overlay | Modal, Sheet, Popover, ContextMenu |
-| Navigation | Tabs, Sidebar, Breadcrumb, Pagination |
-| AI-specific | MessageBubble, StreamingText, CopilotPanel |
-| Data Display | DataTable, Card, Stat, Timeline |
+| Component Category | Examples                                   |
+| ------------------ | ------------------------------------------ |
+| Primitives         | Button, Input, Badge, Avatar, Tooltip      |
+| Layout             | Container, Grid, Stack, Divider            |
+| Feedback           | Toast, Alert, Skeleton, Spinner            |
+| Overlay            | Modal, Sheet, Popover, ContextMenu         |
+| Navigation         | Tabs, Sidebar, Breadcrumb, Pagination      |
+| AI-specific        | MessageBubble, StreamingText, CopilotPanel |
+| Data Display       | DataTable, Card, Stat, Timeline            |
 
 ### Design Tokens (Tailwind)
 
@@ -315,41 +315,41 @@ App Init → Check memory for access token
 
 ### Code Sharing Strategy
 
-| Shareable | Not Shareable |
-|---|---|
-| RTK Query API slices | Navigation structure |
-| Redux slices | Platform-specific UI components |
-| Zod validation schemas | Gesture handlers |
-| Shared types and contracts | Native permissions |
-| Business logic hooks | File system operations |
+| Shareable                  | Not Shareable                   |
+| -------------------------- | ------------------------------- |
+| RTK Query API slices       | Navigation structure            |
+| Redux slices               | Platform-specific UI components |
+| Zod validation schemas     | Gesture handlers                |
+| Shared types and contracts | Native permissions              |
+| Business logic hooks       | File system operations          |
 
 ---
 
 ## 11. Performance Strategy
 
-| Strategy | Implementation | Status |
-|---|---|---|
-| Code splitting | Dynamic imports per route | [TODO: implement] |
-| Bundle analysis | `rollup-plugin-visualizer` | [TODO: configure] |
-| Image optimization | Modern formats (WebP/AVIF), lazy load | [TODO: implement] |
-| Virtual lists | TanStack Virtual for long chat/doc lists | [TODO: implement] |
-| Service Worker | Offline caching strategy | [TODO: evaluate] |
-| Memoization | `React.memo`, `useMemo`, `useCallback` | Ongoing |
-| Web Vitals monitoring | Core Web Vitals in analytics | [TODO: integrate] |
+| Strategy              | Implementation                           | Status            |
+| --------------------- | ---------------------------------------- | ----------------- |
+| Code splitting        | Dynamic imports per route                | [TODO: implement] |
+| Bundle analysis       | `rollup-plugin-visualizer`               | [TODO: configure] |
+| Image optimization    | Modern formats (WebP/AVIF), lazy load    | [TODO: implement] |
+| Virtual lists         | TanStack Virtual for long chat/doc lists | [TODO: implement] |
+| Service Worker        | Offline caching strategy                 | [TODO: evaluate]  |
+| Memoization           | `React.memo`, `useMemo`, `useCallback`   | Ongoing           |
+| Web Vitals monitoring | Core Web Vitals in analytics             | [TODO: integrate] |
 
 ---
 
 ## 12. Testing Strategy
 
-| Test Level | Tool | Coverage Target |
-|---|---|---|
-| Unit (components) | Jest + React Testing Library | 80% |
-| Unit (hooks/slices) | Jest | 90% |
-| Integration | Jest + MSW (mock service worker) | Key user flows |
-| E2E (web) | Playwright | Critical paths |
-| E2E (mobile) | Detox | Critical paths |
-| Visual regression | Storybook + Chromatic | UI Kit components |
-| Accessibility | Axe-core + `@testing-library/jest-axe` | All components |
+| Test Level          | Tool                                   | Coverage Target   |
+| ------------------- | -------------------------------------- | ----------------- |
+| Unit (components)   | Jest + React Testing Library           | 80%               |
+| Unit (hooks/slices) | Jest                                   | 90%               |
+| Integration         | Jest + MSW (mock service worker)       | Key user flows    |
+| E2E (web)           | Playwright                             | Critical paths    |
+| E2E (mobile)        | Detox                                  | Critical paths    |
+| Visual regression   | Storybook + Chromatic                  | UI Kit components |
+| Accessibility       | Axe-core + `@testing-library/jest-axe` | All components    |
 
 See [Testing Strategy](./testing.md) for full details.
 

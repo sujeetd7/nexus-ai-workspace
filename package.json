@@ -1,22 +1,21 @@
-﻿{
+{
   "name": "nexus-ai-workspace",
   "version": "1.0.0",
   "private": true,
   "description": "Enterprise AI Platform – ChatGPT + Copilot + Notion AI + Slack AI + GitHub Copilot",
   "workspaces": [
-    "frontend/apps/*",
-    "frontend/packages/*",
     "backend/services/*",
-    "backend/packages/*",
-    "mcp/servers/*",
-    "mcp/sdk",
     "shared"
   ],
+  "prisma": {
+    "schema": "./prisma/schema.prisma"
+  },
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
+    "lint-fix": "eslint . --fix",
     "format": "prettier --write .",
     "prepare": "husky install",
     "db:migrate": "turbo run db:migrate --filter=@nexus/database",
@@ -25,20 +24,45 @@
   "devDependencies": {
     "@commitlint/cli": "^19.0.0",
     "@commitlint/config-conventional": "^19.0.0",
-    "eslint": "^8.57.0",
-    "husky": "^9.0.0",
-    "lint-staged": "^15.0.0",
-    "prettier": "^3.2.0",
+    "@types/jest": "^30.0.0",
+    "@types/supertest": "^7.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.62.1",
+    "@typescript-eslint/parser": "^8.62.1",
+    "@vitest/coverage-v8": "^4.1.9",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
+    "prettier": "^3.9.1",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.11",
     "turbo": "^2.0.0",
-    "typescript": "^5.4.0"
+    "typescript": "^5.4.0",
+    "vitest": "^4.1.9"
   },
   "lint-staged": {
-    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
-    "*.{js,json,md,yml,yaml}": ["prettier --write"]
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=9.0.0"
   },
-  "packageManager": "pnpm@9.0.0"
+  "packageManager": "pnpm@9.0.0",
+  "dependencies": {
+    "@fastify/http-proxy": "^11.5.0",
+    "@fastify/jwt": "^10.2.0",
+    "@fastify/swagger": "^9.8.0",
+    "@fastify/swagger-ui": "^6.1.0",
+    "dotenv": "^17.4.2",
+    "fastify": "^5.9.0",
+    "fastify-plugin": "^6.0.0",
+    "zod": "^4.4.3"
+  }
 }

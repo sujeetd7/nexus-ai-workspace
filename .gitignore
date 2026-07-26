@@ -1,52 +1,39 @@
-﻿# Dependencies
+# dependencies
 node_modules/
-.pnp
-.pnp.js
+**/node_modules/
+**/.ignored_node_modules/
+.pnpm/
+**/.pnpm/
 
-# Build outputs
-dist/
-build/
-.next/
-.turbo/
-out/
-
-# Testing
-coverage/
-.nyc_output/
-pytest_cache/
-__pycache__/
-*.pyc
-.pytest_cache/
-
-# Environment
+# environment
 .env
-.env.local
-.env.*.local
+.env.*
 !.env.example
 
-# Python
-*.egg-info/
-.venv/
-venv/
-__pycache__/
+# build
+dist/
+build/
+coverage/
 
-# IDE
-.vscode/settings.json
-.idea/
-*.swp
-*.swo
+# cache
+.turbo/
+.cache/
+
+# logs
+logs/
+*.log
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
-logs/
-npm-debug.log*
+# IDE
+.vscode/settings.json
 
-# Docker
-*.override.yml
+# prisma generated
+src/generated/
 
-# Prisma
-prisma/generated/
+# Ignore generated folders inside backend services
+/backend/services/*/src/generated/
+/backend/services/user-service/src/generated/
+/backend/services/document-service/src/generated/

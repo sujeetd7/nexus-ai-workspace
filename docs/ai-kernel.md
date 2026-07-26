@@ -88,25 +88,25 @@ See above. Each sub-service under `ai/services/` is a standalone FastAPI applica
 
 LangChain chains for deterministic, non-stateful pipelines:
 
-| Chain | Purpose |
-|---|---|
-| `ChatChain` | Single-turn chat with system prompt |
-| `RAGChain` | Retrieve context + synthesize answer |
-| `SummarizationChain` | Document summarization (map-reduce) |
-| `ClassificationChain` | Intent and topic classification |
-| `ExtractionChain` | Structured JSON extraction from text |
+| Chain                 | Purpose                              |
+| --------------------- | ------------------------------------ |
+| `ChatChain`           | Single-turn chat with system prompt  |
+| `RAGChain`            | Retrieve context + synthesize answer |
+| `SummarizationChain`  | Document summarization (map-reduce)  |
+| `ClassificationChain` | Intent and topic classification      |
+| `ExtractionChain`     | Structured JSON extraction from text |
 
 ### Graphs (`kernel/core/graphs/`)
 
 LangGraph stateful graphs for multi-step workflows:
 
-| Graph | Purpose |
-|---|---|
-| `ChatAgentGraph` | Multi-turn conversational agent |
-| `DocumentAgentGraph` | Document research and Q&A agent |
-| `CodeAgentGraph` | Code generation, review, explanation |
-| `WorkspaceAgentGraph` | Cross-workspace context synthesis |
-| `ResearchAgentGraph` | Multi-step web and doc research |
+| Graph                 | Purpose                              |
+| --------------------- | ------------------------------------ |
+| `ChatAgentGraph`      | Multi-turn conversational agent      |
+| `DocumentAgentGraph`  | Document research and Q&A agent      |
+| `CodeAgentGraph`      | Code generation, review, explanation |
+| `WorkspaceAgentGraph` | Cross-workspace context synthesis    |
+| `ResearchAgentGraph`  | Multi-step web and doc research      |
 
 ---
 
@@ -201,12 +201,12 @@ Response + Source Citations
 
 ### Chunking Strategies
 
-| Strategy | Use Case | Chunk Size |
-|---|---|---|
-| Fixed-size | General purpose | 512 tokens, 50 overlap |
-| Semantic | Coherent paragraph preservation | Variable, ~256–1024 |
-| Recursive character | Code and markdown | 1000 chars, 200 overlap |
-| Sentence | High-precision QA | ~3–5 sentences |
+| Strategy            | Use Case                        | Chunk Size              |
+| ------------------- | ------------------------------- | ----------------------- |
+| Fixed-size          | General purpose                 | 512 tokens, 50 overlap  |
+| Semantic            | Coherent paragraph preservation | Variable, ~256–1024     |
+| Recursive character | Code and markdown               | 1000 chars, 200 overlap |
+| Sentence            | High-precision QA               | ~3–5 sentences          |
 
 ### LlamaIndex Integration
 
@@ -228,14 +228,14 @@ Response + Source Citations
 
 ### Model Routing
 
-| Priority | Model | Provider | Use Case |
-|---|---|---|---|
-| Primary | GPT-4o | OpenAI | Complex reasoning, chat |
-| Primary | GPT-4o-mini | OpenAI | Fast responses, classification |
-| Fallback | Claude 3.5 Sonnet | Anthropic | Primary unavailable |
-| Fallback | Llama 3.3 70B | GitHub Models | Cost optimization |
-| Specialized | o3-mini | OpenAI | Deep reasoning tasks |
-| Specialized | Codestral | GitHub Models | Code generation |
+| Priority    | Model             | Provider      | Use Case                       |
+| ----------- | ----------------- | ------------- | ------------------------------ |
+| Primary     | GPT-4o            | OpenAI        | Complex reasoning, chat        |
+| Primary     | GPT-4o-mini       | OpenAI        | Fast responses, classification |
+| Fallback    | Claude 3.5 Sonnet | Anthropic     | Primary unavailable            |
+| Fallback    | Llama 3.3 70B     | GitHub Models | Cost optimization              |
+| Specialized | o3-mini           | OpenAI        | Deep reasoning tasks           |
+| Specialized | Codestral         | GitHub Models | Code generation                |
 
 ### Provider Failover
 
@@ -265,11 +265,11 @@ class BaseLLMProvider:
 
 ### Provider Configuration
 
-| Provider | Authentication | Config Location |
-|---|---|---|
-| OpenAI | `OPENAI_API_KEY` | Environment variable |
-| Anthropic | `ANTHROPIC_API_KEY` | Environment variable |
-| GitHub Models | `GITHUB_TOKEN` | Environment variable |
+| Provider      | Authentication      | Config Location      |
+| ------------- | ------------------- | -------------------- |
+| OpenAI        | `OPENAI_API_KEY`    | Environment variable |
+| Anthropic     | `ANTHROPIC_API_KEY` | Environment variable |
+| GitHub Models | `GITHUB_TOKEN`      | Environment variable |
 
 ---
 
@@ -277,13 +277,13 @@ class BaseLLMProvider:
 
 ### Memory Types
 
-| Type | Scope | Storage | Purpose |
-|---|---|---|---|
-| **Buffer Memory** | Single session | In-process | Recent message history |
-| **Summary Memory** | Session | Redis | Compressed past context |
-| **Entity Memory** | Session | Redis | Extracted named entities |
-| **Vector Memory** | Long-term | ChromaDB | Semantic memory search |
-| **Episodic Memory** | Long-term | PostgreSQL | Past interaction records |
+| Type                | Scope          | Storage    | Purpose                  |
+| ------------------- | -------------- | ---------- | ------------------------ |
+| **Buffer Memory**   | Single session | In-process | Recent message history   |
+| **Summary Memory**  | Session        | Redis      | Compressed past context  |
+| **Entity Memory**   | Session        | Redis      | Extracted named entities |
+| **Vector Memory**   | Long-term      | ChromaDB   | Semantic memory search   |
+| **Episodic Memory** | Long-term      | PostgreSQL | Past interaction records |
 
 ### Memory Lifecycle
 
@@ -298,14 +298,14 @@ class BaseLLMProvider:
 
 ### Built-in Tools
 
-| Tool | Category | Description |
-|---|---|---|
-| `web_search` | Research | DuckDuckGo / Bing search |
-| `document_retrieval` | RAG | Query ChromaDB for relevant chunks |
-| `code_executor` | Code | Sandboxed Python/JS execution |
-| `calculator` | Math | Symbolic + numeric computation |
-| `datetime` | Utility | Current date/time, timezone conversion |
-| `url_reader` | Research | Fetch and parse web page content |
+| Tool                 | Category | Description                            |
+| -------------------- | -------- | -------------------------------------- |
+| `web_search`         | Research | DuckDuckGo / Bing search               |
+| `document_retrieval` | RAG      | Query ChromaDB for relevant chunks     |
+| `code_executor`      | Code     | Sandboxed Python/JS execution          |
+| `calculator`         | Math     | Symbolic + numeric computation         |
+| `datetime`           | Utility  | Current date/time, timezone conversion |
+| `url_reader`         | Research | Fetch and parse web page content       |
 
 ### MCP Tools
 
@@ -357,14 +357,14 @@ Output: { content, usage, model_used } or SSE stream
 
 ### Evaluation Metrics
 
-| Metric | Tool | Frequency |
-|---|---|---|
-| RAG Faithfulness | RAGAS | Per deployment |
-| RAG Relevancy | RAGAS | Per deployment |
+| Metric             | Tool               | Frequency      |
+| ------------------ | ------------------ | -------------- |
+| RAG Faithfulness   | RAGAS              | Per deployment |
+| RAG Relevancy      | RAGAS              | Per deployment |
 | Answer Correctness | Custom + LLM judge | Per deployment |
-| Latency (TTFB) | Prometheus | Continuous |
-| Token efficiency | Custom | Continuous |
-| Tool call accuracy | Custom benchmark | Per deployment |
+| Latency (TTFB)     | Prometheus         | Continuous     |
+| Token efficiency   | Custom             | Continuous     |
+| Tool call accuracy | Custom benchmark   | Per deployment |
 
 ### Evaluation Pipeline (`pipelines/evaluation/`)
 
@@ -389,26 +389,26 @@ Output: { content, usage, model_used } or SSE stream
 
 ## 13. Observability
 
-| Signal | Implementation | Status |
-|---|---|---|
-| LLM trace logging | LangSmith integration | [TODO: configure] |
-| Inference latency | Prometheus histogram | [TODO: implement] |
-| Token usage per user | Custom metric | [TODO: implement] |
-| RAG retrieval quality | RAGAS dashboard | [TODO: implement] |
-| Error rates | Prometheus counter | [TODO: implement] |
-| Prompt/response audit | Structured log | [TODO: implement] |
+| Signal                | Implementation        | Status            |
+| --------------------- | --------------------- | ----------------- |
+| LLM trace logging     | LangSmith integration | [TODO: configure] |
+| Inference latency     | Prometheus histogram  | [TODO: implement] |
+| Token usage per user  | Custom metric         | [TODO: implement] |
+| RAG retrieval quality | RAGAS dashboard       | [TODO: implement] |
+| Error rates           | Prometheus counter    | [TODO: implement] |
+| Prompt/response audit | Structured log        | [TODO: implement] |
 
 ---
 
 ## 14. Architectural Tradeoffs
 
-| Decision | Benefit | Cost |
-|---|---|---|
-| LangGraph over CrewAI | Fine-grained control, stateful | Steeper learning curve |
-| Python for AI layer | ML ecosystem access | Separate language from backend |
-| ChromaDB over Pinecone | Free, local development | Scaling limits at large volume |
-| LlamaIndex + LangChain | Best of both indexing + chaining | Abstraction overlap |
-| Single inference service | Centralized routing, fallback | Bottleneck risk at high load |
+| Decision                 | Benefit                          | Cost                           |
+| ------------------------ | -------------------------------- | ------------------------------ |
+| LangGraph over CrewAI    | Fine-grained control, stateful   | Steeper learning curve         |
+| Python for AI layer      | ML ecosystem access              | Separate language from backend |
+| ChromaDB over Pinecone   | Free, local development          | Scaling limits at large volume |
+| LlamaIndex + LangChain   | Best of both indexing + chaining | Abstraction overlap            |
+| Single inference service | Centralized routing, fallback    | Bottleneck risk at high load   |
 
 ---
 

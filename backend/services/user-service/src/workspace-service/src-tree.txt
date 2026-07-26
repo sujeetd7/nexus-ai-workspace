@@ -1,0 +1,163 @@
+Folder PATH listing
+Volume serial number is 000000D1 B0ED:067D
+C:\AGENTICAI\NEXUS-AI-WORKSPACE\BACKEND\SERVICES\WORKSPACE-SERVICE\SRC
+|   app.ts
+|   server.ts
+|   
++---billing
+|       .gitkeep
+|       
++---config
+|   |   .gitkeep
+|   |   
+|   +---database
+|   |       .gitkeep
+|   |       prisma.ts
+|   |       
+|   +---env
+|   |       .gitkeep
+|   |       env.ts
+|   |       
+|   +---logger
+|   |       .gitkeep
+|   |       
+|   \---redis
+|           .gitkeep
+|           
++---controllers
+|       .gitkeep
+|       workspace-member.controller.ts
+|       workspace.controller.ts
+|       
++---domain
+|   \---entities
+|           workspace-invitation.entity.ts
+|           workspace-member.entity.ts
+|           workspace.entity.ts
+|           
++---dto
+|   |   workspace-member.dto.ts
+|   |   workspace.dto.ts
+|   |   
+|   +---requests
+|   |       .gitkeep
+|   |       
+|   \---responses
+|           .gitkeep
+|           
++---events
+|   +---consumers
+|   |       .gitkeep
+|   |       
+|   \---publishers
+|           .gitkeep
+|           
++---generated
+|   \---prisma
+|       |   default.d.ts
+|       |   default.js
+|       |   edge.d.ts
+|       |   edge.js
+|       |   index-browser.js
+|       |   index.d.ts
+|       |   index.js
+|       |   index.ts
+|       |   package.json
+|       |   query_engine-windows.dll.node
+|       |   query_engine-windows.dll.node.tmp3076
+|       |   schema.prisma
+|       |   wasm.d.ts
+|       |   wasm.js
+|       |   
+|       \---runtime
+|               edge-esm.js
+|               edge.js
+|               index-browser.d.ts
+|               index-browser.js
+|               library.d.ts
+|               library.js
+|               react-native.js
+|               wasm.js
+|               
++---invitations
+|       .gitkeep
+|       
++---middleware
+|   +---auth
+|   |       .gitkeep
+|   |       
+|   +---error
+|   |       .gitkeep
+|   |       error.middleware.ts
+|   |       
+|   +---logging
+|   |       .gitkeep
+|   |       
+|   +---rate-limit
+|   |       .gitkeep
+|   |       
+|   \---validation
+|           .gitkeep
+|           
++---permissions
+|       .gitkeep
+|       
++---queues
+|       .gitkeep
+|       
++---repositories
+|   |   .gitkeep
+|   |   workspace-member.repository.ts
+|   |   workspace.repository.ts
+|   |   
+|   +---mongo
+|   |       .gitkeep
+|   |       
+|   \---prisma
+|           .gitkeep
+|           
++---routes
+|       .gitkeep
+|       health.routes.ts
+|       index.ts
+|       workspace-member.routes.ts
+|       workspace.routes.ts
+|       
++---services
+|       .gitkeep
+|       workspace-member.service.ts
+|       workspace.service.ts
+|       
++---settings
+|       .gitkeep
+|       
++---types
+|   +---enums
+|   |       .gitkeep
+|   |       workspace-role.enum.ts
+|   |       
+|   \---interfaces
+|           .gitkeep
+|           
++---utils
+|       .gitkeep
+|       
++---validators
+|       .gitkeep
+|       workspace-member.validator.ts
+|       workspace.validator.ts
+|       
+\---workers
+        .gitkeep
+        
+Folder PATH listing
+Volume serial number is 0000000E B0ED:067D
+C:\AGENTICAI\NEXUS-AI-WORKSPACE\BACKEND\SERVICES\WORKSPACE-SERVICE\PRISMA
+|   schema.prisma
+|   
+\---migrations
+    |   migration_lock.toml
+    |   
+    \---20260703064419_init_workspace
+            migration.sql
+            

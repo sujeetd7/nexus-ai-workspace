@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AgentStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+model Agent {
+  id String @id @default(cuid())
+
+  workspaceId String
+
+  name String
+  slug String @unique
+
+  description String?
+
+  systemPrompt String? @db.Text
+
+  provider String
+  model    String
+
+  temperature Float @default(0.7)
+  maxTokens   Int   @default(4096)
+
+  status AgentStatus @default(DRAFT)
+
+  metadata Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  conversations Conversation[]
+
+  executions AgentExecution[]
+
+  @@index([workspaceId])
+  @@index([status])
+  @@index([name])
+}
+
+enum ConversationStatus {
+  ACTIVE
+  ARCHIVED
+  COMPLETED
+}
+
+model Conversation {
+  id String @id @default(uuid())
+
+  workspaceId String
+
+  agentId String
+
+  title String
+
+  createdBy String
+
+  status ConversationStatus @default(ACTIVE)
+
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  agent               Agent                 @relation(fields: [agentId], references: [id])
+  ConversationMessage ConversationMessage[]
+
+  @@index([agentId])
+  @@index([workspaceId])
+  @@index([status])
+}
+
+model ConversationMessage {
+  id String @id @default(uuid())
+
+  conversationId String
+
+  role String
+
+  content String
+
+  tokens Int?
+
+  latency Int?
+
+  createdAt DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+}
+
+model AgentExecution {
+  id String @id @default(uuid())
+
+  agentId String
+
+  conversationId String?
+
+  provider String
+
+  model String
+
+  input Json
+
+  output Json
+
+  tokens Int?
+
+  latency Int?
+
+  status String @default("SUCCESS")
+
+  error String?
+
+  createdAt DateTime @default(now())
+
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+}
