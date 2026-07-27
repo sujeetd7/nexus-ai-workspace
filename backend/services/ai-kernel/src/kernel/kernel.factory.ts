@@ -37,39 +37,40 @@ export async function getKernel(): Promise<IKernel> {
   const workspaceServiceUrl =
     process.env.WORKSPACE_SERVICE_URL ?? "http://localhost:3002";
 
-  const workspaceServiceKey =
-    process.env.WORKSPACE_SERVICE_KEY;
+  const workspaceServiceKey = process.env.WORKSPACE_SERVICE_KEY;
 
-  const workspaceServiceTimeout =
-    Number(process.env.WORKSPACE_SERVICE_TIMEOUT ?? 60000);
+  const workspaceServiceTimeout = Number(
+    process.env.WORKSPACE_SERVICE_TIMEOUT ?? 60000,
+  );
 
-  const aiServiceUrl =
-    process.env.AI_SERVICE_URL ?? "http://localhost:3005";
+  const aiServiceUrl = process.env.AI_SERVICE_URL ?? "http://localhost:3005";
 
-  const aiServiceKey =
-    process.env.AI_SERVICE_KEY;
+  const aiServiceKey = process.env.AI_SERVICE_KEY;
 
-  const aiServiceTimeout =
-    Number(process.env.AI_SERVICE_TIMEOUT ?? 30000);
+  const aiServiceTimeout = Number(process.env.AI_SERVICE_TIMEOUT ?? 30000);
 
   kernel = new KernelBuilder()
     .addModule(new PipelineModule())
     .addModule(new MemoryModule())
-    .addModule(new AIServiceIntegrationModule({
-      url: aiServiceUrl,
-      apiKey: aiServiceKey,
-      timeoutMs: aiServiceTimeout,
-    }))
+    .addModule(
+      new AIServiceIntegrationModule({
+        url: aiServiceUrl,
+        apiKey: aiServiceKey,
+        timeoutMs: aiServiceTimeout,
+      }),
+    )
     .addModule(new ProviderModule())
     .addModule(new PromptIntegrationModule())
     .addModule(new AgentIntegrationModule({ url: agentServiceUrl }))
     .addModule(new ChatIntegrationModule({ url: chatServiceUrl }))
     .addModule(new DocumentIntegrationModule({ url: documentServiceUrl }))
-    .addModule(new WorkspaceIntegrationModule({
-      url: workspaceServiceUrl,
-      apiKey: workspaceServiceKey,
-      timeoutMs: workspaceServiceTimeout,
-    }))
+    .addModule(
+      new WorkspaceIntegrationModule({
+        url: workspaceServiceUrl,
+        apiKey: workspaceServiceKey,
+        timeoutMs: workspaceServiceTimeout,
+      }),
+    )
     .addModule(new ExecutionModule())
     .build();
 

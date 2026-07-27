@@ -115,7 +115,7 @@ export class ExecutionContextBuilder {
       startTime: new Date(),
       source: "mcp-runtime",
       ...this.context.metadata,
-      ...metadata
+      ...metadata,
     };
     return this;
   }
@@ -124,7 +124,7 @@ export class ExecutionContextBuilder {
     if (!this.context.metadata) {
       this.context.metadata = {
         startTime: new Date(),
-        source: "mcp-runtime"
+        source: "mcp-runtime",
       };
     }
     this.context.metadata.timeout = timeout;
@@ -135,7 +135,7 @@ export class ExecutionContextBuilder {
     if (!this.context.metadata) {
       this.context.metadata = {
         startTime: new Date(),
-        source: "mcp-runtime"
+        source: "mcp-runtime",
       };
     }
     this.context.metadata.source = source;
@@ -146,7 +146,7 @@ export class ExecutionContextBuilder {
     if (!this.context.metadata) {
       this.context.metadata = {
         startTime: new Date(),
-        source: "mcp-runtime"
+        source: "mcp-runtime",
       };
     }
     this.context.metadata.parentRequestId = parentRequestId;
@@ -175,34 +175,41 @@ export class ExecutionContextBuilder {
       metadata: {
         startTime: new Date(),
         source: "mcp-runtime",
-        ...this.context.metadata
-      }
+        ...this.context.metadata,
+      },
     } as MCPExecutionContext;
   }
 }
 
-export function generateExecutionId(context: MCPExecutionContext, toolName: string): string {
+export function generateExecutionId(
+  context: MCPExecutionContext,
+  toolName: string,
+): string {
   return `exec_${context.requestId}_${toolName}_${Date.now()}`;
 }
 
 export function isRetryableError(error: any): boolean {
   if (!error) return false;
-  
+
   // Network/transport errors are retryable
-  if (error.code === "ECONNREFUSED" || 
-      error.code === "ENOTFOUND" || 
-      error.code === "ETIMEDOUT" ||
-      error.code === "ECONNRESET") {
+  if (
+    error.code === "ECONNREFUSED" ||
+    error.code === "ENOTFOUND" ||
+    error.code === "ETIMEDOUT" ||
+    error.code === "ECONNRESET"
+  ) {
     return true;
   }
 
   // MCP specific retryable errors
   if (error.message && typeof error.message === "string") {
     const message = error.message.toLowerCase();
-    return message.includes("timeout") ||
-           message.includes("connection") ||
-           message.includes("network") ||
-           message.includes("transport");
+    return (
+      message.includes("timeout") ||
+      message.includes("connection") ||
+      message.includes("network") ||
+      message.includes("transport")
+    );
   }
 
   return false;

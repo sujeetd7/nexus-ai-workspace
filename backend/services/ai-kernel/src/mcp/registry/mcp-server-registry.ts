@@ -7,9 +7,12 @@ import {
   MCPDiscoveredPrompt,
   MCPDiscoveredResource,
   MCPDiscoveredTemplate,
-  MCPServerCapabilities
+  MCPServerCapabilities,
 } from "../discovery";
-import { DuplicateToolException, ServerRegistrationException } from "./exceptions";
+import {
+  DuplicateToolException,
+  ServerRegistrationException,
+} from "./exceptions";
 
 export interface RegisteredServer {
   server: MCPServer;
@@ -27,7 +30,11 @@ export interface RegisteredServer {
 export interface ServerLookupResult {
   serverId: string;
   server: RegisteredServer;
-  item: MCPDiscoveredTool | MCPDiscoveredPrompt | MCPDiscoveredResource | MCPDiscoveredTemplate;
+  item:
+    | MCPDiscoveredTool
+    | MCPDiscoveredPrompt
+    | MCPDiscoveredResource
+    | MCPDiscoveredTemplate;
 }
 
 export class MCPServerRegistry extends EventEmitter {
@@ -36,7 +43,10 @@ export class MCPServerRegistry extends EventEmitter {
   private sessionManager: MCPSessionManager;
   private discoveryManager: DiscoveryManager;
 
-  constructor(sessionManager: MCPSessionManager, discoveryManager: DiscoveryManager) {
+  constructor(
+    sessionManager: MCPSessionManager,
+    discoveryManager: DiscoveryManager,
+  ) {
     super();
     this.sessionManager = sessionManager;
     this.discoveryManager = discoveryManager;
@@ -50,7 +60,7 @@ export class MCPServerRegistry extends EventEmitter {
       throw new ServerRegistrationException(
         serverId,
         "register",
-        "Server already registered"
+        "Server already registered",
       );
     }
 
@@ -62,7 +72,7 @@ export class MCPServerRegistry extends EventEmitter {
       prompts: [],
       resources: [],
       templates: [],
-      status: "inactive"
+      status: "inactive",
     };
 
     this.servers.set(serverId, registeredServer);
@@ -78,7 +88,7 @@ export class MCPServerRegistry extends EventEmitter {
         serverId,
         "register",
         error instanceof Error ? error.message : "Unknown error",
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
@@ -90,7 +100,7 @@ export class MCPServerRegistry extends EventEmitter {
     }
 
     // Remove all tools from index
-    registeredServer.tools.forEach(tool => {
+    registeredServer.tools.forEach((tool) => {
       this.toolIndex.delete(tool.name);
     });
 
@@ -108,13 +118,16 @@ export class MCPServerRegistry extends EventEmitter {
       throw new ServerRegistrationException(
         serverId,
         "refresh",
-        "Server not found in registry"
+        "Server not found in registry",
       );
     }
 
     try {
       // Use discovery manager to get all server data
-      const discoveryResult = await this.discoveryManager.discoverServer(serverId, true);
+      const discoveryResult = await this.discoveryManager.discoverServer(
+        serverId,
+        true,
+      );
 
       // Update server data
       registeredServer.lastRefresh = new Date();
@@ -122,24 +135,31 @@ export class MCPServerRegistry extends EventEmitter {
       registeredServer.errorMessage = undefined;
 
       // Update capabilities
-      if (discoveryResult.capabilities.success && discoveryResult.capabilities.data) {
+      if (
+        discoveryResult.capabilities.success &&
+        discoveryResult.capabilities.data
+      ) {
         registeredServer.capabilities = discoveryResult.capabilities.data[0];
       }
 
       // Clear existing tool index entries for this server
-      registeredServer.tools.forEach(tool => {
+      registeredServer.tools.forEach((tool) => {
         this.toolIndex.delete(tool.name);
       });
 
       // Update tools and check for duplicates
       if (discoveryResult.tools.success && discoveryResult.tools.data) {
         registeredServer.tools = discoveryResult.tools.data;
-        
+
         // Re-index tools and check for duplicates
         for (const tool of registeredServer.tools) {
           const existingServerId = this.toolIndex.get(tool.name);
           if (existingServerId && existingServerId !== serverId) {
-            throw new DuplicateToolException(tool.name, existingServerId, serverId);
+            throw new DuplicateToolException(
+              tool.name,
+              existingServerId,
+              serverId,
+            );
           }
           this.toolIndex.set(tool.name, serverId);
         }
@@ -170,15 +190,21 @@ export class MCPServerRegistry extends EventEmitter {
 
       this.emit("server:refreshed", { serverId, server: registeredServer });
       return registeredServer;
-
     } catch (error) {
       registeredServer.status = "error";
-      registeredServer.errorMessage = error instanceof Error ? error.message : "Unknown error";
+      registeredServer.errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       registeredServer.lastRefresh = new Date();
 
-      this.emit("server:error", { serverId, error: registeredServer.errorMessage });
+      this.emit("server:error", {
+        serverId,
+        error: registeredServer.errorMessage,
+      });
 
-      if (error instanceof DuplicateToolException || error instanceof ServerRegistrationException) {
+      if (
+        error instanceof DuplicateToolException ||
+        error instanceof ServerRegistrationException
+      ) {
         throw error;
       }
 
@@ -186,25 +212,27 @@ export class MCPServerRegistry extends EventEmitter {
         serverId,
         "refresh",
         error instanceof Error ? error.message : "Unknown error",
-        error instanceof Error ? error : undefined
+        error instanceof Error ? error : undefined,
       );
     }
   }
 
   async refreshAll(): Promise<Map<string, RegisteredServer>> {
     const results = new Map<string, RegisteredServer>();
-    const refreshPromises = Array.from(this.servers.keys()).map(async (serverId) => {
-      try {
-        const result = await this.refreshServer(serverId);
-        results.set(serverId, result);
-      } catch (error) {
-        // Continue with other servers even if one fails
-        const registeredServer = this.servers.get(serverId);
-        if (registeredServer) {
-          results.set(serverId, registeredServer);
+    const refreshPromises = Array.from(this.servers.keys()).map(
+      async (serverId) => {
+        try {
+          const result = await this.refreshServer(serverId);
+          results.set(serverId, result);
+        } catch (error) {
+          // Continue with other servers even if one fails
+          const registeredServer = this.servers.get(serverId);
+          if (registeredServer) {
+            results.set(serverId, registeredServer);
+          }
         }
-      }
-    });
+      },
+    );
 
     await Promise.allSettled(refreshPromises);
     this.emit("registry:refreshed", { serverCount: results.size });
@@ -228,7 +256,7 @@ export class MCPServerRegistry extends EventEmitter {
       return null;
     }
 
-    const tool = server.tools.find(t => t.name === toolName);
+    const tool = server.tools.find((t) => t.name === toolName);
     if (!tool) {
       // Clean up stale index entry
       this.toolIndex.delete(toolName);
@@ -238,18 +266,18 @@ export class MCPServerRegistry extends EventEmitter {
     return {
       serverId,
       server,
-      item: tool
+      item: tool,
     };
   }
 
   findPrompt(promptName: string): ServerLookupResult | null {
     for (const [serverId, server] of this.servers.entries()) {
-      const prompt = server.prompts.find(p => p.name === promptName);
+      const prompt = server.prompts.find((p) => p.name === promptName);
       if (prompt) {
         return {
           serverId,
           server,
-          item: prompt
+          item: prompt,
         };
       }
     }
@@ -258,12 +286,12 @@ export class MCPServerRegistry extends EventEmitter {
 
   findResource(resourceUri: string): ServerLookupResult | null {
     for (const [serverId, server] of this.servers.entries()) {
-      const resource = server.resources.find(r => r.uri === resourceUri);
+      const resource = server.resources.find((r) => r.uri === resourceUri);
       if (resource) {
         return {
           serverId,
           server,
-          item: resource
+          item: resource,
         };
       }
     }
@@ -272,12 +300,12 @@ export class MCPServerRegistry extends EventEmitter {
 
   findTemplate(templateName: string): ServerLookupResult | null {
     for (const [serverId, server] of this.servers.entries()) {
-      const template = server.templates.find(t => t.name === templateName);
+      const template = server.templates.find((t) => t.name === templateName);
       if (template) {
         return {
           serverId,
           server,
-          item: template
+          item: template,
         };
       }
     }
@@ -289,15 +317,15 @@ export class MCPServerRegistry extends EventEmitter {
   }
 
   listActiveServers(): RegisteredServer[] {
-    return this.listServers().filter(server => server.status === "active");
+    return this.listServers().filter((server) => server.status === "active");
   }
 
   listTools(): Array<{ serverId: string; tool: MCPDiscoveredTool }> {
     const tools: Array<{ serverId: string; tool: MCPDiscoveredTool }> = [];
-    
+
     for (const [serverId, server] of this.servers.entries()) {
       if (server.status === "active") {
-        server.tools.forEach(tool => {
+        server.tools.forEach((tool) => {
           tools.push({ serverId, tool });
         });
       }
@@ -307,11 +335,12 @@ export class MCPServerRegistry extends EventEmitter {
   }
 
   listPrompts(): Array<{ serverId: string; prompt: MCPDiscoveredPrompt }> {
-    const prompts: Array<{ serverId: string; prompt: MCPDiscoveredPrompt }> = [];
-    
+    const prompts: Array<{ serverId: string; prompt: MCPDiscoveredPrompt }> =
+      [];
+
     for (const [serverId, server] of this.servers.entries()) {
       if (server.status === "active") {
-        server.prompts.forEach(prompt => {
+        server.prompts.forEach((prompt) => {
           prompts.push({ serverId, prompt });
         });
       }
@@ -320,12 +349,18 @@ export class MCPServerRegistry extends EventEmitter {
     return prompts;
   }
 
-  listResources(): Array<{ serverId: string; resource: MCPDiscoveredResource }> {
-    const resources: Array<{ serverId: string; resource: MCPDiscoveredResource }> = [];
-    
+  listResources(): Array<{
+    serverId: string;
+    resource: MCPDiscoveredResource;
+  }> {
+    const resources: Array<{
+      serverId: string;
+      resource: MCPDiscoveredResource;
+    }> = [];
+
     for (const [serverId, server] of this.servers.entries()) {
       if (server.status === "active") {
-        server.resources.forEach(resource => {
+        server.resources.forEach((resource) => {
           resources.push({ serverId, resource });
         });
       }
@@ -334,12 +369,18 @@ export class MCPServerRegistry extends EventEmitter {
     return resources;
   }
 
-  listTemplates(): Array<{ serverId: string; template: MCPDiscoveredTemplate }> {
-    const templates: Array<{ serverId: string; template: MCPDiscoveredTemplate }> = [];
-    
+  listTemplates(): Array<{
+    serverId: string;
+    template: MCPDiscoveredTemplate;
+  }> {
+    const templates: Array<{
+      serverId: string;
+      template: MCPDiscoveredTemplate;
+    }> = [];
+
     for (const [serverId, server] of this.servers.entries()) {
       if (server.status === "active") {
-        server.templates.forEach(template => {
+        server.templates.forEach((template) => {
           templates.push({ serverId, template });
         });
       }
@@ -358,7 +399,7 @@ export class MCPServerRegistry extends EventEmitter {
       totalPrompts: 0,
       totalResources: 0,
       totalTemplates: 0,
-      toolIndex: this.toolIndex.size
+      toolIndex: this.toolIndex.size,
     };
 
     for (const server of this.servers.values()) {

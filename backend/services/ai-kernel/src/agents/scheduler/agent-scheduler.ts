@@ -47,7 +47,7 @@ export enum SchedulingStrategy {
   PRIORITY = "priority",
   FIFO = "fifo",
   FAIR = "fair",
-  DEPENDENCY = "dependency"
+  DEPENDENCY = "dependency",
 }
 
 export interface IAgentScheduler<T = unknown> {
@@ -70,21 +70,24 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
   private readonly waitingQueue: AgentTask<T>[] = [];
   private readonly completedQueue: AgentTask<T>[] = [];
   private readonly failedQueue: AgentTask<T>[] = [];
-  
+
   private readonly runningTasksMap: Map<string, RunningTaskInfo<T>> = new Map();
   private readonly taskDependencies: Map<string, Set<string>> = new Map();
-  
+
   private readonly maxConcurrency: number;
   private readonly strategy: SchedulingStrategy;
   private readonly startTime: Date;
-  
+
   private isPaused: boolean = false;
   private totalExecutionTime: number = 0;
   private completedCount: number = 0;
   private errors: string[] = [];
   private warnings: string[] = [];
 
-  constructor(maxConcurrency: number = 5, strategy: SchedulingStrategy = SchedulingStrategy.PRIORITY) {
+  constructor(
+    maxConcurrency: number = 5,
+    strategy: SchedulingStrategy = SchedulingStrategy.PRIORITY,
+  ) {
     this.maxConcurrency = maxConcurrency;
     this.strategy = strategy;
     this.startTime = new Date();
@@ -112,9 +115,8 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
         task.state = TaskState.WAITING;
         this.waitingQueue.push(task);
       }
-
     } catch (error) {
-      const errorMsg = `Failed to schedule task ${task.taskId}: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      const errorMsg = `Failed to schedule task ${task.taskId}: ${error instanceof Error ? error.message : "Unknown error"}`;
       this.errors.push(errorMsg);
       throw new Error(errorMsg);
     }
@@ -164,7 +166,7 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
         task: nextTask,
         startedAt: new Date(),
         timeoutAt: new Date(Date.now() + nextTask.timeoutMs),
-        attempts: nextTask.metrics.attempts
+        attempts: nextTask.metrics.attempts,
       };
 
       this.runningTasksMap.set(nextTask.taskId, runningInfo);
@@ -182,7 +184,7 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
         runningInfo.task.state = TaskState.CANCELLED;
         runningInfo.task.metrics.completedAt = new Date();
         this.runningTasksMap.delete(taskId);
-        
+
         // Move to failed queue
         this.failedQueue.push(runningInfo.task);
         return true;
@@ -199,7 +201,7 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
 
       return false;
     } catch (error) {
-      const errorMsg = `Failed to cancel task ${taskId}: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      const errorMsg = `Failed to cancel task ${taskId}: ${error instanceof Error ? error.message : "Unknown error"}`;
       this.errors.push(errorMsg);
       throw new Error(errorMsg);
     }
@@ -213,7 +215,10 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
     this.isPaused = false;
   }
 
-  public async reschedule(taskId: string, newPriority?: string): Promise<boolean> {
+  public async reschedule(
+    taskId: string,
+    newPriority?: string,
+  ): Promise<boolean> {
     try {
       const task = this.findTaskInQueues(taskId);
       if (!task) {
@@ -221,17 +226,20 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
       }
 
       // Update priority if provided
-      if (newPriority && ['critical', 'high', 'normal', 'low'].includes(newPriority)) {
+      if (
+        newPriority &&
+        ["critical", "high", "normal", "low"].includes(newPriority)
+      ) {
         task.priority = newPriority as any;
       }
 
       // Remove from current queue and re-add
       this.removeTaskFromQueues(taskId);
       await this.schedule(task);
-      
+
       return true;
     } catch (error) {
-      const errorMsg = `Failed to reschedule task ${taskId}: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      const errorMsg = `Failed to reschedule task ${taskId}: ${error instanceof Error ? error.message : "Unknown error"}`;
       this.errors.push(errorMsg);
       throw new Error(errorMsg);
     }
@@ -240,10 +248,10 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
   public async health(): Promise<SchedulerHealth> {
     const queueSizes = await this.queueSizes();
     const runningCount = this.runningTasksMap.size;
-    
+
     // Determine health status
     let status: "healthy" | "degraded" | "unhealthy" = "healthy";
-    
+
     if (this.errors.length > 0) {
       status = "unhealthy";
     } else if (this.warnings.length > 0 || runningCount === 0) {
@@ -266,24 +274,29 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
       maxConcurrency: this.maxConcurrency,
       errors: [...this.errors],
       warnings: [...this.warnings],
-      lastActivity: new Date()
+      lastActivity: new Date(),
     };
   }
 
   public async metrics(): Promise<SchedulerMetrics> {
     const uptime = Date.now() - this.startTime.getTime();
-    const throughput = uptime > 0 ? (this.completedCount / (uptime / 60000)) : 0;
-    const averageExecutionTime = this.completedCount > 0 ? this.totalExecutionTime / this.completedCount : 0;
+    const throughput = uptime > 0 ? this.completedCount / (uptime / 60000) : 0;
+    const averageExecutionTime =
+      this.completedCount > 0
+        ? this.totalExecutionTime / this.completedCount
+        : 0;
 
     return {
       totalTasks: this.getTotalTaskCount(),
       completedTasks: this.completedQueue.length,
       failedTasks: this.failedQueue.length,
-      cancelledTasks: this.failedQueue.filter(t => t.state === TaskState.CANCELLED).length,
+      cancelledTasks: this.failedQueue.filter(
+        (t) => t.state === TaskState.CANCELLED,
+      ).length,
       averageExecutionTime,
       totalExecutionTime: this.totalExecutionTime,
       uptime,
-      throughput
+      throughput,
     };
   }
 
@@ -293,7 +306,7 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
       execution: this.executionQueue.length,
       waiting: this.waitingQueue.length,
       completed: this.completedQueue.length,
-      failed: this.failedQueue.length
+      failed: this.failedQueue.length,
     };
   }
 
@@ -301,7 +314,12 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
     return Array.from(this.runningTasksMap.values());
   }
 
-  public async completeTask(taskId: string, success: boolean, output?: unknown, error?: string): Promise<void> {
+  public async completeTask(
+    taskId: string,
+    success: boolean,
+    output?: unknown,
+    error?: string,
+  ): Promise<void> {
     const runningInfo = this.runningTasksMap.get(taskId);
     if (!runningInfo) {
       return;
@@ -326,7 +344,7 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
 
     // Remove from running and execution queues
     this.runningTasksMap.delete(taskId);
-    const execIndex = this.executionQueue.findIndex(t => t.taskId === taskId);
+    const execIndex = this.executionQueue.findIndex((t) => t.taskId === taskId);
     if (execIndex !== -1) {
       this.executionQueue.splice(execIndex, 1);
     }
@@ -343,20 +361,21 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
 
   private addToPriorityQueue(task: AgentTask<T>): void {
     task.state = TaskState.READY;
-    
+
     // Insert in priority order
-    const priorityOrder = { 'critical': 0, 'high': 1, 'normal': 2, 'low': 3 };
+    const priorityOrder = { critical: 0, high: 1, normal: 2, low: 3 };
     const taskPriority = priorityOrder[task.priority] ?? 2;
-    
+
     let insertIndex = this.priorityQueue.length;
     for (let i = 0; i < this.priorityQueue.length; i++) {
-      const existingPriority = priorityOrder[this.priorityQueue[i].priority] ?? 2;
+      const existingPriority =
+        priorityOrder[this.priorityQueue[i].priority] ?? 2;
       if (taskPriority < existingPriority) {
         insertIndex = i;
         break;
       }
     }
-    
+
     this.priorityQueue.splice(insertIndex, 0, task);
   }
 
@@ -375,7 +394,7 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
 
   private promoteWaitingTasks(): void {
     const toPromote: AgentTask<T>[] = [];
-    
+
     for (let i = this.waitingQueue.length - 1; i >= 0; i--) {
       const task = this.waitingQueue[i];
       if (this.canExecuteNow(task)) {
@@ -383,7 +402,7 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
         this.waitingQueue.splice(i, 1);
       }
     }
-    
+
     for (const task of toPromote) {
       this.addToPriorityQueue(task);
     }
@@ -396,10 +415,10 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
   private dequeueByFIFO(): AgentTask<T> | undefined {
     // Return oldest task regardless of priority
     if (this.priorityQueue.length === 0) return undefined;
-    
+
     let oldestIndex = 0;
     let oldestTime = this.priorityQueue[0].metrics.createdAt.getTime();
-    
+
     for (let i = 1; i < this.priorityQueue.length; i++) {
       const taskTime = this.priorityQueue[i].metrics.createdAt.getTime();
       if (taskTime < oldestTime) {
@@ -407,26 +426,26 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
         oldestIndex = i;
       }
     }
-    
+
     return this.priorityQueue.splice(oldestIndex, 1)[0];
   }
 
   private dequeueByFairness(): AgentTask<T> | undefined {
     // Round-robin by agent
     if (this.priorityQueue.length === 0) return undefined;
-    
+
     const agentCounts = new Map<string, number>();
-    
+
     // Count running tasks per agent
     for (const info of this.runningTasksMap.values()) {
       const count = agentCounts.get(info.task.agentId) || 0;
       agentCounts.set(info.task.agentId, count + 1);
     }
-    
+
     // Find task from agent with fewest running tasks
     let selectedIndex = 0;
     let minCount = agentCounts.get(this.priorityQueue[0].agentId) || 0;
-    
+
     for (let i = 1; i < this.priorityQueue.length; i++) {
       const agentCount = agentCounts.get(this.priorityQueue[i].agentId) || 0;
       if (agentCount < minCount) {
@@ -434,7 +453,7 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
         selectedIndex = i;
       }
     }
-    
+
     return this.priorityQueue.splice(selectedIndex, 1)[0];
   }
 
@@ -449,14 +468,14 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
       this.executionQueue,
       this.waitingQueue,
       this.completedQueue,
-      this.failedQueue
+      this.failedQueue,
     ];
-    
+
     for (const queue of allQueues) {
-      const task = queue.find(t => t.taskId === taskId);
+      const task = queue.find((t) => t.taskId === taskId);
       if (task) return task;
     }
-    
+
     // Check running tasks
     const runningInfo = this.runningTasksMap.get(taskId);
     return runningInfo ? runningInfo.task : undefined;
@@ -468,16 +487,16 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
       this.executionQueue,
       this.waitingQueue,
       this.completedQueue,
-      this.failedQueue
+      this.failedQueue,
     ];
-    
+
     for (const queue of allQueues) {
-      const index = queue.findIndex(t => t.taskId === taskId);
+      const index = queue.findIndex((t) => t.taskId === taskId);
       if (index !== -1) {
         return queue.splice(index, 1)[0];
       }
     }
-    
+
     return undefined;
   }
 
@@ -490,11 +509,13 @@ export class AgentScheduler<T = unknown> implements IAgentScheduler<T> {
   }
 
   private getTotalTaskCount(): number {
-    return this.priorityQueue.length +
-           this.executionQueue.length +
-           this.waitingQueue.length +
-           this.completedQueue.length +
-           this.failedQueue.length +
-           this.runningTasksMap.size;
+    return (
+      this.priorityQueue.length +
+      this.executionQueue.length +
+      this.waitingQueue.length +
+      this.completedQueue.length +
+      this.failedQueue.length +
+      this.runningTasksMap.size
+    );
   }
 }

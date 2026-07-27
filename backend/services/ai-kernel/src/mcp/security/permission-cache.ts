@@ -1,12 +1,12 @@
 import { EventEmitter } from "events";
-import { 
-  PermissionCacheEntry, 
-  AuthorizationResult, 
+import {
+  PermissionCacheEntry,
+  AuthorizationResult,
   SecurityContext,
   SecurityEvent,
   SecurityEventPayload,
   ResourceType,
-  PermissionAction
+  PermissionAction,
 } from "./types";
 
 export class PermissionCache extends EventEmitter {
@@ -22,7 +22,7 @@ export class PermissionCache extends EventEmitter {
 
   get(key: string): AuthorizationResult | null {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return null;
     }
@@ -38,16 +38,16 @@ export class PermissionCache extends EventEmitter {
       ...entry.result,
       metadata: {
         ...entry.result.metadata,
-        cached: true
-      }
+        cached: true,
+      },
     };
   }
 
   set(
-    key: string, 
-    result: AuthorizationResult, 
-    context: SecurityContext, 
-    ttl?: number
+    key: string,
+    result: AuthorizationResult,
+    context: SecurityContext,
+    ttl?: number,
   ): void {
     // Check if we need to evict entries due to size limit
     if (this.cache.size >= this.maxSize) {
@@ -57,14 +57,14 @@ export class PermissionCache extends EventEmitter {
     const now = new Date();
     const effectiveTtl = ttl || this.defaultTtl;
     const expiresAt = new Date(now.getTime() + effectiveTtl);
-    
+
     const entry: PermissionCacheEntry = {
       key,
       result,
       context,
       cachedAt: now,
       expiresAt,
-      ttl: effectiveTtl
+      ttl: effectiveTtl,
     };
 
     this.cache.set(key, entry);
@@ -74,18 +74,18 @@ export class PermissionCache extends EventEmitter {
   invalidate(key: string): boolean {
     const entry = this.cache.get(key);
     const deleted = this.cache.delete(key);
-    
+
     if (deleted && entry) {
       this.emitCacheInvalidated(entry.context, key);
     }
-    
+
     return deleted;
   }
 
   invalidateUser(userId: string): number {
     let count = 0;
     const keysToDelete: string[] = [];
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (entry.context.userId === userId) {
         keysToDelete.push(key);
@@ -93,7 +93,7 @@ export class PermissionCache extends EventEmitter {
       }
     }
 
-    keysToDelete.forEach(key => {
+    keysToDelete.forEach((key) => {
       const entry = this.cache.get(key);
       if (entry) {
         this.cache.delete(key);
@@ -107,7 +107,7 @@ export class PermissionCache extends EventEmitter {
   invalidateWorkspace(workspaceId: string): number {
     let count = 0;
     const keysToDelete: string[] = [];
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (entry.context.workspaceId === workspaceId) {
         keysToDelete.push(key);
@@ -115,7 +115,7 @@ export class PermissionCache extends EventEmitter {
       }
     }
 
-    keysToDelete.forEach(key => {
+    keysToDelete.forEach((key) => {
       const entry = this.cache.get(key);
       if (entry) {
         this.cache.delete(key);
@@ -129,7 +129,7 @@ export class PermissionCache extends EventEmitter {
   invalidateServer(serverId: string): number {
     let count = 0;
     const keysToDelete: string[] = [];
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (entry.context.serverId === serverId) {
         keysToDelete.push(key);
@@ -137,7 +137,7 @@ export class PermissionCache extends EventEmitter {
       }
     }
 
-    keysToDelete.forEach(key => {
+    keysToDelete.forEach((key) => {
       const entry = this.cache.get(key);
       if (entry) {
         this.cache.delete(key);
@@ -149,9 +149,11 @@ export class PermissionCache extends EventEmitter {
   }
 
   clear(): void {
-    const contexts = Array.from(this.cache.values()).map(entry => entry.context);
+    const contexts = Array.from(this.cache.values()).map(
+      (entry) => entry.context,
+    );
     const keys = Array.from(this.cache.keys());
-    
+
     this.cache.clear();
 
     // Emit events for all cleared entries
@@ -168,14 +170,14 @@ export class PermissionCache extends EventEmitter {
 
   cleanupExpired(): number {
     const keysToDelete: string[] = [];
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (this.isExpired(entry)) {
         keysToDelete.push(key);
       }
     }
 
-    keysToDelete.forEach(key => {
+    keysToDelete.forEach((key) => {
       const entry = this.cache.get(key);
       if (entry) {
         this.cache.delete(key);
@@ -197,7 +199,7 @@ export class PermissionCache extends EventEmitter {
       oldestEntry: undefined as Date | undefined,
       newestEntry: undefined as Date | undefined,
       averageTtl: 0,
-      hitRatio: 0 // Would need hit/miss tracking for this
+      hitRatio: 0, // Would need hit/miss tracking for this
     };
 
     let totalTtl = 0;
@@ -214,11 +216,13 @@ export class PermissionCache extends EventEmitter {
 
       // Count by workspace
       const workspaceId = entry.context.workspaceId;
-      stats.entriesByWorkspace[workspaceId] = (stats.entriesByWorkspace[workspaceId] || 0) + 1;
+      stats.entriesByWorkspace[workspaceId] =
+        (stats.entriesByWorkspace[workspaceId] || 0) + 1;
 
       // Count by server
       const serverId = entry.context.serverId;
-      stats.entriesByServer[serverId] = (stats.entriesByServer[serverId] || 0) + 1;
+      stats.entriesByServer[serverId] =
+        (stats.entriesByServer[serverId] || 0) + 1;
 
       // Track oldest/newest
       if (!stats.oldestEntry || entry.cachedAt < stats.oldestEntry) {
@@ -243,7 +247,7 @@ export class PermissionCache extends EventEmitter {
     resource: ResourceType,
     action: PermissionAction,
     resourceId?: string,
-    serverId?: string
+    serverId?: string,
   ): string {
     const parts = [userId, workspaceId, resource, action];
     if (resourceId) {
@@ -257,7 +261,7 @@ export class PermissionCache extends EventEmitter {
 
   private evictOldestEntries(count: number): void {
     const entries = Array.from(this.cache.entries()).sort(
-      ([, a], [, b]) => a.cachedAt.getTime() - b.cachedAt.getTime()
+      ([, a], [, b]) => a.cachedAt.getTime() - b.cachedAt.getTime(),
     );
 
     for (let i = 0; i < Math.min(count, entries.length); i++) {
@@ -275,9 +279,9 @@ export class PermissionCache extends EventEmitter {
       sessionId: context.sessionId,
       serverId: context.serverId,
       timestamp: new Date(),
-      metadata: { cacheKey: key, action: "cache_updated" }
+      metadata: { cacheKey: key, action: "cache_updated" },
     };
-    
+
     // Note: We don't have resource/action info in the cache context
     // This would need to be passed separately or stored in the cache entry
     this.emit("cache:updated", payload);
@@ -290,9 +294,9 @@ export class PermissionCache extends EventEmitter {
       sessionId: context.sessionId,
       serverId: context.serverId,
       timestamp: new Date(),
-      metadata: { cacheKey: key, action: "cache_invalidated" }
+      metadata: { cacheKey: key, action: "cache_invalidated" },
     };
-    
+
     this.emit("cache:invalidated", payload);
   }
 }

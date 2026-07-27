@@ -42,13 +42,13 @@ export interface IAgent {
   readonly priority: AgentPriority;
   readonly capabilities: IAgentCapability[];
   readonly health: AgentHealth;
-  
+
   // Core methods
   initialize(): Promise<void>;
   shutdown(): Promise<void>;
   getHealth(): Promise<AgentHealth>;
   updateStatus(status: AgentStatus): Promise<void>;
-  
+
   // Capability methods
   hasCapability(capabilityId: string): boolean;
   getCapability(capabilityId: string): IAgentCapability | undefined;

@@ -14,15 +14,17 @@ import { AIServiceIntegrationModule } from "../integrations/ai-service/ai-servic
 // AI Service Provider Wrapper - delegates all calls to AI Service
 class AIServiceProviderWrapper implements ILLMProvider {
   readonly name: string;
-  
+
   constructor(
     providerName: string,
-    private aiServiceClient: any
+    private aiServiceClient: any,
   ) {
     this.name = providerName;
   }
 
-  async generate(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse> {
+  async generate(
+    request: ProviderExecuteRequest,
+  ): Promise<ProviderExecuteResponse> {
     return this.aiServiceClient.generate({
       ...request,
       provider: this.name,
@@ -50,7 +52,9 @@ class AIServiceProviderWrapper implements ILLMProvider {
   }
 
   // Legacy method for backward compatibility
-  async execute(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse> {
+  async execute(
+    request: ProviderExecuteRequest,
+  ): Promise<ProviderExecuteResponse> {
     return this.generate(request);
   }
 }
@@ -68,26 +72,32 @@ export class ProviderModule implements IProviderModule {
     // Get AI Service integration module
     try {
       this.aiServiceModule = kernel.getModule<AIServiceIntegrationModule>(
-        "AIServiceIntegrationModule"
+        "AIServiceIntegrationModule",
       );
 
       if (this.aiServiceModule) {
         const aiServiceClient = this.aiServiceModule.getClient();
-        
+
         // Initialize providers from AI Service
-        const availableProviders = await aiServiceClient.getAvailableProviders();
-        
+        const availableProviders =
+          await aiServiceClient.getAvailableProviders();
+
         // Create AI Service delegating wrappers
         for (const providerName of availableProviders) {
-          const wrapper = new AIServiceProviderWrapper(providerName, aiServiceClient);
+          const wrapper = new AIServiceProviderWrapper(
+            providerName,
+            aiServiceClient,
+          );
           this.providers.set(providerName, wrapper);
         }
 
-        console.log(`ProviderModule: Registered ${availableProviders.length} providers from AI Service`);
+        console.log(
+          `ProviderModule: Registered ${availableProviders.length} providers from AI Service`,
+        );
       }
     } catch (error) {
       console.warn("Failed to initialize AI Service providers:", error);
-      
+
       // Fallback configuration
       const defaultWrapper = new AIServiceProviderWrapper("ollama", {
         generate: this.createFallbackMethod("generate"),
@@ -96,7 +106,7 @@ export class ProviderModule implements IProviderModule {
         providerHealth: this.createFallbackMethod("health"),
         getAvailableProviders: () => Promise.resolve(["ollama"]),
       });
-      
+
       this.providers.set("ollama", defaultWrapper);
       console.warn("ProviderModule: Using fallback provider configuration");
     }
@@ -113,7 +123,9 @@ export class ProviderModule implements IProviderModule {
     const provider = this.providers.get(name);
 
     if (!provider) {
-      throw new Error(`Provider '${name}' not found. Available providers: ${this.listProviders().join(", ")}`);
+      throw new Error(
+        `Provider '${name}' not found. Available providers: ${this.listProviders().join(", ")}`,
+      );
     }
 
     return provider;
@@ -129,7 +141,9 @@ export class ProviderModule implements IProviderModule {
     }
   }
 
-  async execute(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse> {
+  async execute(
+    request: ProviderExecuteRequest,
+  ): Promise<ProviderExecuteResponse> {
     const provider = this.getProvider(request.provider);
     return provider.execute(request);
   }
@@ -145,7 +159,9 @@ export class ProviderModule implements IProviderModule {
   // Fallback methods when AI Service is not available
   private createFallbackMethod(methodName: string) {
     return async (...args: any[]) => {
-      throw new Error(`${methodName} not available: AI Service is not connected`);
+      throw new Error(
+        `${methodName} not available: AI Service is not connected`,
+      );
     };
   }
 

@@ -1,10 +1,10 @@
-import { 
-  WorkflowDefinition, 
-  WorkflowExecution, 
+import {
+  WorkflowDefinition,
+  WorkflowExecution,
   WorkflowExecutionContext,
   WorkflowMetrics,
   StepExecution,
-  CompensationAction
+  CompensationAction,
 } from "./workflow.types";
 
 export interface IWorkflowRegistry {
@@ -24,7 +24,11 @@ export interface WorkflowValidationResult {
 export interface IWorkflowEngine {
   validate(workflow: WorkflowDefinition): Promise<WorkflowValidationResult>;
   compile(workflow: WorkflowDefinition): Promise<WorkflowDefinition>;
-  execute(workflowId: string, input: unknown, context: WorkflowExecutionContext): Promise<WorkflowExecution>;
+  execute(
+    workflowId: string,
+    input: unknown,
+    context: WorkflowExecutionContext,
+  ): Promise<WorkflowExecution>;
   cancel(executionId: string): Promise<boolean>;
   pause(executionId: string): Promise<boolean>;
   resume(executionId: string): Promise<boolean>;
@@ -33,14 +37,32 @@ export interface IWorkflowEngine {
 export interface IWorkflowRunner {
   runSequential(steps: string[], execution: WorkflowExecution): Promise<void>;
   runParallel(steps: string[], execution: WorkflowExecution): Promise<void>;
-  runConditional(condition: string, thenSteps: string[], elseSteps: string[], execution: WorkflowExecution): Promise<void>;
-  runLoop(loopConfig: unknown, steps: string[], execution: WorkflowExecution): Promise<void>;
+  runConditional(
+    condition: string,
+    thenSteps: string[],
+    elseSteps: string[],
+    execution: WorkflowExecution,
+  ): Promise<void>;
+  runLoop(
+    loopConfig: unknown,
+    steps: string[],
+    execution: WorkflowExecution,
+  ): Promise<void>;
 }
 
 export interface IWorkflowExecutor {
-  executeStep(stepId: string, execution: WorkflowExecution): Promise<StepExecution>;
-  compensateStep(stepId: string, execution: WorkflowExecution): Promise<CompensationAction>;
-  evaluateCondition(condition: string, context: WorkflowExecutionContext): Promise<boolean>;
+  executeStep(
+    stepId: string,
+    execution: WorkflowExecution,
+  ): Promise<StepExecution>;
+  compensateStep(
+    stepId: string,
+    execution: WorkflowExecution,
+  ): Promise<CompensationAction>;
+  evaluateCondition(
+    condition: string,
+    context: WorkflowExecutionContext,
+  ): Promise<boolean>;
   getStepInput(stepId: string, execution: WorkflowExecution): Promise<unknown>;
 }
 

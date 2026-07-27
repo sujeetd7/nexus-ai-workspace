@@ -17,7 +17,7 @@ export class ProviderRouter {
 
   public getProvider(providerName: string): AIProvider {
     const provider = this.providers.get(providerName.toLowerCase());
-    
+
     if (!provider) {
       throw new UnsupportedProviderException(providerName);
     }

@@ -72,16 +72,24 @@ export class ChatServiceClient {
     });
   }
 
-  public async createMessage(conversationId: string, payload: any): Promise<any> {
+  public async createMessage(
+    conversationId: string,
+    payload: any,
+  ): Promise<any> {
     return this.withRetries(async () => {
-      const resp = await this.client.post(`/api/v1/conversations/${conversationId}/messages`, payload);
+      const resp = await this.client.post(
+        `/api/v1/conversations/${conversationId}/messages`,
+        payload,
+      );
       return resp.data;
     });
   }
 
   public async listMessages(conversationId: string): Promise<any> {
     return this.withRetries(async () => {
-      const resp = await this.client.get(`/api/v1/conversations/${conversationId}/messages`);
+      const resp = await this.client.get(
+        `/api/v1/conversations/${conversationId}/messages`,
+      );
       return resp.data;
     });
   }

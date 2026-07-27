@@ -1,6 +1,6 @@
-import { 
-  ILLMProvider, 
-  ProviderExecuteRequest, 
+import {
+  ILLMProvider,
+  ProviderExecuteRequest,
   ProviderExecuteResponse,
   EmbeddingRequest,
   EmbeddingResponse,
@@ -13,15 +13,17 @@ import { UnsupportedProviderException } from "./exceptions/unsupported-provider.
 
 export class AIServiceDelegatingProvider implements ILLMProvider {
   readonly name: string;
-  
+
   constructor(
     providerName: string,
-    private aiServiceClient: any
+    private aiServiceClient: any,
   ) {
     this.name = providerName;
   }
 
-  async generate(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse> {
+  async generate(
+    request: ProviderExecuteRequest,
+  ): Promise<ProviderExecuteResponse> {
     return this.aiServiceClient.generate({
       ...request,
       provider: this.name,
@@ -52,7 +54,9 @@ export class AIServiceDelegatingProvider implements ILLMProvider {
   }
 
   // Legacy method for backward compatibility
-  async execute(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse> {
+  async execute(
+    request: ProviderExecuteRequest,
+  ): Promise<ProviderExecuteResponse> {
     return this.generate(request);
   }
 }
@@ -66,34 +70,45 @@ export class ProviderRouter {
 
   private initializeProviders(): void {
     if (!this.aiServiceClient) {
-      console.warn("ProviderRouter: No AI Service client provided - no providers available");
+      console.warn(
+        "ProviderRouter: No AI Service client provided - no providers available",
+      );
       return;
     }
 
     // Initialize providers from AI Service
-    this.aiServiceClient.getAvailableProviders()
+    this.aiServiceClient
+      .getAvailableProviders()
       .then((providers: string[]) => {
         for (const providerName of providers) {
           const delegatingProvider = new AIServiceDelegatingProvider(
-            providerName, 
-            this.aiServiceClient
+            providerName,
+            this.aiServiceClient,
           );
           this.providers.set(providerName.toLowerCase(), delegatingProvider);
         }
-        console.log(`ProviderRouter: Initialized ${providers.length} providers from AI Service`);
+        console.log(
+          `ProviderRouter: Initialized ${providers.length} providers from AI Service`,
+        );
       })
       .catch((error: any) => {
-        console.warn("ProviderRouter: Failed to get providers from AI Service:", error);
-        
+        console.warn(
+          "ProviderRouter: Failed to get providers from AI Service:",
+          error,
+        );
+
         // Fallback configuration
-        const fallbackProvider = new AIServiceDelegatingProvider("ollama", this.aiServiceClient);
+        const fallbackProvider = new AIServiceDelegatingProvider(
+          "ollama",
+          this.aiServiceClient,
+        );
         this.providers.set("ollama", fallbackProvider);
       });
   }
 
   public getProvider(providerName: string): ILLMProvider {
     const provider = this.providers.get(providerName.toLowerCase());
-    
+
     if (!provider) {
       throw new UnsupportedProviderException(providerName);
     }

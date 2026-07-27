@@ -1,27 +1,28 @@
 import request from "supertest";
-
-import app from "../../src/app";
+import createApp from "../../src/app";
 
 describe("Auth API", () => {
-  test("POST /auth/register", async () => {
-    console.log("before request");
-    const response = await request(app).post("/api/v1/auth/register").send({
-      email: "integration@test.com",
+  const app = createApp();
 
-      password: "Password@123",
+  test("POST /api/v1/auth/refresh rejects missing refreshToken", async () => {
+    const response = await request(app).post("/api/v1/auth/refresh").send({});
 
-      firstName: "John",
+    expect(response.status).toBe(400);
+  });
 
-      lastName: "Doe",
-    });
+  test("POST /api/v1/auth/logout requires authentication", async () => {
+    const response = await request(app)
+      .post("/api/v1/auth/logout")
+      .send({ refreshToken: "not-a-real-token" });
 
-    console.log("after request");
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(401);
+  });
 
-    expect(response.body.user.email).toBe("integration@test.com");
+  test("duplicate session router is not mounted at POST /logout-all", async () => {
+    const response = await request(app)
+      .post("/api/v1/auth/logout-all")
+      .send({});
 
-    expect(response.body.tokens.accessToken).toBeDefined();
-
-    expect(response.body.tokens.refreshToken).toBeDefined();
+    expect(response.status).toBe(404);
   });
 });

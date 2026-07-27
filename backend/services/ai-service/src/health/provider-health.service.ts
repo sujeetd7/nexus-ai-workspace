@@ -21,7 +21,9 @@ export class ProviderHealthService {
   private healthCache: Map<string, ProviderHealthStatus> = new Map();
   private cacheExpirationMs = 30000; // 30 seconds
 
-  async health(providerName?: string): Promise<ProviderHealthStatus | SystemHealthStatus> {
+  async health(
+    providerName?: string,
+  ): Promise<ProviderHealthStatus | SystemHealthStatus> {
     if (providerName) {
       return this.checkProviderHealth(providerName);
     } else {
@@ -29,7 +31,9 @@ export class ProviderHealthService {
     }
   }
 
-  async checkProviderHealth(providerName: string): Promise<ProviderHealthStatus> {
+  async checkProviderHealth(
+    providerName: string,
+  ): Promise<ProviderHealthStatus> {
     const cached = this.getCachedHealth(providerName);
     if (cached) {
       return cached;
@@ -49,7 +53,7 @@ export class ProviderHealthService {
       } else {
         const provider = this.providerRouter.getProvider(providerName);
         const start = Date.now();
-        
+
         let healthResult: any;
         try {
           healthResult = await Promise.race([
@@ -62,7 +66,7 @@ export class ProviderHealthService {
             name: providerName,
             status: "unhealthy",
             latency: Date.now() - start,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
             lastChecked,
           };
           this.healthCache.set(providerName, status);
@@ -71,10 +75,17 @@ export class ProviderHealthService {
 
         const latency = Date.now() - start;
 
-        if (healthResult && typeof healthResult === 'object' && 'status' in healthResult) {
+        if (
+          healthResult &&
+          typeof healthResult === "object" &&
+          "status" in healthResult
+        ) {
           status = {
             name: providerName,
-            status: (healthResult as any).status === "healthy" ? "healthy" : "unhealthy",
+            status:
+              (healthResult as any).status === "healthy"
+                ? "healthy"
+                : "unhealthy",
             latency,
             error: (healthResult as any).error,
             lastChecked,
@@ -111,12 +122,14 @@ export class ProviderHealthService {
 
   async checkSystemHealth(): Promise<SystemHealthStatus> {
     const availableProviders = this.providerRouter.getAvailableProviders();
-    const healthPromises = availableProviders.map(provider => 
-      this.checkProviderHealth(provider)
+    const healthPromises = availableProviders.map((provider) =>
+      this.checkProviderHealth(provider),
     );
 
     const providerStatuses = await Promise.all(healthPromises);
-    const healthyCount = providerStatuses.filter(status => status.status === "healthy").length;
+    const healthyCount = providerStatuses.filter(
+      (status) => status.status === "healthy",
+    ).length;
     const totalCount = providerStatuses.length;
 
     let overall: "healthy" | "degraded" | "unhealthy";
@@ -140,13 +153,13 @@ export class ProviderHealthService {
   async getHealthyProviders(): Promise<string[]> {
     const systemHealth = await this.checkSystemHealth();
     return systemHealth.providers
-      .filter(provider => provider.status === "healthy")
-      .map(provider => provider.name);
+      .filter((provider) => provider.status === "healthy")
+      .map((provider) => provider.name);
   }
 
   async refreshHealthCache(): Promise<void> {
     const availableProviders = this.providerRouter.getAvailableProviders();
-    
+
     for (const providerName of availableProviders) {
       // Remove from cache to force refresh
       this.healthCache.delete(providerName);
@@ -157,14 +170,14 @@ export class ProviderHealthService {
 
   private getCachedHealth(providerName: string): ProviderHealthStatus | null {
     const cached = this.healthCache.get(providerName);
-    
+
     if (!cached) {
       return null;
     }
 
     const now = Date.now();
     const cacheTime = cached.lastChecked.getTime();
-    
+
     if (now - cacheTime > this.cacheExpirationMs) {
       this.healthCache.delete(providerName);
       return null;
@@ -173,20 +186,26 @@ export class ProviderHealthService {
     return cached;
   }
 
-  private cacheHealth(providerName: string, status: ProviderHealthStatus): void {
+  private cacheHealth(
+    providerName: string,
+    status: ProviderHealthStatus,
+  ): void {
     this.healthCache.set(providerName, status);
   }
 
   private createTimeoutPromise(timeoutMs: number): Promise<never> {
     return new Promise((_, reject) => {
-      setTimeout(() => reject(new Error(`Health check timeout after ${timeoutMs}ms`)), timeoutMs);
+      setTimeout(
+        () => reject(new Error(`Health check timeout after ${timeoutMs}ms`)),
+        timeoutMs,
+      );
     });
   }
 
   // Clear expired cache entries
   private cleanupCache(): void {
     const now = Date.now();
-    
+
     for (const [providerName, status] of this.healthCache.entries()) {
       if (now - status.lastChecked.getTime() > this.cacheExpirationMs) {
         this.healthCache.delete(providerName);

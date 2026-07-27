@@ -21,11 +21,13 @@ import { JwtService, jwtService } from "../../tokens/access/jwt.service";
 
 import { ApiError } from "../../middleware/error/api-error";
 
-import { PasswordResetPrismaRepository } from "@prisma/password-reset.prisma.repository";
+import { PasswordResetPrismaRepository } from "@repositories/prisma/password-reset.prisma.repository";
 import { AuthPrismaRepository } from "@repositories/prisma/auth.prisma.repository";
 import { EmailVerificationPrismaRepository } from "@repositories/prisma/email-verification.prisma.repository";
 import { SessionPrismaRepository } from "@repositories/prisma/session.prisma.repository";
+import { SessionRotationConflictError } from "@repositories/prisma/session-rotation.error";
 import { env } from "../../config/env";
+import { logger } from "../../config/logger";
 import {
   EmailVerificationEventPublisher,
   emailVerificationEventPublisher,
@@ -39,15 +41,27 @@ import {
   secureTokenService,
 } from "../../security/tokens/secure-token.service";
 import { IEmailVerificationRepository } from "../../types/interfaces/email-verification.repository.interface";
+import { ISessionRepository } from "../../types/interfaces/session.repository.interface";
+import { IPasswordResetRepository } from "../../types/interfaces/password-reset.repository.interface";
+
+/** Refresh session TTL aligned with JWT refresh expiry (7d). */
+const REFRESH_SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * Replay policy (Auth B′): without a session family id, confirmed refresh
+ * reuse revokes ALL active sessions for the affected user. This is deliberate
+ * and conservative — not precise family-scoped revocation.
+ */
+const REPLAY_REVOCATION_SCOPE = "ALL_USER_SESSIONS" as const;
 
 export class AuthService {
   constructor(
     private readonly users: IUserRepository,
     private readonly passwords: PasswordService,
     private readonly tokens: JwtService,
-    private readonly sessions: SessionPrismaRepository,
+    private readonly sessions: ISessionRepository,
     private readonly emailVerifications: IEmailVerificationRepository,
-    private readonly passwordResetRepository: PasswordResetPrismaRepository,
+    private readonly passwordResetRepository: IPasswordResetRepository,
     private readonly secureTokens: SecureTokenService = secureTokenService,
     private readonly emailVerificationPublisher: EmailVerificationEventPublisher = emailVerificationEventPublisher,
   ) {}
@@ -299,68 +313,80 @@ export class AuthService {
     context?: SessionContext,
   ): Promise<AuthResponse> {
     const payload = this.verifyRefreshToken(token);
-
     const tokenHash = hashService.sha256(token);
+    const now = new Date();
 
-    const oldSession = await this.sessions.findByTokenHash(tokenHash);
+    const oldSession = await this.sessions.findActiveByTokenHash(
+      tokenHash,
+      now,
+    );
 
     if (!oldSession) {
-      const historicalSession =
-        await this.sessions.findAnyByTokenHash(tokenHash);
-
-      if (historicalSession?.revoked) {
-        await this.sessions.revokeUserSessions(payload.sub);
-
-        await auditService.log({
-          event: AuditEvent.TOKEN_REPLAY,
-          userId: payload.sub,
-          metadata: {
-            sessionId: historicalSession.id,
-            revokedReason: historicalSession.revokedReason,
-          },
-        });
-
-        throw new ApiError(
-          401,
-          "TOKEN_REPLAY_DETECTED",
-          "Refresh token reuse detected.",
-        );
-      }
-
-      throw new ApiError(
-        401,
-        "INVALID_REFRESH_TOKEN",
-        "Refresh token is invalid or has expired.",
-      );
+      return await this.handleRefreshReplayOrUnknown(tokenHash, payload.sub);
     }
 
-    /*
-      ROTATE OLD TOKEN
-    */
-    await this.sessions.revoke(oldSession.id);
+    if (oldSession.userId !== payload.sub) {
+      logger.warn({
+        event: "REFRESH_SUBJECT_MISMATCH",
+        sessionId: oldSession.id,
+      });
+      throw this.invalidRefreshTokenError();
+    }
 
     const user = await this.users.findById(payload.sub);
 
     if (!user) {
-      throw new ApiError(401, "USER_NOT_FOUND", "User does not exist.");
+      throw this.invalidRefreshTokenError();
     }
 
-    await this.sessions.touch(oldSession.id, new Date());
+    const jwtPayload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
 
-    const response = await this.toAuthResponse(user, context);
+    const accessToken = this.tokens.generateAccessToken(jwtPayload);
+    const refreshToken = this.tokens.generateRefreshToken(jwtPayload);
+    const newRefreshTokenHash = hashService.sha256(refreshToken);
+    const expiresAt = new Date(Date.now() + REFRESH_SESSION_TTL_MS);
 
-    /*
-      MARK AS ROTATED
-    */
-    await this.sessions.revokeAsRotated(oldSession.id);
+    try {
+      const rotation = await this.sessions.rotateSession({
+        oldSessionId: oldSession.id,
+        userId: user.id,
+        newRefreshTokenHash,
+        expiresAt,
+        deviceName: context?.deviceName ?? this.inferDeviceName(context),
+        ipAddress: context?.ipAddress,
+        userAgent: context?.userAgent,
+        now,
+      });
 
-    await auditService.log({
-      event: AuditEvent.TOKEN_REFRESH,
-      userId: user.id,
-      metadata: { sessionId: oldSession.id },
-    });
+      await auditService.log({
+        event: AuditEvent.TOKEN_REFRESH,
+        userId: user.id,
+        metadata: {
+          oldSessionId: rotation.oldSessionId,
+          newSessionId: rotation.newSession.id,
+        },
+      });
 
-    return response;
+      return {
+        user: this.sanitizeUser(user),
+        tokens: {
+          accessToken,
+          refreshToken,
+        },
+      };
+    } catch (error) {
+      if (error instanceof SessionRotationConflictError) {
+        return await this.containRefreshReplay(payload.sub, oldSession.id, {
+          reason: "ROTATION_CONFLICT",
+        });
+      }
+
+      throw error;
+    }
   }
 
   /*
@@ -373,11 +399,17 @@ export class AuthService {
     const hash = hashService.sha256(refreshToken);
     const session = await this.sessions.findAnyByTokenHash(hash);
 
-    if (!session) {
-      throw new ApiError(401, "INVALID_REFRESH_TOKEN", "Session not found");
+    if (!session || session.revoked) {
+      return;
     }
 
-    await this.sessions.revoke(session.id);
+    await this.sessions.revoke(session.id, "LOGOUT");
+
+    await auditService.log({
+      event: AuditEvent.LOGOUT,
+      userId: session.userId,
+      metadata: { sessionId: session.id },
+    });
   }
 
   /*
@@ -411,7 +443,7 @@ export class AuthService {
   }
 
   async logoutAll(userId: string) {
-    await this.sessions.revokeUserSessions(userId);
+    await this.sessions.revokeUserSessions(userId, "LOGOUT_ALL");
 
     await auditService.log({
       event: AuditEvent.LOGOUT_ALL,
@@ -456,39 +488,23 @@ export class AuthService {
     };
 
     const accessToken = this.tokens.generateAccessToken(payload);
-
     const refreshToken = this.tokens.generateRefreshToken(payload);
-
-    console.log("\n========== LOGIN ==========");
-    console.log("REFRESH TOKEN:");
-    console.log(refreshToken);
-
-    console.log("\nREFRESH HASH:");
-    console.log(hashService.sha256(refreshToken));
 
     await this.sessions.create({
       userId: user.id,
-
       refreshTokenHash: hashService.sha256(refreshToken),
-
       createdAt: new Date(),
-
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-
+      expiresAt: new Date(Date.now() + REFRESH_SESSION_TTL_MS),
       revoked: false,
-
+      rotated: false,
       deviceName: context?.deviceName ?? this.inferDeviceName(context),
-
       ipAddress: context?.ipAddress,
-
       userAgent: context?.userAgent,
-
       lastUsedAt: new Date(),
     });
 
     return {
       user: this.sanitizeUser(user),
-
       tokens: {
         accessToken,
         refreshToken,
@@ -500,12 +516,65 @@ export class AuthService {
     try {
       return this.tokens.verifyRefreshToken(token);
     } catch {
-      throw new ApiError(
-        401,
-        "INVALID_REFRESH_TOKEN",
-        "Refresh token is invalid or has expired.",
-      );
+      throw this.invalidRefreshTokenError();
     }
+  }
+
+  private invalidRefreshTokenError(): ApiError {
+    return new ApiError(
+      401,
+      "INVALID_REFRESH_TOKEN",
+      "Refresh token is invalid or has expired.",
+    );
+  }
+
+  /**
+   * Historical revoked/rotated hash → contain replay (all user sessions).
+   * Unknown or merely expired → generic invalid refresh error.
+   */
+  private async handleRefreshReplayOrUnknown(
+    tokenHash: string,
+    userId: string,
+  ): Promise<never> {
+    const historicalSession = await this.sessions.findAnyByTokenHash(tokenHash);
+
+    if (
+      historicalSession &&
+      (historicalSession.revoked || historicalSession.rotated)
+    ) {
+      await this.containRefreshReplay(userId, historicalSession.id, {
+        reason: historicalSession.revokedReason ?? "REPLAY",
+      });
+    }
+
+    throw this.invalidRefreshTokenError();
+  }
+
+  private async containRefreshReplay(
+    userId: string,
+    sessionId: string,
+    metadata: { reason: string },
+  ): Promise<never> {
+    await this.sessions.revokeUserSessions(userId, "TOKEN_REPLAY");
+
+    await auditService.log({
+      event: AuditEvent.TOKEN_REPLAY,
+      userId,
+      metadata: {
+        sessionId,
+        revocationScope: REPLAY_REVOCATION_SCOPE,
+        reason: metadata.reason,
+      },
+    });
+
+    logger.warn({
+      event: AuditEvent.TOKEN_REPLAY,
+      userId,
+      sessionId,
+      revocationScope: REPLAY_REVOCATION_SCOPE,
+    });
+
+    throw this.invalidRefreshTokenError();
   }
 
   private invalidCredentialsError(): ApiError {

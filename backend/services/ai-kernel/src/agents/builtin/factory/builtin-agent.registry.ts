@@ -40,7 +40,7 @@ export interface BuiltinAgentRegistryMetrics {
 
 export class BuiltinAgentRegistryException extends Error {
   public readonly name = "BuiltinAgentRegistryException";
-  
+
   constructor(message?: string) {
     super(message || "Builtin agent registry operation failed");
     Object.setPrototypeOf(this, BuiltinAgentRegistryException.prototype);
@@ -50,7 +50,7 @@ export class BuiltinAgentRegistryException extends Error {
 export class AgentAlreadyRegisteredException extends Error {
   public readonly name = "AgentAlreadyRegisteredException";
   public readonly agentId: string;
-  
+
   constructor(agentId: string, message?: string) {
     super(message || `Agent '${agentId}' is already registered`);
     this.agentId = agentId;
@@ -61,7 +61,7 @@ export class AgentAlreadyRegisteredException extends Error {
 export class AgentNotRegisteredException extends Error {
   public readonly name = "AgentNotRegisteredException";
   public readonly agentId: string;
-  
+
   constructor(agentId: string, message?: string) {
     super(message || `Agent '${agentId}' is not registered`);
     this.agentId = agentId;
@@ -83,18 +83,22 @@ export class BuiltinAgentRegistry {
     this.factory = factory;
   }
 
-  public registerAgent(agentType: BuiltinAgentType, agentId?: string, metadata?: Record<string, unknown>): BuiltinAgentInstance {
+  public registerAgent(
+    agentType: BuiltinAgentType,
+    agentId?: string,
+    metadata?: Record<string, unknown>,
+  ): BuiltinAgentInstance {
     try {
       const id = agentId || this.generateAgentId(agentType);
-      
+
       // Check if agent is already registered
       if (this.agents.has(id)) {
         throw new AgentAlreadyRegisteredException(id);
       }
-      
+
       // Create agent instance using factory
       const agent = this.factory.createAgent(agentType);
-      
+
       // Create registry entry
       const instance: BuiltinAgentInstance = {
         id,
@@ -103,18 +107,18 @@ export class BuiltinAgentRegistry {
         status: AgentStatus.IDLE,
         createdAt: new Date(),
         usageCount: 0,
-        metadata: metadata || {}
+        metadata: metadata || {},
       };
-      
+
       // Register the agent
       this.agents.set(id, instance);
       this.totalRegistrations++;
       this.lastActivity = new Date();
-      
+
       return instance;
-      
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Unknown registration error';
+      const errorMsg =
+        error instanceof Error ? error.message : "Unknown registration error";
       this.errors.push(errorMsg);
       throw error;
     }
@@ -126,7 +130,7 @@ export class BuiltinAgentRegistry {
       if (!instance) {
         throw new AgentNotRegisteredException(agentId);
       }
-      
+
       // Shutdown agent if it's running
       if (instance.status !== AgentStatus.STOPPED) {
         try {
@@ -134,21 +138,23 @@ export class BuiltinAgentRegistry {
           // In practice, you might want to make this async
           instance.status = AgentStatus.SHUTTING_DOWN;
         } catch (error) {
-          this.warnings.push(`Failed to shutdown agent '${agentId}' during unregistration`);
+          this.warnings.push(
+            `Failed to shutdown agent '${agentId}' during unregistration`,
+          );
         }
       }
-      
+
       // Remove from registry
       const removed = this.agents.delete(agentId);
       if (removed) {
         this.totalUnregistrations++;
         this.lastActivity = new Date();
       }
-      
+
       return removed;
-      
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Unknown unregistration error';
+      const errorMsg =
+        error instanceof Error ? error.message : "Unknown unregistration error";
       this.errors.push(errorMsg);
       throw error;
     }
@@ -165,11 +171,15 @@ export class BuiltinAgentRegistry {
   }
 
   public findAgentsByType(agentType: BuiltinAgentType): BuiltinAgentInstance[] {
-    return Array.from(this.agents.values()).filter(instance => instance.type === agentType);
+    return Array.from(this.agents.values()).filter(
+      (instance) => instance.type === agentType,
+    );
   }
 
   public findAgentsByStatus(status: AgentStatus): BuiltinAgentInstance[] {
-    return Array.from(this.agents.values()).filter(instance => instance.status === status);
+    return Array.from(this.agents.values()).filter(
+      (instance) => instance.status === status,
+    );
   }
 
   public listAllAgents(): BuiltinAgentInstance[] {
@@ -197,17 +207,20 @@ export class BuiltinAgentRegistry {
     if (!instance) {
       throw new AgentNotRegisteredException(agentId);
     }
-    
+
     instance.status = status;
     this.lastActivity = new Date();
   }
 
-  public updateAgentMetadata(agentId: string, metadata: Record<string, unknown>): void {
+  public updateAgentMetadata(
+    agentId: string,
+    metadata: Record<string, unknown>,
+  ): void {
     const instance = this.agents.get(agentId);
     if (!instance) {
       throw new AgentNotRegisteredException(agentId);
     }
-    
+
     instance.metadata = { ...instance.metadata, ...metadata };
     this.lastActivity = new Date();
   }
@@ -219,29 +232,36 @@ export class BuiltinAgentRegistry {
         try {
           instance.status = AgentStatus.SHUTTING_DOWN;
         } catch (error) {
-          this.warnings.push(`Failed to shutdown agent '${instance.id}' during registry clear`);
+          this.warnings.push(
+            `Failed to shutdown agent '${instance.id}' during registry clear`,
+          );
         }
       }
     }
-    
+
     this.agents.clear();
     this.lastActivity = new Date();
   }
 
   public health(): BuiltinAgentRegistryHealth {
     const agents = this.listAllAgents();
-    const activeAgents = agents.filter(a => a.status === AgentStatus.IDLE || a.status === AgentStatus.INITIALIZING).length;
-    const failedAgents = agents.filter(a => a.status === AgentStatus.ERROR).length;
+    const activeAgents = agents.filter(
+      (a) =>
+        a.status === AgentStatus.IDLE || a.status === AgentStatus.INITIALIZING,
+    ).length;
+    const failedAgents = agents.filter(
+      (a) => a.status === AgentStatus.ERROR,
+    ).length;
     const totalUsage = agents.reduce((sum, agent) => sum + agent.usageCount, 0);
-    
+
     let status: "healthy" | "degraded" | "unhealthy" = "healthy";
-    
+
     if (this.errors.length > 0 || failedAgents > 0) {
       status = "unhealthy";
     } else if (this.warnings.length > 0) {
       status = "degraded";
     }
-    
+
     return {
       status,
       registeredAgents: agents.length,
@@ -251,53 +271,63 @@ export class BuiltinAgentRegistry {
       totalUsage,
       errors: [...this.errors],
       warnings: [...this.warnings],
-      lastActivity: this.lastActivity
+      lastActivity: this.lastActivity,
     };
   }
 
   public metrics(): BuiltinAgentRegistryMetrics {
     const agents = this.listAllAgents();
-    
+
     // Calculate registration counts by type
-    const registrationsByType: Record<BuiltinAgentType, number> = {} as Record<BuiltinAgentType, number>;
-    const usageByType: Record<BuiltinAgentType, number> = {} as Record<BuiltinAgentType, number>;
-    
-    Object.values(BuiltinAgentType).forEach(type => {
+    const registrationsByType: Record<BuiltinAgentType, number> = {} as Record<
+      BuiltinAgentType,
+      number
+    >;
+    const usageByType: Record<BuiltinAgentType, number> = {} as Record<
+      BuiltinAgentType,
+      number
+    >;
+
+    Object.values(BuiltinAgentType).forEach((type) => {
       registrationsByType[type] = 0;
       usageByType[type] = 0;
     });
-    
+
     // Calculate status breakdown
-    const statusBreakdown: Record<AgentStatus, number> = {} as Record<AgentStatus, number>;
-    Object.values(AgentStatus).forEach(status => {
+    const statusBreakdown: Record<AgentStatus, number> = {} as Record<
+      AgentStatus,
+      number
+    >;
+    Object.values(AgentStatus).forEach((status) => {
       statusBreakdown[status] = 0;
     });
-    
+
     let mostUsedAgent: BuiltinAgentInstance | undefined;
     let leastUsedAgent: BuiltinAgentInstance | undefined;
     let maxUsage = -1;
     let minUsage = Number.MAX_SAFE_INTEGER;
-    
+
     // Process agents
     for (const agent of agents) {
       registrationsByType[agent.type]++;
       usageByType[agent.type] += agent.usageCount;
       statusBreakdown[agent.status]++;
-      
+
       if (agent.usageCount > maxUsage) {
         maxUsage = agent.usageCount;
         mostUsedAgent = agent;
       }
-      
+
       if (agent.usageCount < minUsage) {
         minUsage = agent.usageCount;
         leastUsedAgent = agent;
       }
     }
-    
+
     const totalUsage = agents.reduce((sum, agent) => sum + agent.usageCount, 0);
-    const averageUsagePerAgent = agents.length > 0 ? totalUsage / agents.length : 0;
-    
+    const averageUsagePerAgent =
+      agents.length > 0 ? totalUsage / agents.length : 0;
+
     return {
       totalRegistrations: this.totalRegistrations,
       totalUnregistrations: this.totalUnregistrations,
@@ -308,7 +338,7 @@ export class BuiltinAgentRegistry {
       averageUsagePerAgent,
       mostUsedAgent: agents.length > 0 ? mostUsedAgent : undefined,
       leastUsedAgent: agents.length > 0 ? leastUsedAgent : undefined,
-      uptime: Date.now() - this.startTime.getTime()
+      uptime: Date.now() - this.startTime.getTime(),
     };
   }
 

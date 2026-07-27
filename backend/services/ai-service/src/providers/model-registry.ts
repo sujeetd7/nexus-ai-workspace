@@ -118,7 +118,7 @@ export class ModelRegistry {
     // Priority order: ollama (free) -> openai -> gemini -> anthropic
     const providers = ["ollama", "openai", "gemini", "anthropic"];
     const typeDefaults = this.defaultModels.get(type);
-    
+
     if (!typeDefaults) {
       return "ollama";
     }
@@ -132,17 +132,22 @@ export class ModelRegistry {
     return "ollama";
   }
 
-  public getDefaultModel(provider: string, type: "chat" | "embedding" | "completion"): string {
+  public getDefaultModel(
+    provider: string,
+    type: "chat" | "embedding" | "completion",
+  ): string {
     const typeDefaults = this.defaultModels.get(type);
-    
+
     if (!typeDefaults) {
       throw new Error(`Unknown model type: ${type}`);
     }
 
     const defaultModel = typeDefaults.get(provider);
-    
+
     if (!defaultModel) {
-      throw new Error(`No default ${type} model configured for provider: ${provider}`);
+      throw new Error(
+        `No default ${type} model configured for provider: ${provider}`,
+      );
     }
 
     return defaultModel;
@@ -152,7 +157,10 @@ export class ModelRegistry {
     return this.modelConfigs.get(modelId);
   }
 
-  public getProviderModels(provider: string, type?: "chat" | "embedding" | "completion"): ModelConfig[] {
+  public getProviderModels(
+    provider: string,
+    type?: "chat" | "embedding" | "completion",
+  ): ModelConfig[] {
     const models: ModelConfig[] = [];
     const configArray = Array.from(this.modelConfigs.values());
 
@@ -167,7 +175,9 @@ export class ModelRegistry {
     return models;
   }
 
-  public getAllModels(type?: "chat" | "embedding" | "completion"): ModelConfig[] {
+  public getAllModels(
+    type?: "chat" | "embedding" | "completion",
+  ): ModelConfig[] {
     const models: ModelConfig[] = [];
     const configArray = Array.from(this.modelConfigs.values());
 
@@ -180,9 +190,13 @@ export class ModelRegistry {
     return models;
   }
 
-  public updateDefaultModel(provider: string, type: "chat" | "embedding" | "completion", modelId: string): void {
+  public updateDefaultModel(
+    provider: string,
+    type: "chat" | "embedding" | "completion",
+    modelId: string,
+  ): void {
     const typeDefaults = this.defaultModels.get(type);
-    
+
     if (!typeDefaults) {
       this.defaultModels.set(type, new Map([[provider, modelId]]));
     } else {

@@ -31,34 +31,41 @@ export class ToolCallingExecutor implements IExecutionExecutor {
   constructor(
     private readonly aiServiceClient: AIServiceClient,
     private readonly toolRegistry: ToolRegistry,
-    private readonly toolExecutor: EnhancedToolExecutor
+    private readonly toolExecutor: EnhancedToolExecutor,
   ) {}
 
   async execute(context: ExecutionContext): Promise<ExecutionResult> {
     const startTime = Date.now();
-    
+
     try {
       // Get available tools
       const availableTools = this.toolRegistry.definitions();
-      
+
       // Create tool call handler
       const toolCallHandler = new KernelToolCallHandler(
         this.toolRegistry,
-        this.toolExecutor
+        this.toolExecutor,
       );
 
       // Execute with tools using iterative approach
-      const result = await this.executeWithToolCalling({
-        workspaceId: context.kernelContext.workspaceId || "",
-        userId: context.kernelContext.userId || "",
-        provider: context.plan.provider,
-        model: context.plan.model,
-        prompt: context.kernelContext.compiledPrompt || context.kernelContext.prompt || "",
-        tools: availableTools,
-        temperature: context.plan.temperature,
-        maxTokens: context.plan.maxTokens,
-        stream: false,
-      }, toolCallHandler, context);
+      const result = await this.executeWithToolCalling(
+        {
+          workspaceId: context.kernelContext.workspaceId || "",
+          userId: context.kernelContext.userId || "",
+          provider: context.plan.provider,
+          model: context.plan.model,
+          prompt:
+            context.kernelContext.compiledPrompt ||
+            context.kernelContext.prompt ||
+            "",
+          tools: availableTools,
+          temperature: context.plan.temperature,
+          maxTokens: context.plan.maxTokens,
+          stream: false,
+        },
+        toolCallHandler,
+        context,
+      );
 
       return ExecutionResult.builder(context.requestId)
         .setSuccess(true)
@@ -72,11 +79,14 @@ export class ToolCallingExecutor implements IExecutionExecutor {
           toolCalls: result.toolCalls,
         })
         .build();
-
     } catch (error) {
       return ExecutionResult.builder(context.requestId)
         .setSuccess(false)
-        .setError(error instanceof Error ? error : new Error("Unknown tool calling error"))
+        .setError(
+          error instanceof Error
+            ? error
+            : new Error("Unknown tool calling error"),
+        )
         .setLatencyMs(Date.now() - startTime)
         .build();
     }
@@ -85,12 +95,12 @@ export class ToolCallingExecutor implements IExecutionExecutor {
   private async executeWithToolCalling(
     request: ToolCallExecuteRequest,
     toolCallHandler: KernelToolCallHandler,
-    context?: ExecutionContext
+    context?: ExecutionContext,
   ): Promise<any> {
     let currentPrompt = request.prompt;
     let toolExecutionCount = 0;
     const maxToolExecutions = 5; // Prevent infinite loops
-    
+
     while (toolExecutionCount < maxToolExecutions) {
       // Execute AI request with current prompt and tools
       const aiResult = await this.aiServiceClient.execute({
@@ -103,7 +113,7 @@ export class ToolCallingExecutor implements IExecutionExecutor {
         stream: false,
       });
 
-      // Check if AI requested tool calls  
+      // Check if AI requested tool calls
       const toolCalls = aiResult.toolCalls || (aiResult.raw as any)?.toolCalls;
       if (!toolCalls || toolCalls.length === 0) {
         // No more tool calls, return final result
@@ -125,25 +135,27 @@ export class ToolCallingExecutor implements IExecutionExecutor {
           name: call.function.name,
           arguments: call.function.arguments,
           callId: call.id,
-          context: context ? {
-            workspaceId: context.kernelContext.workspaceId,
-            userId: context.kernelContext.userId,
-            traceId: context.traceId,
-            sessionId: context.payload.request?.sessionId,
-            conversationId: context.kernelContext.conversationId,
-          } : undefined,
-        }))
+          context: context
+            ? {
+                workspaceId: context.kernelContext.workspaceId,
+                userId: context.kernelContext.userId,
+                traceId: context.traceId,
+                sessionId: context.payload.request?.sessionId,
+                conversationId: context.kernelContext.conversationId,
+              }
+            : undefined,
+        })),
       );
-      
+
       // Build new prompt with tool results
       currentPrompt = this.buildPromptWithToolResults(
-        currentPrompt, 
-        toolCalls, 
-        toolResults
+        currentPrompt,
+        toolCalls,
+        toolResults,
       );
 
       toolExecutionCount++;
-      
+
       // If this is the last iteration, execute one final AI call
       if (toolExecutionCount >= maxToolExecutions) {
         const finalResult = await this.aiServiceClient.execute({
@@ -193,7 +205,7 @@ export class ToolCallingExecutor implements IExecutionExecutor {
   private buildPromptWithToolResults(
     originalPrompt: string,
     toolCalls: ToolCall[],
-    toolResults: any[]
+    toolResults: any[],
   ): string {
     let updatedPrompt = originalPrompt;
 
@@ -213,7 +225,8 @@ export class ToolCallingExecutor implements IExecutionExecutor {
       }
     }
 
-    updatedPrompt += "\n\nPlease provide a final response based on the tool results above.";
+    updatedPrompt +=
+      "\n\nPlease provide a final response based on the tool results above.";
 
     return updatedPrompt;
   }

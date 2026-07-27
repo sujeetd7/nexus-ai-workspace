@@ -1,13 +1,17 @@
 import { AgentPlan, ExecutionMode } from "../../planner/agent-plan";
 import { AgentTask } from "../../planner/agent-task";
-import { PlanningRequest, PlanValidationResult, TaskSplitResult } from "../../planner/agent-planner";
+import {
+  PlanningRequest,
+  PlanValidationResult,
+  TaskSplitResult,
+} from "../../planner/agent-planner";
 import { AgentPriority } from "../../types";
 
 export enum PlannerOperation {
   PLAN = "plan",
-  REPLAN = "replan", 
+  REPLAN = "replan",
   VALIDATE = "validate",
-  ESTIMATE = "estimate"
+  ESTIMATE = "estimate",
 }
 
 export interface PlannerOperationRequest {
@@ -123,11 +127,11 @@ export interface PlannerAgentMetrics {
   successCounts: Record<PlannerOperation, number>;
   errorCounts: Record<PlannerOperation, number>;
   averageLatencies: Record<PlannerOperation, number>;
-  
+
   totalOperations: number;
   successRate: number;
   uptime: number;
-  
+
   planningStats: {
     totalPlansCreated: number;
     totalReplans: number;
@@ -136,7 +140,7 @@ export interface PlannerAgentMetrics {
     plansByMode: Record<ExecutionMode, number>;
     plansByPriority: Record<AgentPriority, number>;
   };
-  
+
   validationStats: {
     totalValidations: number;
     validPlans: number;
@@ -144,7 +148,7 @@ export interface PlannerAgentMetrics {
     averageValidationTime: number;
     commonErrors: Record<string, number>;
   };
-  
+
   estimationAccuracy: {
     totalEstimates: number;
     averageEstimation: number;

@@ -14,7 +14,7 @@ export {
   PermissionCacheEntry,
   SecurityEvent,
   SecurityEventPayload,
-  SecurityConfig
+  SecurityConfig,
 } from "./types";
 
 // Exceptions
@@ -22,7 +22,7 @@ export {
   MCPAuthorizationException,
   MCPAuthenticationException,
   WorkspaceIsolationException,
-  PermissionDeniedException
+  PermissionDeniedException,
 } from "./exceptions";
 
 // Cache
@@ -38,5 +38,5 @@ export {
   ToolAuthorizationRequest,
   PromptAuthorizationRequest,
   ResourceAuthorizationRequest,
-  TemplateAuthorizationRequest
+  TemplateAuthorizationRequest,
 } from "./mcp-security-manager";

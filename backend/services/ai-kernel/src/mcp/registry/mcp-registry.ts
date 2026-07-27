@@ -14,7 +14,7 @@ export class MCPRegistry {
     this.servers.set(server.id, {
       server,
       registeredAt: now,
-      lastActivity: now
+      lastActivity: now,
     });
   }
 
@@ -31,64 +31,68 @@ export class MCPRegistry {
     return null;
   }
 
-  async findTool(toolName: string): Promise<Array<{ server: MCPServer; tool: MCPTool }>> {
+  async findTool(
+    toolName: string,
+  ): Promise<Array<{ server: MCPServer; tool: MCPTool }>> {
     const results: Array<{ server: MCPServer; tool: MCPTool }> = [];
-    
+
     const serverInfos = Array.from(this.servers.values());
     for (const serverInfo of serverInfos) {
       try {
         const tools = await serverInfo.server.listTools();
-        const matchingTool = tools.find(tool => tool.name === toolName);
+        const matchingTool = tools.find((tool) => tool.name === toolName);
         if (matchingTool) {
           results.push({
             server: serverInfo.server,
-            tool: matchingTool
+            tool: matchingTool,
           });
         }
       } catch (error) {
         continue;
       }
     }
-    
+
     return results;
   }
 
   listServers(): MCPServer[] {
-    return Array.from(this.servers.values()).map(info => info.server);
+    return Array.from(this.servers.values()).map((info) => info.server);
   }
 
   async listTools(): Promise<Array<{ server: MCPServer; tools: MCPTool[] }>> {
     const results: Array<{ server: MCPServer; tools: MCPTool[] }> = [];
-    
+
     const serverInfos = Array.from(this.servers.values());
     for (const serverInfo of serverInfos) {
       try {
         const tools = await serverInfo.server.listTools();
         results.push({
           server: serverInfo.server,
-          tools
+          tools,
         });
       } catch (error) {
         results.push({
           server: serverInfo.server,
-          tools: []
+          tools: [],
         });
       }
     }
-    
+
     return results;
   }
 
   async refresh(): Promise<void> {
-    const healthChecks = Array.from(this.servers.values()).map(async (serverInfo) => {
-      try {
-        await serverInfo.server.health();
-        serverInfo.lastActivity = new Date();
-      } catch (error) {
-        // Server health check failed, but we don't remove it
-        // The manager can decide what to do with unhealthy servers
-      }
-    });
+    const healthChecks = Array.from(this.servers.values()).map(
+      async (serverInfo) => {
+        try {
+          await serverInfo.server.health();
+          serverInfo.lastActivity = new Date();
+        } catch (error) {
+          // Server health check failed, but we don't remove it
+          // The manager can decide what to do with unhealthy servers
+        }
+      },
+    );
 
     await Promise.allSettled(healthChecks);
   }

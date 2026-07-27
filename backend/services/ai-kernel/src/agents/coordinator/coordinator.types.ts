@@ -6,7 +6,7 @@ export enum CoordinationStrategy {
   FIRST_SUCCESS = "first_success",
   ALL_SUCCESS = "all_success",
   QUORUM = "quorum",
-  SEQUENTIAL = "sequential"
+  SEQUENTIAL = "sequential",
 }
 
 export enum CoordinationStatus {
@@ -18,14 +18,14 @@ export enum CoordinationStatus {
   SUCCESS = "success",
   FAILED = "failed",
   TIMEOUT = "timeout",
-  CANCELLED = "cancelled"
+  CANCELLED = "cancelled",
 }
 
 export enum VotingMethod {
   SIMPLE_MAJORITY = "simple_majority",
   WEIGHTED_MAJORITY = "weighted_majority",
   UNANIMOUS = "unanimous",
-  SUPER_MAJORITY = "super_majority"
+  SUPER_MAJORITY = "super_majority",
 }
 
 export interface AgentAssignment {
@@ -44,29 +44,29 @@ export interface CoordinationTask {
   coordinationId: string;
   strategy: CoordinationStrategy;
   assignments: AgentAssignment[];
-  
+
   // Strategy-specific configuration
   quorumSize?: number;
   votingMethod?: VotingMethod;
   weightThreshold?: number;
   maxParallelism?: number;
-  
+
   // Execution tracking
   status: CoordinationStatus;
   startedAt: Date;
   completedAt?: Date;
   duration?: number;
-  
+
   // Results
   results: Record<string, ExecutionResult>;
   finalResult?: unknown;
   votes?: Record<string, unknown>;
-  
+
   // Control
   timeoutMs?: number;
   cancellationToken?: AbortSignal;
   retryAttempts?: number;
-  
+
   metadata: Record<string, unknown>;
 }
 
@@ -78,11 +78,11 @@ export interface CoordinationContext {
   userId: string;
   conversationId?: string;
   executionId: string;
-  
+
   startTime: Date;
   timeout?: number;
   cancellationToken?: AbortSignal;
-  
+
   metadata: Record<string, unknown>;
 }
 
@@ -91,24 +91,24 @@ export interface CoordinationRequest {
   input: unknown;
   strategy: CoordinationStrategy;
   context: CoordinationContext;
-  
+
   // Strategy-specific options
   quorumSize?: number;
   votingMethod?: VotingMethod;
   weightThreshold?: number;
   maxParallelism?: number;
-  
+
   // Agent-specific options
   agentWeights?: Record<string, number>;
   agentTimeouts?: Record<string, number>;
   agentPriorities?: Record<string, number>;
-  
+
   // Execution options
   timeoutMs?: number;
   retryAttempts?: number;
   failFast?: boolean;
   collectPartialResults?: boolean;
-  
+
   metadata: Record<string, unknown>;
 }
 
@@ -117,18 +117,18 @@ export interface CoordinationResult {
   taskId: string;
   status: CoordinationStatus;
   strategy: CoordinationStrategy;
-  
+
   // Results
   finalResult?: unknown;
   agentResults: Record<string, ExecutionResult>;
   successfulAgents: string[];
   failedAgents: string[];
-  
+
   // Voting results (if applicable)
   votes?: Record<string, unknown>;
   winningVote?: unknown;
   voteDistribution?: Record<string, number>;
-  
+
   // Performance metrics
   startedAt: Date;
   completedAt: Date;
@@ -136,11 +136,11 @@ export interface CoordinationResult {
   agentCount: number;
   successCount: number;
   failureCount: number;
-  
+
   // Error tracking
   errors: string[];
   warnings: string[];
-  
+
   metadata: Record<string, unknown>;
 }
 
@@ -196,30 +196,36 @@ export interface CoordinatorHealth {
   completedCoordinations: number;
   failedCoordinations: number;
   averageCoordinationTime: number;
-  
+
   // Strategy statistics
-  strategyStats: Record<CoordinationStrategy, {
-    count: number;
-    successRate: number;
-    averageTime: number;
-  }>;
-  
+  strategyStats: Record<
+    CoordinationStrategy,
+    {
+      count: number;
+      successRate: number;
+      averageTime: number;
+    }
+  >;
+
   // Agent statistics
-  agentStats: Record<string, {
-    assignments: number;
-    successes: number;
-    failures: number;
-    averageTime: number;
-  }>;
-  
+  agentStats: Record<
+    string,
+    {
+      assignments: number;
+      successes: number;
+      failures: number;
+      averageTime: number;
+    }
+  >;
+
   // Resource usage
   memoryUsage: number;
   queueSize: number;
-  
+
   errors: string[];
   warnings: string[];
   lastActivity: Date;
   uptime: number;
-  
+
   metadata: Record<string, unknown>;
 }

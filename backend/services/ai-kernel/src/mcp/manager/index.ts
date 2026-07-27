@@ -4,5 +4,5 @@ export { MCPManager } from "./mcp-manager";
 // New Batch-6 execution manager
 export {
   MCPExecutionManager,
-  MCPExecutionManagerConfig
+  MCPExecutionManagerConfig,
 } from "./mcp-execution-manager";

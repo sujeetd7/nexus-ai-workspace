@@ -5,7 +5,9 @@ export class DuplicateToolException extends Error {
   public readonly newServerId: string;
 
   constructor(toolName: string, existingServerId: string, newServerId: string) {
-    super(`Tool '${toolName}' already exists from server '${existingServerId}', cannot register from server '${newServerId}'`);
+    super(
+      `Tool '${toolName}' already exists from server '${existingServerId}', cannot register from server '${newServerId}'`,
+    );
     this.name = "DuplicateToolException";
     this.toolName = toolName;
     this.existingServerId = existingServerId;
@@ -22,8 +24,15 @@ export class ServerRegistrationException extends Error {
   public readonly serverId: string;
   public readonly operation: string;
 
-  constructor(serverId: string, operation: string, message: string, cause?: Error) {
-    super(`Server registration failed for '${serverId}' during '${operation}': ${message}`);
+  constructor(
+    serverId: string,
+    operation: string,
+    message: string,
+    cause?: Error,
+  ) {
+    super(
+      `Server registration failed for '${serverId}' during '${operation}': ${message}`,
+    );
     this.name = "ServerRegistrationException";
     this.serverId = serverId;
     this.operation = operation;

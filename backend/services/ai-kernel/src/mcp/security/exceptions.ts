@@ -1,4 +1,9 @@
-import { SecurityRole, PermissionAction, ResourceType, Permission } from "./types";
+import {
+  SecurityRole,
+  PermissionAction,
+  ResourceType,
+  Permission,
+} from "./types";
 
 export class MCPAuthorizationException extends Error {
   public readonly code = "MCP_AUTHORIZATION_FAILED";
@@ -16,12 +21,14 @@ export class MCPAuthorizationException extends Error {
     action: PermissionAction,
     requiredPermissions: Permission[] = [],
     resourceId?: string,
-    reason?: string
+    reason?: string,
   ) {
     const baseMessage = `Authorization failed for user ${userId} in workspace ${workspaceId}`;
-    const actionMessage = `to ${action} ${resource}${resourceId ? ` '${resourceId}'` : ''}`;
-    const fullMessage = reason ? `${baseMessage} ${actionMessage}: ${reason}` : `${baseMessage} ${actionMessage}`;
-    
+    const actionMessage = `to ${action} ${resource}${resourceId ? ` '${resourceId}'` : ""}`;
+    const fullMessage = reason
+      ? `${baseMessage} ${actionMessage}: ${reason}`
+      : `${baseMessage} ${actionMessage}`;
+
     super(fullMessage);
     this.name = "MCPAuthorizationException";
     this.userId = userId;
@@ -43,7 +50,12 @@ export class MCPAuthenticationException extends Error {
   public readonly sessionId?: string;
   public readonly authMethod?: string;
 
-  constructor(message: string, userId?: string, sessionId?: string, authMethod?: string) {
+  constructor(
+    message: string,
+    userId?: string,
+    sessionId?: string,
+    authMethod?: string,
+  ) {
     super(`Authentication failed: ${message}`);
     this.name = "MCPAuthenticationException";
     this.userId = userId;
@@ -69,11 +81,12 @@ export class WorkspaceIsolationException extends Error {
     sourceWorkspaceId: string,
     targetWorkspaceId: string,
     resource: ResourceType,
-    resourceId?: string
+    resourceId?: string,
   ) {
-    const message = `Workspace isolation violated: User ${userId} from workspace ${sourceWorkspaceId} ` +
-                   `attempted to access ${resource}${resourceId ? ` '${resourceId}'` : ''} in workspace ${targetWorkspaceId}`;
-    
+    const message =
+      `Workspace isolation violated: User ${userId} from workspace ${sourceWorkspaceId} ` +
+      `attempted to access ${resource}${resourceId ? ` '${resourceId}'` : ""} in workspace ${targetWorkspaceId}`;
+
     super(message);
     this.name = "WorkspaceIsolationException";
     this.userId = userId;
@@ -101,12 +114,13 @@ export class PermissionDeniedException extends Error {
     workspaceId: string,
     requiredPermission: Permission,
     userRoles: SecurityRole[] = [],
-    userPermissions: Permission[] = []
+    userPermissions: Permission[] = [],
   ) {
-    const message = `Permission denied for user ${userId} in workspace ${workspaceId}: ` +
-                   `Required permission ${requiredPermission.action} on ${requiredPermission.resource}` +
-                   `${requiredPermission.resourceId ? ` '${requiredPermission.resourceId}'` : ''}`;
-    
+    const message =
+      `Permission denied for user ${userId} in workspace ${workspaceId}: ` +
+      `Required permission ${requiredPermission.action} on ${requiredPermission.resource}` +
+      `${requiredPermission.resourceId ? ` '${requiredPermission.resourceId}'` : ""}`;
+
     super(message);
     this.name = "PermissionDeniedException";
     this.userId = userId;

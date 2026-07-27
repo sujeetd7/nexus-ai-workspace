@@ -1,11 +1,15 @@
-import { WorkflowDefinition, WorkflowExecution, WorkflowExecutionContext } from "../../workflow";
+import {
+  WorkflowDefinition,
+  WorkflowExecution,
+  WorkflowExecutionContext,
+} from "../../workflow";
 
 export enum WorkflowOperation {
   EXECUTE_WORKFLOW = "execute-workflow",
-  VALIDATE_WORKFLOW = "validate-workflow", 
+  VALIDATE_WORKFLOW = "validate-workflow",
   PAUSE_WORKFLOW = "pause-workflow",
   RESUME_WORKFLOW = "resume-workflow",
-  CANCEL_WORKFLOW = "cancel-workflow"
+  CANCEL_WORKFLOW = "cancel-workflow",
 }
 
 export interface WorkflowOperationRequest {
@@ -17,7 +21,7 @@ export interface WorkflowExecuteRequest extends WorkflowOperationRequest {
   operation: WorkflowOperation.EXECUTE_WORKFLOW;
   workflowId: string;
   input: unknown;
-  context: Omit<WorkflowExecutionContext, 'executionId'> & {
+  context: Omit<WorkflowExecutionContext, "executionId"> & {
     timeout?: number;
   };
 }
@@ -105,11 +109,11 @@ export interface WorkflowAgentMetrics {
   successCounts: Record<WorkflowOperation, number>;
   errorCounts: Record<WorkflowOperation, number>;
   averageLatencies: Record<WorkflowOperation, number>;
-  
+
   totalOperations: number;
   successRate: number;
   uptime: number;
-  
+
   workflowStats: {
     totalExecutions: number;
     currentlyRunning: number;
@@ -118,7 +122,7 @@ export interface WorkflowAgentMetrics {
     failedExecutions: number;
     cancelledExecutions: number;
   };
-  
+
   operationStats: {
     totalValidations: number;
     validWorkflows: number;

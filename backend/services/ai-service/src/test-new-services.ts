@@ -11,9 +11,15 @@ async function testServices() {
 
   // Test Model Registry
   const modelRegistry = new ModelRegistry();
-  console.log("Default chat provider:", modelRegistry.getDefaultProvider("chat"));
-  console.log("Default embedding provider:", modelRegistry.getDefaultProvider("embedding"));
-  
+  console.log(
+    "Default chat provider:",
+    modelRegistry.getDefaultProvider("chat"),
+  );
+  console.log(
+    "Default embedding provider:",
+    modelRegistry.getDefaultProvider("embedding"),
+  );
+
   // Test Provider Router
   const providerRouter = new ProviderRouter();
   console.log("Available providers:", providerRouter.getAvailableProviders());

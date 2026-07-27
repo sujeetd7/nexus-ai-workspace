@@ -1,21 +1,25 @@
 # AI Kernel Provider Migration
 
 ## Overview
+
 AI Kernel has been refactored to delegate all provider operations to AI Service as the single AI execution engine.
 
 ## Changes Made
 
 ### 1. New AI Service Integration
+
 - **Added**: `src/integrations/ai-service/ai-service-integration.module.ts`
 - **Enhanced**: `src/integrations/ai-service/ai-service.client.ts` with full provider API
 - **Updated**: `src/integrations/ai-service/ai-service.interface.ts` with new methods
 
 ### 2. Provider Module Refactoring
+
 - **Updated**: `src/providers/provider.module.ts` - Now delegates to AI Service
 - **Updated**: `src/providers/provider-router.ts` - Creates AI Service delegating providers
 - **Preserved**: All existing interfaces for backward compatibility
 
 ### 3. Kernel Factory Updates
+
 - **Added**: AI Service integration module initialization
 - **Updated**: Module registration order (AI Service before Provider Module)
 - **Added**: Environment configuration for AI Service
@@ -27,7 +31,7 @@ The following provider implementation files are **no longer used** in AI Kernel 
 ```
 src/providers/clients/
 ├── ollama.provider.ts       ❌ Remove - Now in AI Service
-├── openai.provider.ts       ❌ Remove - Now in AI Service  
+├── openai.provider.ts       ❌ Remove - Now in AI Service
 ├── gemini.provider.ts       ❌ Remove - Now in AI Service
 └── anthropic.provider.ts    ❌ Remove - Now in AI Service
 ```
@@ -48,11 +52,13 @@ AI_SERVICE_TIMEOUT=30000
 ## Architecture Flow
 
 ### Before (Direct Provider Usage):
+
 ```
 Kernel → ProviderModule → OllamaProvider/OpenAIProvider/etc.
 ```
 
 ### After (AI Service Delegation):
+
 ```
 Kernel → ProviderModule → AIServiceClient → AI Service REST API → Provider Implementations
 ```
@@ -81,6 +87,7 @@ The difference is that now the calls are routed through AI Service instead of di
 ## Rollback Plan
 
 If needed to rollback:
+
 1. Restore the removed provider files from git history
 2. Revert `provider.module.ts` and `provider-router.ts`
 3. Remove AI Service integration module from `kernel.factory.ts`
@@ -88,6 +95,7 @@ If needed to rollback:
 ## Testing
 
 Run the test file to verify refactoring:
+
 ```bash
 npx tsx src/test-refactoring.ts
 ```

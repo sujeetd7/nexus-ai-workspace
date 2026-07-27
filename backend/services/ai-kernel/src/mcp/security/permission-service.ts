@@ -14,12 +14,12 @@ import {
   PermissionAction,
   SecurityConfig,
   SecurityEvent,
-  SecurityEventPayload
+  SecurityEventPayload,
 } from "./types";
 import {
   MCPAuthorizationException,
   WorkspaceIsolationException,
-  PermissionDeniedException
+  PermissionDeniedException,
 } from "./exceptions";
 
 export class PermissionService extends EventEmitter {
@@ -38,16 +38,19 @@ export class PermissionService extends EventEmitter {
       enableWorkspaceIsolation: config.enableWorkspaceIsolation ?? true,
       strictPermissionChecking: config.strictPermissionChecking ?? true,
       defaultRoles: config.defaultRoles ?? [SecurityRole.USER],
-      sessionTimeout: config.sessionTimeout ?? 3600000
+      sessionTimeout: config.sessionTimeout ?? 3600000,
     };
 
-    this.cache = new PermissionCache(this.config.cacheTtl, this.config.maxCacheSize);
+    this.cache = new PermissionCache(
+      this.config.cacheTtl,
+      this.config.maxCacheSize,
+    );
     this.setupCacheEvents();
   }
 
   async authorize(request: AuthorizationRequest): Promise<AuthorizationResult> {
     const startTime = Date.now();
-    
+
     // Check cache first
     const cacheKey = this.cache.generateCacheKey(
       request.context.userId,
@@ -55,7 +58,7 @@ export class PermissionService extends EventEmitter {
       request.resource,
       request.action,
       request.resourceId,
-      request.context.serverId
+      request.context.serverId,
     );
 
     const cached = this.cache.get(cacheKey);
@@ -80,7 +83,10 @@ export class PermissionService extends EventEmitter {
     return result;
   }
 
-  setWorkspacePermissions(workspaceId: string, permissions: WorkspacePermissions): void {
+  setWorkspacePermissions(
+    workspaceId: string,
+    permissions: WorkspacePermissions,
+  ): void {
     this.workspacePermissions.set(workspaceId, permissions);
     this.cache.invalidateWorkspace(workspaceId);
     this.emitPermissionUpdated("workspace", workspaceId);
@@ -121,7 +127,11 @@ export class PermissionService extends EventEmitter {
     return this.serverPermissions.get(serverId) || null;
   }
 
-  invalidateCache(userId?: string, workspaceId?: string, serverId?: string): void {
+  invalidateCache(
+    userId?: string,
+    workspaceId?: string,
+    serverId?: string,
+  ): void {
     if (userId) {
       this.cache.invalidateUser(userId);
     } else if (workspaceId) {
@@ -141,13 +151,17 @@ export class PermissionService extends EventEmitter {
     const { context, resource, resourceId } = request;
 
     // Check if the request is trying to access resources from a different workspace
-    if (resource === ResourceType.WORKSPACE && resourceId && resourceId !== context.workspaceId) {
+    if (
+      resource === ResourceType.WORKSPACE &&
+      resourceId &&
+      resourceId !== context.workspaceId
+    ) {
       throw new WorkspaceIsolationException(
         context.userId,
         context.workspaceId,
         resourceId,
         resource,
-        resourceId
+        resourceId,
       );
     }
 
@@ -158,7 +172,7 @@ export class PermissionService extends EventEmitter {
 
   private async performAuthorization(
     request: AuthorizationRequest,
-    startTime: number
+    startTime: number,
   ): Promise<AuthorizationResult> {
     const { context, resource, action, resourceId } = request;
 
@@ -167,42 +181,57 @@ export class PermissionService extends EventEmitter {
       const userPerms = this.getUserEffectivePermissions(context);
 
       // Get resource-specific permissions
-      const resourcePerms = this.getResourcePermissions(resource, resourceId, context.serverId);
+      const resourcePerms = this.getResourcePermissions(
+        resource,
+        resourceId,
+        context.serverId,
+      );
 
       // Check if user has required role-based access
-      const roleAccess = this.checkRoleBasedAccess(userPerms.roles, resourcePerms);
-      
+      const roleAccess = this.checkRoleBasedAccess(
+        userPerms.roles,
+        resourcePerms,
+      );
+
       // Check if user has explicit permission
       const permissionAccess = this.checkPermissionBasedAccess(
         userPerms.permissions,
         resource,
         action,
-        resourceId
+        resourceId,
       );
 
       const granted = roleAccess || permissionAccess;
-      const grantedBy = roleAccess 
-        ? { role: userPerms.roles.find(role => resourcePerms.allowedRoles.includes(role)) }
-        : { permission: userPerms.permissions.find(p => 
-            p.resource === resource && 
-            p.action === action &&
-            (!p.resourceId || p.resourceId === resourceId)
-          )};
+      const grantedBy = roleAccess
+        ? {
+            role: userPerms.roles.find((role) =>
+              resourcePerms.allowedRoles.includes(role),
+            ),
+          }
+        : {
+            permission: userPerms.permissions.find(
+              (p) =>
+                p.resource === resource &&
+                p.action === action &&
+                (!p.resourceId || p.resourceId === resourceId),
+            ),
+          };
 
       const result: AuthorizationResult = {
         granted,
         reason: granted ? "Access granted" : "Insufficient permissions",
-        requiredPermissions: granted ? [] : this.getRequiredPermissions(resource, action, resourceId),
+        requiredPermissions: granted
+          ? []
+          : this.getRequiredPermissions(resource, action, resourceId),
         grantedBy: granted ? grantedBy : undefined,
         metadata: {
           checkedAt: new Date(),
           duration: Date.now() - startTime,
-          cached: false
-        }
+          cached: false,
+        },
       };
 
       return result;
-
     } catch (error) {
       throw new MCPAuthorizationException(
         context.userId,
@@ -211,7 +240,7 @@ export class PermissionService extends EventEmitter {
         action,
         this.getRequiredPermissions(resource, action, resourceId),
         resourceId,
-        error instanceof Error ? error.message : "Authorization check failed"
+        error instanceof Error ? error.message : "Authorization check failed",
       );
     }
   }
@@ -232,7 +261,9 @@ export class PermissionService extends EventEmitter {
       permissions.push(...userPerms.globalPermissions);
 
       // Add workspace-specific permissions
-      const userWorkspacePerms = userPerms.workspacePermissions.get(context.workspaceId);
+      const userWorkspacePerms = userPerms.workspacePermissions.get(
+        context.workspaceId,
+      );
       if (userWorkspacePerms) {
         roles.push(...userWorkspacePerms.roles);
         permissions.push(...userWorkspacePerms.permissions);
@@ -247,14 +278,14 @@ export class PermissionService extends EventEmitter {
 
     // Remove duplicates
     roles = Array.from(new Set(roles));
-    
+
     return { roles, permissions };
   }
 
   private getResourcePermissions(
     resource: ResourceType,
     resourceId?: string,
-    serverId?: string
+    serverId?: string,
   ): { allowedRoles: SecurityRole[]; requiredPermissions: Permission[] } {
     switch (resource) {
       case ResourceType.TOOL:
@@ -264,7 +295,7 @@ export class PermissionService extends EventEmitter {
           if (toolPerms) {
             return {
               allowedRoles: toolPerms.allowedRoles,
-              requiredPermissions: toolPerms.requiredPermissions
+              requiredPermissions: toolPerms.requiredPermissions,
             };
           }
         }
@@ -276,7 +307,7 @@ export class PermissionService extends EventEmitter {
           if (serverPerms) {
             return {
               allowedRoles: serverPerms.allowedRoles,
-              requiredPermissions: serverPerms.requiredPermissions
+              requiredPermissions: serverPerms.requiredPermissions,
             };
           }
         }
@@ -286,30 +317,33 @@ export class PermissionService extends EventEmitter {
     // Default permissions for resources without specific configuration
     return {
       allowedRoles: [SecurityRole.ADMIN, SecurityRole.USER],
-      requiredPermissions: []
+      requiredPermissions: [],
     };
   }
 
-  private checkRoleBasedAccess(userRoles: SecurityRole[], resourcePerms: any): boolean {
-    return userRoles.some(role => resourcePerms.allowedRoles.includes(role));
+  private checkRoleBasedAccess(
+    userRoles: SecurityRole[],
+    resourcePerms: any,
+  ): boolean {
+    return userRoles.some((role) => resourcePerms.allowedRoles.includes(role));
   }
 
   private checkPermissionBasedAccess(
     userPermissions: Permission[],
     resource: ResourceType,
     action: PermissionAction,
-    resourceId?: string
+    resourceId?: string,
   ): boolean {
-    return userPermissions.some(permission => {
+    return userPermissions.some((permission) => {
       if (permission.resource !== resource || permission.action !== action) {
         return false;
       }
-      
+
       // If permission has no resourceId, it applies to all resources of this type
       if (!permission.resourceId) {
         return true;
       }
-      
+
       // If resourceId matches or no specific resourceId required
       return permission.resourceId === resourceId;
     });
@@ -318,13 +352,15 @@ export class PermissionService extends EventEmitter {
   private getRequiredPermissions(
     resource: ResourceType,
     action: PermissionAction,
-    resourceId?: string
+    resourceId?: string,
   ): Permission[] {
-    return [{
-      resource,
-      action,
-      resourceId
-    }];
+    return [
+      {
+        resource,
+        action,
+        resourceId,
+      },
+    ];
   }
 
   private setupCacheEvents(): void {
@@ -337,7 +373,10 @@ export class PermissionService extends EventEmitter {
     });
   }
 
-  private emitSecurityEvent(request: AuthorizationRequest, result: AuthorizationResult): void {
+  private emitSecurityEvent(
+    request: AuthorizationRequest,
+    result: AuthorizationResult,
+  ): void {
     const payload: SecurityEventPayload = {
       userId: request.context.userId,
       workspaceId: request.context.workspaceId,
@@ -349,10 +388,12 @@ export class PermissionService extends EventEmitter {
       granted: result.granted,
       reason: result.reason,
       timestamp: new Date(),
-      metadata: request.metadata
+      metadata: request.metadata,
     };
 
-    const event = result.granted ? SecurityEvent.AUTHORIZED : SecurityEvent.DENIED;
+    const event = result.granted
+      ? SecurityEvent.AUTHORIZED
+      : SecurityEvent.DENIED;
     this.emit(event, payload);
   }
 
@@ -360,7 +401,7 @@ export class PermissionService extends EventEmitter {
     this.emit(SecurityEvent.PERMISSION_UPDATED, {
       type,
       id,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 }

@@ -15,26 +15,38 @@ export class AgentRuntimeRepository {
     error?: string | null;
   }): Promise<AgentExecution> {
     try {
-      console.log("[RUNTIME_REPOSITORY] Creating execution with data:", JSON.stringify(data, null, 2));
-      
+      console.log(
+        "[RUNTIME_REPOSITORY] Creating execution with data:",
+        JSON.stringify(data, null, 2),
+      );
+
       const prismaData = {
         ...data,
         input: data.input as any,
         output: data.output as any,
       };
-      
-      console.log("[RUNTIME_REPOSITORY] Prisma data structure:", JSON.stringify(prismaData, null, 2));
-      
+
+      console.log(
+        "[RUNTIME_REPOSITORY] Prisma data structure:",
+        JSON.stringify(prismaData, null, 2),
+      );
+
       const result = await prisma.agentExecution.create({
         data: prismaData,
       });
-      
-      console.log("[RUNTIME_REPOSITORY] Created execution:", JSON.stringify(result, null, 2));
-      
+
+      console.log(
+        "[RUNTIME_REPOSITORY] Created execution:",
+        JSON.stringify(result, null, 2),
+      );
+
       return result;
     } catch (error) {
       console.error("[RUNTIME_REPOSITORY] ERROR creating execution:", error);
-      console.error("[RUNTIME_REPOSITORY] Stack trace:", error instanceof Error ? error.stack : 'No stack trace');
+      console.error(
+        "[RUNTIME_REPOSITORY] Stack trace:",
+        error instanceof Error ? error.stack : "No stack trace",
+      );
       throw error;
     }
   }

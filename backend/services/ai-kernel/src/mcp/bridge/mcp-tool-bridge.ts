@@ -33,7 +33,7 @@ export class MCPToolBridge implements ITool {
     serverId: string,
     mcpManager: MCPManager,
     securityManager: MCPSecurityManager,
-    registry: MCPServerRegistry
+    registry: MCPServerRegistry,
   ) {
     this.id = `mcp:${serverId}:${tool.name}`;
     this.name = tool.name;
@@ -51,7 +51,7 @@ export class MCPToolBridge implements ITool {
     this.metadata = {
       serverId,
       originalTool: tool,
-      bridgedAt: new Date()
+      bridgedAt: new Date(),
     };
   }
 
@@ -62,13 +62,13 @@ export class MCPToolBridge implements ITool {
 
       // Get security context from input (if available)
       const securityContext = this.extractSecurityContext(input);
-      
+
       if (securityContext) {
         // Authorize tool execution
         await this.securityManager.authorizeTool({
           context: securityContext,
           toolName: this.name,
-          parameters: input
+          parameters: input,
         });
       }
 
@@ -76,12 +76,11 @@ export class MCPToolBridge implements ITool {
       const result = await this.mcpManager.executeTool(
         this.metadata.serverId,
         this.name,
-        input
+        input,
       );
 
       // Normalize the result
       return this.normalizeResult(result);
-
     } catch (error) {
       // Transform MCP errors into standard tool execution errors
       throw this.transformError(error);
@@ -109,7 +108,7 @@ export class MCPToolBridge implements ITool {
   async refreshFromServer(): Promise<void> {
     // Refresh the server registration to get latest tool metadata
     await this.registry.refreshServer(this.metadata.serverId);
-    
+
     // Update our metadata with the latest tool information
     const serverLookup = this.registry.findTool(this.name);
     if (serverLookup && serverLookup.serverId === this.metadata.serverId) {
@@ -149,8 +148,8 @@ export class MCPToolBridge implements ITool {
           serverId: this.metadata.serverId,
           toolName: this.name,
           executedAt: new Date(),
-          ...mcpResult.metadata
-        }
+          ...mcpResult.metadata,
+        },
       };
     } else {
       throw new Error(mcpResult.error?.message || "MCP tool execution failed");
@@ -160,7 +159,9 @@ export class MCPToolBridge implements ITool {
   private transformError(error: any): Error {
     if (error instanceof Error) {
       // Wrap MCP errors with tool execution context
-      const toolError = new Error(`Tool '${this.name}' execution failed: ${error.message}`);
+      const toolError = new Error(
+        `Tool '${this.name}' execution failed: ${error.message}`,
+      );
       toolError.stack = error.stack;
       return toolError;
     }
@@ -170,7 +171,7 @@ export class MCPToolBridge implements ITool {
 
   private extractPermissions(tool: MCPDiscoveredTool): string[] {
     const permissions: string[] = [];
-    
+
     // Extract permissions from metadata
     if (tool.metadata?.category) {
       permissions.push(`category:${tool.metadata.category}`);
@@ -198,12 +199,12 @@ export class MCPToolBridge implements ITool {
       properties: {
         success: {
           type: "boolean",
-          description: "Whether the tool execution was successful"
+          description: "Whether the tool execution was successful",
         },
         data: {
           type: "object",
           description: "The tool execution result data",
-          additionalProperties: true
+          additionalProperties: true,
         },
         metadata: {
           type: "object",
@@ -211,11 +212,11 @@ export class MCPToolBridge implements ITool {
           properties: {
             serverId: { type: "string" },
             toolName: { type: "string" },
-            executedAt: { type: "string", format: "date-time" }
-          }
-        }
+            executedAt: { type: "string", format: "date-time" },
+          },
+        },
       },
-      required: ["success"]
+      required: ["success"],
     };
   }
 }

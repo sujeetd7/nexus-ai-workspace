@@ -15,9 +15,7 @@ export class ChatIntegrationModule implements IKernelModule {
   public async init(kernel: IKernel): Promise<void> {
     const baseUrl = process.env.CHAT_SERVICE_URL || this.opts?.url;
     if (!baseUrl) {
-      console.warn(
-        "CHAT_SERVICE_URL not set; ChatIntegrationModule disabled",
-      );
+      console.warn("CHAT_SERVICE_URL not set; ChatIntegrationModule disabled");
       return;
     }
 

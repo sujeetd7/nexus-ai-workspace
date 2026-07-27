@@ -7,7 +7,7 @@ export enum MCPSessionStatus {
   CONNECTED = "connected",
   RECONNECTING = "reconnecting",
   DISCONNECTED = "disconnected",
-  ERROR = "error"
+  ERROR = "error",
 }
 
 export interface MCPSessionConfig {
@@ -36,13 +36,13 @@ export class MCPSession {
     this.sessionId = `session-${config.serverId}-${Date.now()}`;
     this.serverId = config.serverId;
     this.transport = config.transport;
-    
+
     this.config = {
       ...config,
       heartbeatInterval: config.heartbeatInterval ?? 30000,
       idleTimeout: config.idleTimeout ?? 300000, // 5 minutes
       maxReconnectAttempts: config.maxReconnectAttempts ?? 5,
-      reconnectInterval: config.reconnectInterval ?? 5000
+      reconnectInterval: config.reconnectInterval ?? 5000,
     };
 
     this.setupTransportListeners();
@@ -69,7 +69,9 @@ export class MCPSession {
       this.resetIdleTimeout();
     } catch (error) {
       this.status = MCPSessionStatus.ERROR;
-      throw new Error(`Failed to connect session: ${error instanceof Error ? error.message : "Unknown error"}`);
+      throw new Error(
+        `Failed to connect session: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -79,7 +81,7 @@ export class MCPSession {
     }
 
     this.cleanup();
-    
+
     try {
       await this.transport.disconnect();
     } catch (error) {
@@ -139,14 +141,19 @@ export class MCPSession {
   }
 
   isHealthy(): boolean {
-    return this.status === MCPSessionStatus.CONNECTED && 
-           this.lastHeartbeat !== null &&
-           Date.now() - this.lastHeartbeat.getTime() < this.config.heartbeatInterval * 2;
+    return (
+      this.status === MCPSessionStatus.CONNECTED &&
+      this.lastHeartbeat !== null &&
+      Date.now() - this.lastHeartbeat.getTime() <
+        this.config.heartbeatInterval * 2
+    );
   }
 
   shouldReconnect(): boolean {
-    return this.status === MCPSessionStatus.ERROR &&
-           this.reconnectAttempts < this.config.maxReconnectAttempts;
+    return (
+      this.status === MCPSessionStatus.ERROR &&
+      this.reconnectAttempts < this.config.maxReconnectAttempts
+    );
   }
 
   async attemptReconnect(): Promise<void> {
@@ -159,12 +166,16 @@ export class MCPSession {
 
     try {
       await this.transport.close();
-      await new Promise(resolve => setTimeout(resolve, this.config.reconnectInterval));
+      await new Promise((resolve) =>
+        setTimeout(resolve, this.config.reconnectInterval),
+      );
       await this.connect();
     } catch (error) {
       if (this.reconnectAttempts >= this.config.maxReconnectAttempts) {
         this.status = MCPSessionStatus.ERROR;
-        throw new Error(`Max reconnection attempts reached: ${error instanceof Error ? error.message : "Unknown error"}`);
+        throw new Error(
+          `Max reconnection attempts reached: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
       }
       throw error;
     }
@@ -180,7 +191,7 @@ export class MCPSession {
       reconnectAttempts: this.reconnectAttempts,
       isHealthy: this.isHealthy(),
       transportType: this.transport.type,
-      transportConnected: this.transport.connected
+      transportConnected: this.transport.connected,
     };
   }
 
@@ -209,7 +220,7 @@ export class MCPSession {
 
   private startHeartbeat(): void {
     this.cleanup();
-    
+
     this.heartbeatTimer = setInterval(async () => {
       try {
         await this.heartbeat();

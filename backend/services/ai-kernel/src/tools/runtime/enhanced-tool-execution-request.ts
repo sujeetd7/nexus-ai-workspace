@@ -2,7 +2,7 @@ export interface EnhancedToolExecutionRequest {
   tool: string;
   input: any;
   requestId: string;
-  
+
   // Enhanced context for MCP tools
   context?: {
     workspaceId?: string;
@@ -11,7 +11,7 @@ export interface EnhancedToolExecutionRequest {
     sessionId?: string;
     metadata?: Record<string, unknown>;
   };
-  
+
   // Execution options
   options?: {
     timeout?: number;

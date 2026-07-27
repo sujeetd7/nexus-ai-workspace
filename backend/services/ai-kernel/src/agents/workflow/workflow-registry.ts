@@ -1,10 +1,14 @@
 import { WorkflowDefinition } from "./workflow.types";
 import { IWorkflowRegistry } from "./workflow.interface";
-import { DuplicateWorkflowException, WorkflowNotFoundException } from "./workflow.exceptions";
+import {
+  DuplicateWorkflowException,
+  WorkflowNotFoundException,
+} from "./workflow.exceptions";
 
 export class WorkflowRegistry implements IWorkflowRegistry {
   private readonly workflows: Map<string, WorkflowDefinition> = new Map();
-  private readonly workflowsByName: Map<string, WorkflowDefinition[]> = new Map();
+  private readonly workflowsByName: Map<string, WorkflowDefinition[]> =
+    new Map();
 
   public async register(workflow: WorkflowDefinition): Promise<void> {
     if (!workflow.workflowId) {
@@ -18,23 +22,22 @@ export class WorkflowRegistry implements IWorkflowRegistry {
     try {
       // Validate basic workflow structure
       this.validateWorkflowStructure(workflow);
-      
+
       // Store workflow
       this.workflows.set(workflow.workflowId, workflow);
-      
+
       // Index by name for lookups
       const nameKey = workflow.name.toLowerCase();
       const existingByName = this.workflowsByName.get(nameKey) || [];
       existingByName.push(workflow);
       this.workflowsByName.set(nameKey, existingByName);
-      
     } catch (error) {
       if (error instanceof DuplicateWorkflowException) {
         throw error;
       }
-      
+
       throw new Error(
-        `Failed to register workflow '${workflow.workflowId}': ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to register workflow '${workflow.workflowId}': ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
   }
@@ -47,12 +50,14 @@ export class WorkflowRegistry implements IWorkflowRegistry {
 
     // Remove from main registry
     this.workflows.delete(workflowId);
-    
+
     // Remove from name index
     const nameKey = workflow.name.toLowerCase();
     const existingByName = this.workflowsByName.get(nameKey) || [];
-    const filteredByName = existingByName.filter(w => w.workflowId !== workflowId);
-    
+    const filteredByName = existingByName.filter(
+      (w) => w.workflowId !== workflowId,
+    );
+
     if (filteredByName.length === 0) {
       this.workflowsByName.delete(nameKey);
     } else {
@@ -62,7 +67,9 @@ export class WorkflowRegistry implements IWorkflowRegistry {
     return true;
   }
 
-  public async find(workflowId: string): Promise<WorkflowDefinition | undefined> {
+  public async find(
+    workflowId: string,
+  ): Promise<WorkflowDefinition | undefined> {
     return this.workflows.get(workflowId);
   }
 
@@ -88,7 +95,9 @@ export class WorkflowRegistry implements IWorkflowRegistry {
     return workflows.sort((a, b) => b.version.localeCompare(a.version));
   }
 
-  public async getLatestVersion(name: string): Promise<WorkflowDefinition | undefined> {
+  public async getLatestVersion(
+    name: string,
+  ): Promise<WorkflowDefinition | undefined> {
     const workflows = await this.listByVersion(name);
     return workflows.length > 0 ? workflows[0] : undefined;
   }
@@ -135,8 +144,13 @@ export class WorkflowRegistry implements IWorkflowRegistry {
 
       // Validate step dependencies
       for (const depId of step.dependsOn) {
-        if (!stepIds.has(depId) && !this.isStepIdInNestedSteps(depId, workflow.steps)) {
-          throw new Error(`Step ${step.stepId} depends on non-existent step: ${depId}`);
+        if (
+          !stepIds.has(depId) &&
+          !this.isStepIdInNestedSteps(depId, workflow.steps)
+        ) {
+          throw new Error(
+            `Step ${step.stepId} depends on non-existent step: ${depId}`,
+          );
         }
       }
 
@@ -176,7 +190,7 @@ export class WorkflowRegistry implements IWorkflowRegistry {
 
   private validateNestedSteps(steps: any[], parentStepIds: Set<string>): void {
     const nestedStepIds = new Set<string>();
-    
+
     for (const step of steps) {
       if (!step.stepId) {
         throw new Error("Nested step ID is required");
@@ -190,7 +204,10 @@ export class WorkflowRegistry implements IWorkflowRegistry {
 
       // Recursively validate further nested steps
       if (step.steps && step.steps.length > 0) {
-        this.validateNestedSteps(step.steps, new Set([...parentStepIds, ...nestedStepIds]));
+        this.validateNestedSteps(
+          step.steps,
+          new Set([...parentStepIds, ...nestedStepIds]),
+        );
       }
     }
   }
@@ -233,7 +250,9 @@ export class WorkflowRegistry implements IWorkflowRegistry {
     }
 
     if (policy.maxFailures === 0 && !policy.continueOnError) {
-      throw new Error("Failure policy must allow either maxFailures > 0 or continueOnError = true");
+      throw new Error(
+        "Failure policy must allow either maxFailures > 0 or continueOnError = true",
+      );
     }
   }
 }

@@ -27,7 +27,7 @@ export class HTTPTransport extends BaseTransport {
       timeout: 30000,
       retries: 3,
       retryDelay: 1000,
-      ...config
+      ...config,
     };
 
     this.client = axios.create({
@@ -35,8 +35,8 @@ export class HTTPTransport extends BaseTransport {
       timeout: this.config.timeout,
       headers: {
         "Content-Type": "application/json",
-        ...this.config.headers
-      }
+        ...this.config.headers,
+      },
     });
 
     // Add retry interceptor
@@ -48,14 +48,17 @@ export class HTTPTransport extends BaseTransport {
           config._retryCount = 0;
         }
 
-        if (config._retryCount < this.config!.retries! && this.isRetriableError(error)) {
+        if (
+          config._retryCount < this.config!.retries! &&
+          this.isRetriableError(error)
+        ) {
           config._retryCount++;
           await this.delay(this.config!.retryDelay! * config._retryCount);
           return this.client!.request(config);
         }
 
         return Promise.reject(error);
-      }
+      },
     );
 
     // Test connection
@@ -63,7 +66,9 @@ export class HTTPTransport extends BaseTransport {
       await this.client.get("/health", { timeout: 5000 });
       this.handleConnect();
     } catch (error) {
-      throw new Error(`Failed to connect to ${this.config.baseURL}: ${error instanceof Error ? error.message : "Unknown error"}`);
+      throw new Error(
+        `Failed to connect to ${this.config.baseURL}: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -85,7 +90,11 @@ export class HTTPTransport extends BaseTransport {
     try {
       await this.client.post("/rpc", message);
     } catch (error) {
-      this.handleError(new Error(`Failed to send message: ${error instanceof Error ? error.message : "Unknown error"}`));
+      this.handleError(
+        new Error(
+          `Failed to send message: ${error instanceof Error ? error.message : "Unknown error"}`,
+        ),
+      );
       throw error;
     }
   }
@@ -99,12 +108,12 @@ export class HTTPTransport extends BaseTransport {
       id: this.generateRequestId(),
       method,
       params,
-      jsonrpc: "2.0"
+      jsonrpc: "2.0",
     };
 
     try {
       const response = await this.client.post("/stream", message, {
-        responseType: "stream"
+        responseType: "stream",
       });
 
       let buffer = "";
@@ -130,7 +139,9 @@ export class HTTPTransport extends BaseTransport {
         }
       }
     } catch (error) {
-      throw new Error(`Stream failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+      throw new Error(
+        `Stream failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -148,6 +159,6 @@ export class HTTPTransport extends BaseTransport {
   }
 
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

@@ -108,13 +108,13 @@ export interface ILLMProvider {
   readonly name: string;
 
   generate(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse>;
-  
+
   stream(request: ProviderExecuteRequest): AsyncIterable<StreamChunk>;
-  
+
   embeddings(request: EmbeddingRequest): Promise<EmbeddingResponse>;
-  
+
   health(): Promise<HealthStatus>;
-  
+
   models(): Promise<ModelInfo[]>;
 
   // Legacy method for backward compatibility

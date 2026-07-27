@@ -30,12 +30,13 @@ export class PersistenceLayerStage implements IPipelineStage {
         context.tokensUsed = payload.executionResult.tokens;
         context.latencyMs = payload.executionResult.latencyMs;
         context.finishReason = payload.executionResult.finishReason;
-        
+
         // Store tool outputs if available
         if (payload.executionResult.providerMetadata?.toolCalls) {
-          context.toolOutputs = payload.executionResult.providerMetadata.toolCalls;
+          context.toolOutputs =
+            payload.executionResult.providerMetadata.toolCalls;
         }
-        
+
         console.log(`[${this.name}] Execution metadata persisted`);
       } catch (error) {
         console.error("Error persisting execution metadata:", error);

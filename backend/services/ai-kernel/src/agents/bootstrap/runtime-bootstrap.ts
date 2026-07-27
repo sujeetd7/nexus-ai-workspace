@@ -1,6 +1,17 @@
-import { RuntimeInitializer, RuntimeInitializationOptions, RuntimeComponents } from "../runtime/runtime-initializer";
-import { RuntimeShutdownManager, ShutdownResult } from "../runtime/runtime-shutdown";
-import { RuntimeHealthAggregator, RuntimeHealthComponents, AggregatedRuntimeHealth } from "./runtime-health";
+import {
+  RuntimeInitializer,
+  RuntimeInitializationOptions,
+  RuntimeComponents,
+} from "../runtime/runtime-initializer";
+import {
+  RuntimeShutdownManager,
+  ShutdownResult,
+} from "../runtime/runtime-shutdown";
+import {
+  RuntimeHealthAggregator,
+  RuntimeHealthComponents,
+  AggregatedRuntimeHealth,
+} from "./runtime-health";
 
 export interface BootstrapOptions extends RuntimeInitializationOptions {
   autoStart?: boolean;
@@ -20,7 +31,7 @@ export interface BootstrapState {
 
 export class RuntimeBootstrapException extends Error {
   public readonly name = "RuntimeBootstrapException";
-  
+
   constructor(message?: string) {
     super(message || "Runtime bootstrap failed");
     Object.setPrototypeOf(this, RuntimeBootstrapException.prototype);
@@ -37,8 +48,8 @@ export class RuntimeBootstrap {
     started: false,
     shutdownInProgress: false,
     healthCheck: {
-      enabled: false
-    }
+      enabled: false,
+    },
   };
   private healthCheckTimer?: NodeJS.Timeout;
 
@@ -47,7 +58,9 @@ export class RuntimeBootstrap {
     this.shutdownManager = new RuntimeShutdownManager();
   }
 
-  public async bootstrap(options: BootstrapOptions): Promise<RuntimeComponents> {
+  public async bootstrap(
+    options: BootstrapOptions,
+  ): Promise<RuntimeComponents> {
     if (this.state.initialized) {
       throw new RuntimeBootstrapException("Runtime is already initialized");
     }
@@ -73,16 +86,19 @@ export class RuntimeBootstrap {
 
       console.log("Runtime bootstrap completed successfully");
       return this.components;
-
     } catch (error) {
       console.error("Runtime bootstrap failed:", error);
-      throw new RuntimeBootstrapException(error instanceof Error ? error.message : "Unknown bootstrap error");
+      throw new RuntimeBootstrapException(
+        error instanceof Error ? error.message : "Unknown bootstrap error",
+      );
     }
   }
 
   public async start(): Promise<void> {
     if (!this.state.initialized || !this.components) {
-      throw new RuntimeBootstrapException("Runtime must be initialized before starting");
+      throw new RuntimeBootstrapException(
+        "Runtime must be initialized before starting",
+      );
     }
 
     if (this.state.started) {
@@ -95,19 +111,23 @@ export class RuntimeBootstrap {
 
       // Start orchestrator (which coordinates other components)
       await this.components.orchestrator.start();
-      
+
       // Initialize all builtin agents
-      const allAgents = this.components.builtinRegistration.registry.listAllAgents();
+      const allAgents =
+        this.components.builtinRegistration.registry.listAllAgents();
       for (const instance of allAgents) {
-        await this.components.lifecycleManager.start(instance.agent.metadata.id);
+        await this.components.lifecycleManager.start(
+          instance.agent.metadata.id,
+        );
       }
 
       this.state.started = true;
       console.log("Runtime started successfully");
-
     } catch (error) {
       console.error("Failed to start runtime:", error);
-      throw new RuntimeBootstrapException(`Failed to start runtime: ${error instanceof Error ? error.message : "Unknown error"}`);
+      throw new RuntimeBootstrapException(
+        `Failed to start runtime: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -140,14 +160,18 @@ export class RuntimeBootstrap {
       if (result.success) {
         console.log("Runtime shutdown completed successfully");
       } else {
-        console.warn("Runtime shutdown completed with errors:", result.failedShutdowns);
+        console.warn(
+          "Runtime shutdown completed with errors:",
+          result.failedShutdowns,
+        );
       }
 
       return result;
-
     } catch (error) {
       console.error("Runtime shutdown failed:", error);
-      throw new RuntimeBootstrapException(`Shutdown failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+      throw new RuntimeBootstrapException(
+        `Shutdown failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     } finally {
       this.state.shutdownInProgress = false;
     }
@@ -192,7 +216,7 @@ export class RuntimeBootstrap {
       pluginLoader: this.components.pluginLoader,
       memory: this.components.memory,
       communicationManager: this.components.communicationManager,
-      builtinRegistry: this.components.builtinRegistration.registry
+      builtinRegistry: this.components.builtinRegistration.registry,
     };
 
     this.healthAggregator = new RuntimeHealthAggregator(healthComponents);
@@ -213,9 +237,9 @@ export class RuntimeBootstrap {
           console.warn("Runtime health degraded:", {
             status: health.overallStatus,
             unhealthyComponents: health.componentHealths
-              .filter(c => c.status === "unhealthy")
-              .map(c => c.componentName),
-            errors: health.aggregatedErrors
+              .filter((c) => c.status === "unhealthy")
+              .map((c) => c.componentName),
+            errors: health.aggregatedErrors,
           });
         }
       } catch (error) {

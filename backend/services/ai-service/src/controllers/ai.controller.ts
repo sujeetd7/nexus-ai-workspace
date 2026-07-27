@@ -41,9 +41,10 @@ export class AIController {
     res.setHeader("Connection", "keep-alive");
 
     // Use tool calling service for streaming if tools are provided
-    const streamGenerator = (dto.tools && dto.tools.length > 0) 
-      ? this.toolCallingService.streamWithTools(dto)
-      : this.service.stream(dto);
+    const streamGenerator =
+      dto.tools && dto.tools.length > 0
+        ? this.toolCallingService.streamWithTools(dto)
+        : this.service.stream(dto);
 
     for await (const event of streamGenerator) {
       res.write(`data: ${JSON.stringify(event)}\n\n`);

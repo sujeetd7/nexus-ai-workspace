@@ -42,7 +42,6 @@
       "@schemas/*": ["schemas/*"],
       "@routes/*": ["routes/*"],
       "@utils/*": ["utils/*"],
-      "@prisma/*": ["repositories/prisma/*"],
       "@db": ["prisma/client"]
     }
   },

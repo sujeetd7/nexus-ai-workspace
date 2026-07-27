@@ -10,7 +10,10 @@ import { IPluginLoader, PluginLoader } from "../plugins";
 import { IAgentMemory } from "../memory";
 import { ICommunicationManager, CommunicationManager } from "../communication";
 import { IAgentRuntime, AgentRuntime } from "./agent-runtime";
-import { BuiltinRegistrationManager, BuiltinRegistrationResult } from "./builtin-registration";
+import {
+  BuiltinRegistrationManager,
+  BuiltinRegistrationResult,
+} from "./builtin-registration";
 import { BuiltinAgentFactoryComponents } from "../builtin/factory";
 
 export interface RuntimeComponents {
@@ -33,7 +36,7 @@ export interface RuntimeInitializationOptions {
   planner: IAgentPlanner;
   workflowEngine: IWorkflowEngine;
   memory: IAgentMemory;
-  
+
   // Optional component configurations
   maxConcurrency?: number;
   enablePlugins?: boolean;
@@ -43,9 +46,11 @@ export interface RuntimeInitializationOptions {
 export class RuntimeInitializationException extends Error {
   public readonly name = "RuntimeInitializationException";
   public readonly failedComponent: string;
-  
+
   constructor(failedComponent: string, message?: string) {
-    super(message || `Failed to initialize runtime component: ${failedComponent}`);
+    super(
+      message || `Failed to initialize runtime component: ${failedComponent}`,
+    );
     this.failedComponent = failedComponent;
     Object.setPrototypeOf(this, RuntimeInitializationException.prototype);
   }
@@ -55,26 +60,65 @@ export class RuntimeInitializer {
   private initialized = false;
   private components?: RuntimeComponents;
 
-  public async initialize(options: RuntimeInitializationOptions): Promise<RuntimeComponents> {
+  public async initialize(
+    options: RuntimeInitializationOptions,
+  ): Promise<RuntimeComponents> {
     if (this.initialized) {
-      throw new RuntimeInitializationException("Runtime", "Runtime is already initialized");
+      throw new RuntimeInitializationException(
+        "Runtime",
+        "Runtime is already initialized",
+      );
     }
 
     try {
       // Initialize core components in dependency order
       const agentRegistry = await this.initializeAgentRegistry();
-      const lifecycleManager = await this.initializeLifecycleManager(agentRegistry);
+      const lifecycleManager =
+        await this.initializeLifecycleManager(agentRegistry);
       const scheduler = await this.initializeScheduler(options.maxConcurrency);
       const communicationManager = await this.initializeCommunicationManager();
       const agentRuntime = await this.initializeAgentRuntime(agentRegistry);
-      const coordinator = await this.initializeCoordinator(agentRegistry, agentRuntime, communicationManager);
-      const orchestrator = await this.initializeOrchestrator(agentRegistry, lifecycleManager, scheduler, options.planner, options.workflowEngine, agentRuntime, communicationManager, options.memory);
-      const pluginLoader = await this.initializePluginLoader(options.enablePlugins, options.pluginSearchPaths, agentRegistry);
+      const coordinator = await this.initializeCoordinator(
+        agentRegistry,
+        agentRuntime,
+        communicationManager,
+      );
+      const orchestrator = await this.initializeOrchestrator(
+        agentRegistry,
+        lifecycleManager,
+        scheduler,
+        options.planner,
+        options.workflowEngine,
+        agentRuntime,
+        communicationManager,
+        options.memory,
+      );
+      const pluginLoader = await this.initializePluginLoader(
+        options.enablePlugins,
+        options.pluginSearchPaths,
+        agentRegistry,
+      );
 
       // Initialize builtin agents
-      const builtinComponents = await this.createBuiltinComponents(options.memory, agentRegistry, options.planner, options.workflowEngine, agentRuntime, coordinator, pluginLoader, communicationManager, scheduler, orchestrator);
-      const builtinRegistrationManager = new BuiltinRegistrationManager(agentRegistry);
-      const builtinRegistration = await builtinRegistrationManager.registerAllBuiltinAgents(builtinComponents);
+      const builtinComponents = await this.createBuiltinComponents(
+        options.memory,
+        agentRegistry,
+        options.planner,
+        options.workflowEngine,
+        agentRuntime,
+        coordinator,
+        pluginLoader,
+        communicationManager,
+        scheduler,
+        orchestrator,
+      );
+      const builtinRegistrationManager = new BuiltinRegistrationManager(
+        agentRegistry,
+      );
+      const builtinRegistration =
+        await builtinRegistrationManager.registerAllBuiltinAgents(
+          builtinComponents,
+        );
 
       this.components = {
         agentRegistry,
@@ -88,14 +132,14 @@ export class RuntimeInitializer {
         memory: options.memory,
         communicationManager,
         agentRuntime,
-        builtinRegistration
+        builtinRegistration,
       };
 
       this.initialized = true;
       return this.components;
-
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Unknown initialization error';
+      const errorMsg =
+        error instanceof Error ? error.message : "Unknown initialization error";
       if (error instanceof RuntimeInitializationException) {
         throw error;
       }
@@ -116,19 +160,29 @@ export class RuntimeInitializer {
     try {
       return new AgentRegistry();
     } catch (error) {
-      throw new RuntimeInitializationException("AgentRegistry", error instanceof Error ? error.message : "Unknown error");
+      throw new RuntimeInitializationException(
+        "AgentRegistry",
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
   }
 
-  private async initializeLifecycleManager(agentRegistry: IAgentRegistry): Promise<IAgentLifecycleManager> {
+  private async initializeLifecycleManager(
+    agentRegistry: IAgentRegistry,
+  ): Promise<IAgentLifecycleManager> {
     try {
       return new AgentLifecycleManager(agentRegistry);
     } catch (error) {
-      throw new RuntimeInitializationException("LifecycleManager", error instanceof Error ? error.message : "Unknown error");
+      throw new RuntimeInitializationException(
+        "LifecycleManager",
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
   }
 
-  private async initializeScheduler(maxConcurrency?: number): Promise<IAgentScheduler> {
+  private async initializeScheduler(
+    maxConcurrency?: number,
+  ): Promise<IAgentScheduler> {
     try {
       const scheduler = new AgentScheduler();
       // Configure max concurrency if provided
@@ -136,7 +190,10 @@ export class RuntimeInitializer {
       // This would need to be configured after creation if the scheduler supports it
       return scheduler;
     } catch (error) {
-      throw new RuntimeInitializationException("Scheduler", error instanceof Error ? error.message : "Unknown error");
+      throw new RuntimeInitializationException(
+        "Scheduler",
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
   }
 
@@ -144,27 +201,42 @@ export class RuntimeInitializer {
     try {
       return new CommunicationManager();
     } catch (error) {
-      throw new RuntimeInitializationException("CommunicationManager", error instanceof Error ? error.message : "Unknown error");
+      throw new RuntimeInitializationException(
+        "CommunicationManager",
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
   }
 
-  private async initializeCoordinator(agentRegistry: IAgentRegistry, agentRuntime: IAgentRuntime, communicationManager: ICommunicationManager): Promise<IAgentCoordinator> {
+  private async initializeCoordinator(
+    agentRegistry: IAgentRegistry,
+    agentRuntime: IAgentRuntime,
+    communicationManager: ICommunicationManager,
+  ): Promise<IAgentCoordinator> {
     try {
       return new AgentCoordinator({
         agentRegistry,
         agentRuntime,
-        communicationManager
+        communicationManager,
       });
     } catch (error) {
-      throw new RuntimeInitializationException("Coordinator", error instanceof Error ? error.message : "Unknown error");
+      throw new RuntimeInitializationException(
+        "Coordinator",
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
   }
 
-  private async initializeAgentRuntime(agentRegistry: IAgentRegistry): Promise<IAgentRuntime> {
+  private async initializeAgentRuntime(
+    agentRegistry: IAgentRegistry,
+  ): Promise<IAgentRuntime> {
     try {
       return new AgentRuntime(agentRegistry);
     } catch (error) {
-      throw new RuntimeInitializationException("AgentRuntime", error instanceof Error ? error.message : "Unknown error");
+      throw new RuntimeInitializationException(
+        "AgentRuntime",
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
   }
 
@@ -176,7 +248,7 @@ export class RuntimeInitializer {
     workflowEngine: IWorkflowEngine,
     agentRuntime: IAgentRuntime,
     communicationManager: ICommunicationManager,
-    memory: IAgentMemory
+    memory: IAgentMemory,
   ): Promise<IAgentOrchestrator> {
     try {
       return new AgentOrchestrator({
@@ -187,39 +259,49 @@ export class RuntimeInitializer {
         workflowEngine,
         agentRuntime,
         communicationManager,
-        agentMemory: memory
+        agentMemory: memory,
       });
     } catch (error) {
-      throw new RuntimeInitializationException("Orchestrator", error instanceof Error ? error.message : "Unknown error");
+      throw new RuntimeInitializationException(
+        "Orchestrator",
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
   }
 
-  private async initializePluginLoader(enablePlugins?: boolean, searchPaths?: string[], agentRegistry?: IAgentRegistry): Promise<IPluginLoader> {
+  private async initializePluginLoader(
+    enablePlugins?: boolean,
+    searchPaths?: string[],
+    agentRegistry?: IAgentRegistry,
+  ): Promise<IPluginLoader> {
     try {
       if (!enablePlugins) {
         // Return a basic plugin loader even if plugins are disabled
         return new PluginLoader(agentRegistry);
       }
-      
+
       const pluginLoader = new PluginLoader(agentRegistry);
-      
+
       // Discover plugins from search paths if provided
       if (searchPaths && searchPaths.length > 0) {
         try {
-          await pluginLoader.discover({ 
+          await pluginLoader.discover({
             searchPaths,
             recursive: true,
-            validateOnDiscovery: true 
+            validateOnDiscovery: true,
           });
         } catch (error) {
           // Log warning but don't fail initialization
           console.warn("Failed to discover plugins:", error);
         }
       }
-      
+
       return pluginLoader;
     } catch (error) {
-      throw new RuntimeInitializationException("PluginLoader", error instanceof Error ? error.message : "Unknown error");
+      throw new RuntimeInitializationException(
+        "PluginLoader",
+        error instanceof Error ? error.message : "Unknown error",
+      );
     }
   }
 
@@ -233,7 +315,7 @@ export class RuntimeInitializer {
     pluginLoader: IPluginLoader,
     communicationManager: ICommunicationManager,
     scheduler: IAgentScheduler,
-    orchestrator: IAgentOrchestrator
+    orchestrator: IAgentOrchestrator,
   ): Promise<BuiltinAgentFactoryComponents> {
     // Create component bundles for each builtin agent type
     return {
@@ -241,37 +323,37 @@ export class RuntimeInitializer {
         conversationMemory: memory as any, // Type assertion needed for interface compatibility
         workspaceMemory: memory as any,
         scratchpadMemory: memory as any,
-        sharedMemory: memory as any
+        sharedMemory: memory as any,
       },
       toolComponents: {
         toolRegistry: agentRegistry as any, // Would need proper tool registry
-        toolExecutor: agentRuntime as any // Would need proper tool executor
+        toolExecutor: agentRuntime as any, // Would need proper tool executor
       },
       plannerComponents: {
-        planner: planner
+        planner: planner,
       },
       workflowComponents: {
-        workflowEngine
+        workflowEngine,
       },
       executionComponents: {
-        agentRuntime
+        agentRuntime,
       },
       coordinatorComponents: {
-        agentCoordinator: coordinator
+        agentCoordinator: coordinator,
       },
       pluginComponents: {
         pluginRegistry: pluginLoader as any, // Would need proper plugin registry
-        pluginLoader
+        pluginLoader,
       },
       communicationComponents: {
-        communicationManager
+        communicationManager,
       },
       schedulerComponents: {
-        agentScheduler: scheduler
+        agentScheduler: scheduler,
       },
       orchestratorComponents: {
-        agentOrchestrator: orchestrator
-      }
+        agentOrchestrator: orchestrator,
+      },
     };
   }
 }

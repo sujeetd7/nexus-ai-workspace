@@ -4,7 +4,7 @@ import { ProviderRegistry } from "./provider.registry";
 
 export class ProviderFactory {
   private static instance: ProviderFactory;
-  
+
   public static getInstance(): ProviderFactory {
     if (!ProviderFactory.instance) {
       ProviderFactory.instance = new ProviderFactory();
@@ -14,11 +14,11 @@ export class ProviderFactory {
 
   public create(provider: string): AIProvider {
     const providerInstance = ProviderRegistry.get(provider);
-    
+
     if (!providerInstance) {
       throw new Error(`Unknown provider: ${provider}`);
     }
-    
+
     return providerInstance;
   }
 

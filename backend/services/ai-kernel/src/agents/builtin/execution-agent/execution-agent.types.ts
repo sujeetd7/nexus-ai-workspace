@@ -1,10 +1,15 @@
-import { ExecutionRequest, BatchExecutionRequest, ExecutionResult, BatchExecutionResult } from "../../types";
+import {
+  ExecutionRequest,
+  BatchExecutionRequest,
+  ExecutionResult,
+  BatchExecutionResult,
+} from "../../types";
 
 export enum ExecutionOperation {
   EXECUTE = "execute",
   EXECUTE_BATCH = "execute-batch",
   CANCEL = "cancel",
-  STATUS = "status"
+  STATUS = "status",
 }
 
 export interface ExecutionOperationRequest {
@@ -89,11 +94,11 @@ export interface ExecutionAgentMetrics {
   successCounts: Record<ExecutionOperation, number>;
   errorCounts: Record<ExecutionOperation, number>;
   averageLatencies: Record<ExecutionOperation, number>;
-  
+
   totalOperations: number;
   successRate: number;
   uptime: number;
-  
+
   executionStats: {
     totalExecutions: number;
     singleExecutions: number;
@@ -104,7 +109,7 @@ export interface ExecutionAgentMetrics {
     cancelledExecutions: number;
     timeoutExecutions: number;
   };
-  
+
   operationStats: {
     totalCancellations: number;
     successfulCancellations: number;

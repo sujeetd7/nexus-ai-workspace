@@ -32,7 +32,7 @@ export class SSETransport extends BaseTransport {
       reconnectInterval: 5000,
       maxReconnectAttempts: 10,
       heartbeatInterval: 30000,
-      ...config
+      ...config,
     };
 
     this.httpClient = axios.create({
@@ -40,8 +40,8 @@ export class SSETransport extends BaseTransport {
       timeout: this.config.timeout,
       headers: {
         "Content-Type": "application/json",
-        ...this.config.headers
-      }
+        ...this.config.headers,
+      },
     });
 
     await this.establishConnection();
@@ -64,7 +64,11 @@ export class SSETransport extends BaseTransport {
     try {
       await this.httpClient.post("/rpc", message);
     } catch (error) {
-      this.handleError(new Error(`Failed to send message: ${error instanceof Error ? error.message : "Unknown error"}`));
+      this.handleError(
+        new Error(
+          `Failed to send message: ${error instanceof Error ? error.message : "Unknown error"}`,
+        ),
+      );
       throw error;
     }
   }
@@ -79,7 +83,7 @@ export class SSETransport extends BaseTransport {
       id: streamId,
       method,
       params,
-      jsonrpc: "2.0"
+      jsonrpc: "2.0",
     };
 
     const results: any[] = [];
@@ -111,7 +115,7 @@ export class SSETransport extends BaseTransport {
         if (results.length > 0) {
           yield results.shift();
         } else {
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise((resolve) => setTimeout(resolve, 10));
         }
       }
 
@@ -185,7 +189,11 @@ export class SSETransport extends BaseTransport {
       try {
         await this.establishConnection();
       } catch (error) {
-        this.handleError(new Error(`Reconnection failed: ${error instanceof Error ? error.message : "Unknown error"}`));
+        this.handleError(
+          new Error(
+            `Reconnection failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+          ),
+        );
         this.attemptReconnect();
       }
     }, this.config!.reconnectInterval);
@@ -194,9 +202,15 @@ export class SSETransport extends BaseTransport {
   private startHeartbeat(): void {
     this.heartbeatTimer = setInterval(() => {
       if (this._connected && this.httpClient) {
-        this.httpClient.post("/heartbeat", { clientId: this.id }).catch((error) => {
-          this.handleError(new Error(`Heartbeat failed: ${error instanceof Error ? error.message : "Unknown error"}`));
-        });
+        this.httpClient
+          .post("/heartbeat", { clientId: this.id })
+          .catch((error) => {
+            this.handleError(
+              new Error(
+                `Heartbeat failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+              ),
+            );
+          });
       }
     }, this.config!.heartbeatInterval);
   }

@@ -18,7 +18,9 @@ export interface ToolExecutionResult {
 }
 
 export interface ToolCallHandler {
-  executeTools(requests: ToolExecutionRequest[]): Promise<ToolExecutionResult[]>;
+  executeTools(
+    requests: ToolExecutionRequest[],
+  ): Promise<ToolExecutionResult[]>;
 }
 
 export class ToolCallingService {
@@ -33,7 +35,7 @@ export class ToolCallingService {
     let currentPrompt = request.prompt;
     let toolExecutionCount = 0;
     const maxToolExecutions = 5; // Prevent infinite loops
-    
+
     while (toolExecutionCount < maxToolExecutions) {
       // Execute AI request with current prompt and tools
       const aiResult = await provider.execute({
@@ -49,16 +51,16 @@ export class ToolCallingService {
 
       // Execute requested tools
       const toolResults = await this.executeToolCalls(aiResult.toolCalls);
-      
+
       // Build new prompt with tool results
       currentPrompt = this.buildPromptWithToolResults(
-        currentPrompt, 
-        aiResult.toolCalls, 
-        toolResults
+        currentPrompt,
+        aiResult.toolCalls,
+        toolResults,
       );
 
       toolExecutionCount++;
-      
+
       // If this is the last iteration, execute one final AI call
       if (toolExecutionCount >= maxToolExecutions) {
         return provider.execute({
@@ -73,9 +75,11 @@ export class ToolCallingService {
     return provider.execute(request);
   }
 
-  private async executeToolCalls(toolCalls: ToolCall[]): Promise<ToolExecutionResult[]> {
+  private async executeToolCalls(
+    toolCalls: ToolCall[],
+  ): Promise<ToolExecutionResult[]> {
     if (!this.toolHandler) {
-      return toolCalls.map(call => ({
+      return toolCalls.map((call) => ({
         callId: call.id,
         name: call.function.name,
         result: "Tool execution not available",
@@ -84,7 +88,7 @@ export class ToolCallingService {
       }));
     }
 
-    const requests: ToolExecutionRequest[] = toolCalls.map(call => ({
+    const requests: ToolExecutionRequest[] = toolCalls.map((call) => ({
       name: call.function.name,
       arguments: call.function.arguments,
       callId: call.id,
@@ -96,7 +100,7 @@ export class ToolCallingService {
   private buildPromptWithToolResults(
     originalPrompt: string,
     toolCalls: ToolCall[],
-    toolResults: ToolExecutionResult[]
+    toolResults: ToolExecutionResult[],
   ): string {
     let updatedPrompt = originalPrompt;
 
@@ -116,7 +120,8 @@ export class ToolCallingService {
       }
     }
 
-    updatedPrompt += "\n\nPlease provide a final response based on the tool results above.";
+    updatedPrompt +=
+      "\n\nPlease provide a final response based on the tool results above.";
 
     return updatedPrompt;
   }
@@ -125,7 +130,7 @@ export class ToolCallingService {
     // For streaming, we need to handle tool calls differently
     // This is a simplified implementation - full implementation would need
     // to pause streaming, execute tools, and resume
-    
+
     const provider = ProviderRegistry.get(request.provider || "ollama");
     if (!provider) {
       throw new Error(`Provider ${request.provider} not found`);

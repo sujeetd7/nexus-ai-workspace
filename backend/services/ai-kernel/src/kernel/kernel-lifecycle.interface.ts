@@ -1,5 +1,4 @@
-
-import { IKernel } from './kernel.interface';
+import { IKernel } from "./kernel.interface";
 
 export interface IKernelLifecycle {
   onStart(kernel: IKernel): Promise<void>;

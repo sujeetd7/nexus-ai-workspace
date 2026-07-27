@@ -32,9 +32,9 @@ export class ToolExecutionExecutor implements IExecutionExecutor {
           sessionId: context.payload.request?.sessionId,
           metadata: {
             conversationId: context.payload.request?.conversationId,
-            source: "execution_engine"
-          }
-        }
+            source: "execution_engine",
+          },
+        },
       });
 
       results.push(response);

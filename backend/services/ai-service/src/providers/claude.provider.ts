@@ -40,7 +40,7 @@ export class ClaudeProvider implements AIProvider {
 
       // Add tools if provided
       if (request.tools && request.tools.length > 0) {
-        messageRequest.tools = request.tools.map(tool => ({
+        messageRequest.tools = request.tools.map((tool) => ({
           name: tool.function.name,
           description: tool.function.description,
           input_schema: tool.function.parameters,

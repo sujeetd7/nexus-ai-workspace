@@ -1,7 +1,7 @@
 export enum MCPConnectionStatus {
   DISCONNECTED = "disconnected",
-  CONNECTING = "connecting", 
+  CONNECTING = "connecting",
   CONNECTED = "connected",
   RECONNECTING = "reconnecting",
-  ERROR = "error"
+  ERROR = "error",
 }

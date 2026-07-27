@@ -41,21 +41,25 @@ export class LLMService {
 
   async generate(request: LLMRequest): Promise<LLMResponse> {
     const start = Date.now();
-    
+
     // Select provider and model
-    const provider = request.provider || this.modelRegistry.getDefaultProvider("chat");
-    const model = request.model || this.modelRegistry.getDefaultModel(provider, "chat");
-    
+    const provider =
+      request.provider || this.modelRegistry.getDefaultProvider("chat");
+    const model =
+      request.model || this.modelRegistry.getDefaultModel(provider, "chat");
+
     // Get provider instance
     const providerInstance = this.providerRouter.getProvider(provider);
-    
+
     // Execute request using existing interface
     const executeRequest: ExecuteAIDto = {
       workspaceId: request.workspaceId || "",
       userId: request.userId || "",
       provider,
       model,
-      prompt: request.prompt || (request.messages ? this.messagesToPrompt(request.messages) : ""),
+      prompt:
+        request.prompt ||
+        (request.messages ? this.messagesToPrompt(request.messages) : ""),
       temperature: request.temperature ?? 0.7,
       maxTokens: request.maxTokens ?? 1000,
     };
@@ -92,14 +96,16 @@ export class LLMService {
 
   async *stream(request: LLMRequest): AsyncGenerator<StreamEventDto> {
     const start = Date.now();
-    
+
     // Select provider and model
-    const provider = request.provider || this.modelRegistry.getDefaultProvider("chat");
-    const model = request.model || this.modelRegistry.getDefaultModel(provider, "chat");
-    
+    const provider =
+      request.provider || this.modelRegistry.getDefaultProvider("chat");
+    const model =
+      request.model || this.modelRegistry.getDefaultModel(provider, "chat");
+
     // Get provider instance
     const providerInstance = this.providerRouter.getProvider(provider);
-    
+
     let totalTokens = 0;
     let promptTokens = 0;
     let completionTokens = 0;
@@ -110,7 +116,9 @@ export class LLMService {
       userId: request.userId || "",
       provider,
       model,
-      prompt: request.prompt || (request.messages ? this.messagesToPrompt(request.messages) : ""),
+      prompt:
+        request.prompt ||
+        (request.messages ? this.messagesToPrompt(request.messages) : ""),
       temperature: request.temperature ?? 0.7,
       maxTokens: request.maxTokens ?? 1000,
     };
@@ -121,7 +129,7 @@ export class LLMService {
 
       if (event.type === StreamEventType.DONE) {
         const durationMs = Date.now() - start;
-        
+
         // Extract token info from the done event
         if (event.data) {
           totalTokens = (event.data as any).totalTokens || 0;
@@ -155,14 +163,17 @@ export class LLMService {
     userId?: string;
   }) {
     const start = Date.now();
-    
+
     // Select provider and model for embeddings
-    const provider = request.provider || this.modelRegistry.getDefaultProvider("embedding");
-    const model = request.model || this.modelRegistry.getDefaultModel(provider, "embedding");
-    
+    const provider =
+      request.provider || this.modelRegistry.getDefaultProvider("embedding");
+    const model =
+      request.model ||
+      this.modelRegistry.getDefaultModel(provider, "embedding");
+
     // Get provider instance
     const providerInstance = this.providerRouter.getProvider(provider);
-    
+
     // Execute embeddings request using existing interface
     const embedRequest: EmbedAIDto = {
       provider,
@@ -199,7 +210,9 @@ export class LLMService {
     };
   }
 
-  private messagesToPrompt(messages: Array<{role: "system" | "user" | "assistant"; content: string}>): string {
-    return messages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
+  private messagesToPrompt(
+    messages: Array<{ role: "system" | "user" | "assistant"; content: string }>,
+  ): string {
+    return messages.map((msg) => `${msg.role}: ${msg.content}`).join("\n");
   }
 }

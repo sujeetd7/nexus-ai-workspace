@@ -88,4 +88,6 @@ export interface JwtPayload {
   sub: string;
   email: string;
   role: UserRole;
+  /** Present on refresh tokens; unique per issuance (`jti`). */
+  jti?: string;
 }

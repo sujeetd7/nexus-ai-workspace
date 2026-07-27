@@ -1,4 +1,4 @@
-import { emailPublisher } from "events/email/smtp.email.publisher";
+import { emailPublisher } from "../email/smtp.email.publisher";
 import { env } from "../../config/env";
 import {
   EmailVerificationRequestedEvent,

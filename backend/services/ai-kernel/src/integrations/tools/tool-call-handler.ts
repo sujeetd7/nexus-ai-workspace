@@ -23,16 +23,20 @@ export interface ToolExecutionResult {
 }
 
 export interface ToolCallHandler {
-  executeTools(requests: ToolExecutionRequest[]): Promise<ToolExecutionResult[]>;
+  executeTools(
+    requests: ToolExecutionRequest[],
+  ): Promise<ToolExecutionResult[]>;
 }
 
 export class KernelToolCallHandler implements ToolCallHandler {
   constructor(
     private readonly toolRegistry: ToolRegistry,
-    private readonly toolExecutor: EnhancedToolExecutor
+    private readonly toolExecutor: EnhancedToolExecutor,
   ) {}
 
-  async executeTools(requests: ToolExecutionRequest[]): Promise<ToolExecutionResult[]> {
+  async executeTools(
+    requests: ToolExecutionRequest[],
+  ): Promise<ToolExecutionResult[]> {
     const results: ToolExecutionResult[] = [];
 
     for (const request of requests) {
@@ -46,7 +50,7 @@ export class KernelToolCallHandler implements ToolCallHandler {
             callId: request.callId,
             name: request.name,
             result: null,
-            error: `Invalid arguments format: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`,
+            error: `Invalid arguments format: ${parseError instanceof Error ? parseError.message : "Unknown error"}`,
             success: false,
           });
           continue;
@@ -57,16 +61,18 @@ export class KernelToolCallHandler implements ToolCallHandler {
           tool: request.name,
           input: parsedArguments,
           requestId: request.callId,
-          context: request.context ? {
-            workspaceId: request.context.workspaceId,
-            userId: request.context.userId,
-            traceId: request.context.traceId,
-            sessionId: request.context.sessionId,
-            metadata: {
-              conversationId: request.context.conversationId,
-              source: "tool_call_handler"
-            }
-          } : undefined
+          context: request.context
+            ? {
+                workspaceId: request.context.workspaceId,
+                userId: request.context.userId,
+                traceId: request.context.traceId,
+                sessionId: request.context.sessionId,
+                metadata: {
+                  conversationId: request.context.conversationId,
+                  source: "tool_call_handler",
+                },
+              }
+            : undefined,
         });
 
         results.push({
@@ -76,13 +82,12 @@ export class KernelToolCallHandler implements ToolCallHandler {
           error: executionResult.error,
           success: executionResult.success,
         });
-
       } catch (error) {
         results.push({
           callId: request.callId,
           name: request.name,
           result: null,
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
           success: false,
         });
       }

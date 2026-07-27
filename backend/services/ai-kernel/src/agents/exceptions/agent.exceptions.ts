@@ -26,7 +26,10 @@ export class AgentRegistrationException extends Error {
   public readonly reason: string;
 
   constructor(reason: string, agentId?: string, message?: string) {
-    super(message || `Agent registration failed: ${reason}${agentId ? ` (Agent ID: ${agentId})` : ""}`);
+    super(
+      message ||
+        `Agent registration failed: ${reason}${agentId ? ` (Agent ID: ${agentId})` : ""}`,
+    );
     this.reason = reason;
     this.agentId = agentId;
     Object.setPrototypeOf(this, AgentRegistrationException.prototype);
@@ -39,8 +42,16 @@ export class InvalidStateTransitionException extends Error {
   public readonly fromState: string;
   public readonly toState: string;
 
-  constructor(agentId: string, fromState: string, toState: string, message?: string) {
-    super(message || `Invalid state transition for agent '${agentId}': from '${fromState}' to '${toState}'`);
+  constructor(
+    agentId: string,
+    fromState: string,
+    toState: string,
+    message?: string,
+  ) {
+    super(
+      message ||
+        `Invalid state transition for agent '${agentId}': from '${fromState}' to '${toState}'`,
+    );
     this.agentId = agentId;
     this.fromState = fromState;
     this.toState = toState;
@@ -54,8 +65,16 @@ export class AgentLifecycleException extends Error {
   public readonly operation: string;
   public readonly reason: string;
 
-  constructor(agentId: string, operation: string, reason: string, message?: string) {
-    super(message || `Agent lifecycle operation '${operation}' failed for agent '${agentId}': ${reason}`);
+  constructor(
+    agentId: string,
+    operation: string,
+    reason: string,
+    message?: string,
+  ) {
+    super(
+      message ||
+        `Agent lifecycle operation '${operation}' failed for agent '${agentId}': ${reason}`,
+    );
     this.agentId = agentId;
     this.operation = operation;
     this.reason = reason;
@@ -69,8 +88,16 @@ export class AgentExecutionException extends Error {
   public readonly executionId: string;
   public readonly reason: string;
 
-  constructor(agentId: string, executionId: string, reason: string, message?: string) {
-    super(message || `Agent execution failed for agent '${agentId}' (execution: ${executionId}): ${reason}`);
+  constructor(
+    agentId: string,
+    executionId: string,
+    reason: string,
+    message?: string,
+  ) {
+    super(
+      message ||
+        `Agent execution failed for agent '${agentId}' (execution: ${executionId}): ${reason}`,
+    );
     this.agentId = agentId;
     this.executionId = executionId;
     this.reason = reason;
@@ -84,7 +111,9 @@ export class ExecutionTimeoutException extends Error {
   public readonly timeoutMs: number;
 
   constructor(executionId: string, timeoutMs: number, message?: string) {
-    super(message || `Execution '${executionId}' timed out after ${timeoutMs}ms`);
+    super(
+      message || `Execution '${executionId}' timed out after ${timeoutMs}ms`,
+    );
     this.executionId = executionId;
     this.timeoutMs = timeoutMs;
     Object.setPrototypeOf(this, ExecutionTimeoutException.prototype);

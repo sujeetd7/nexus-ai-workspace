@@ -34,7 +34,9 @@ export class AgentBus<T = unknown> implements IAgentBus<T> {
       // Validate sender is registered
       const sender = this.agents.get(message.senderAgentId);
       if (!sender) {
-        throw new Error(`Sender agent '${message.senderAgentId}' not registered`);
+        throw new Error(
+          `Sender agent '${message.senderAgentId}' not registered`,
+        );
       }
 
       // Update sender's last activity
@@ -56,39 +58,44 @@ export class AgentBus<T = unknown> implements IAgentBus<T> {
           metadata: {
             ...message.metadata,
             error: `Receiver agent '${message.receiverAgentId}' not registered`,
-            failedAt: new Date()
-          }
+            failedAt: new Date(),
+          },
         };
-        
+
         // Add to sender's outbox as failed
-        await sender.outbox.markAsFailed(message.messageId, `Receiver not found: ${message.receiverAgentId}`);
+        await sender.outbox.markAsFailed(
+          message.messageId,
+          `Receiver not found: ${message.receiverAgentId}`,
+        );
         return false;
       }
 
       // Deliver message to receiver's inbox
       await receiver.inbox.push(message);
-      
+
       // Update receiver's last activity
       receiver.lastActivity = new Date();
 
       return true;
-
     } catch (error) {
       console.error(`Failed to send message ${message.messageId}:`, error);
-      
+
       // Try to mark as failed in sender's outbox
       const sender = this.agents.get(message.senderAgentId);
       if (sender) {
-        await sender.outbox.markAsFailed(message.messageId, error instanceof Error ? error.message : 'Unknown error');
+        await sender.outbox.markAsFailed(
+          message.messageId,
+          error instanceof Error ? error.message : "Unknown error",
+        );
       }
-      
+
       return false;
     }
   }
 
   public async broadcast(message: AgentMessage<T>): Promise<number> {
     let deliveredCount = 0;
-    
+
     // Log the broadcast message
     this.addToMessageLog(message);
 
@@ -109,8 +116,8 @@ export class AgentBus<T = unknown> implements IAgentBus<T> {
       metadata: {
         ...message.metadata,
         broadcast: true,
-        broadcastAt: new Date()
-      }
+        broadcastAt: new Date(),
+      },
     };
 
     // Deliver to all registered agents except sender
@@ -120,14 +127,17 @@ export class AgentBus<T = unknown> implements IAgentBus<T> {
         try {
           const messageForReceiver: AgentMessage<T> = {
             ...broadcastMessage,
-            receiverAgentId: agentId
+            receiverAgentId: agentId,
           };
-          
+
           await agent.inbox.push(messageForReceiver);
           agent.lastActivity = new Date();
           deliveredCount++;
         } catch (error) {
-          console.error(`Failed to deliver broadcast message to agent ${agentId}:`, error);
+          console.error(
+            `Failed to deliver broadcast message to agent ${agentId}:`,
+            error,
+          );
           // Continue delivery to other agents
         }
       });
@@ -136,21 +146,24 @@ export class AgentBus<T = unknown> implements IAgentBus<T> {
     return deliveredCount;
   }
 
-  public async register(agentId: string, metadata: Record<string, unknown> = {}): Promise<void> {
+  public async register(
+    agentId: string,
+    metadata: Record<string, unknown> = {},
+  ): Promise<void> {
     if (this.agents.has(agentId)) {
       throw new Error(`Agent '${agentId}' is already registered`);
     }
 
     const inbox = new AgentInbox<T>(agentId);
     const outbox = new AgentOutbox<T>(agentId);
-    
+
     const registeredAgent: RegisteredAgent<T> = {
       agentId,
       inbox,
       outbox,
       registeredAt: new Date(),
       lastActivity: new Date(),
-      metadata
+      metadata,
     };
 
     this.agents.set(agentId, registeredAgent);
@@ -170,7 +183,9 @@ export class AgentBus<T = unknown> implements IAgentBus<T> {
     return this.agents.delete(agentId);
   }
 
-  public async findAgent(agentId: string): Promise<RegisteredAgent<T> | undefined> {
+  public async findAgent(
+    agentId: string,
+  ): Promise<RegisteredAgent<T> | undefined> {
     return this.agents.get(agentId);
   }
 
@@ -201,19 +216,23 @@ export class AgentBus<T = unknown> implements IAgentBus<T> {
     this.messageLog.length = 0;
   }
 
-  public async getAgentInbox(agentId: string): Promise<IAgentInbox<T> | undefined> {
+  public async getAgentInbox(
+    agentId: string,
+  ): Promise<IAgentInbox<T> | undefined> {
     const agent = this.agents.get(agentId);
     return agent ? agent.inbox : undefined;
   }
 
-  public async getAgentOutbox(agentId: string): Promise<IAgentOutbox<T> | undefined> {
+  public async getAgentOutbox(
+    agentId: string,
+  ): Promise<IAgentOutbox<T> | undefined> {
     const agent = this.agents.get(agentId);
     return agent ? agent.outbox : undefined;
   }
 
   private addToMessageLog(message: AgentMessage<T>): void {
     this.messageLog.push(message);
-    
+
     // Maintain log size limit
     if (this.messageLog.length > this.maxLogSize) {
       this.messageLog.shift();

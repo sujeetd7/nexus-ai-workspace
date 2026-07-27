@@ -1,5 +1,8 @@
+import { randomUUID } from "node:crypto";
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "../../types/interfaces/auth.interface";
+
+export type TokenIdGenerator = () => string;
 
 export class JwtService {
   private readonly accessSecret =
@@ -12,8 +15,11 @@ export class JwtService {
 
   private readonly refreshExpiry = "7d";
 
+  constructor(
+    private readonly tokenIdGenerator: TokenIdGenerator = randomUUID,
+  ) {}
+
   generateAccessToken(payload: JwtPayload): string {
-    console.log("SIGN ACCESS:", this.accessSecret);
     return jwt.sign(
       {
         sub: payload.sub,
@@ -28,7 +34,6 @@ export class JwtService {
   }
 
   verifyAccessToken(token: string): JwtPayload {
-    console.log("VERIFY ACCESS:", this.accessSecret);
     return jwt.verify(token, this.accessSecret) as JwtPayload;
   }
 
@@ -38,6 +43,7 @@ export class JwtService {
         sub: payload.sub,
         email: payload.email,
         role: payload.role,
+        jti: this.tokenIdGenerator(),
       },
       this.refreshSecret,
       {
@@ -47,7 +53,13 @@ export class JwtService {
   }
 
   verifyRefreshToken(token: string): JwtPayload {
-    return jwt.verify(token, this.refreshSecret) as JwtPayload;
+    const payload = jwt.verify(token, this.refreshSecret) as JwtPayload;
+
+    if (!payload.sub || !payload.jti) {
+      throw new Error("INVALID_REFRESH_TOKEN_CLAIMS");
+    }
+
+    return payload;
   }
 }
 

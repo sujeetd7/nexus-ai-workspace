@@ -86,8 +86,9 @@ export class EnhancedToolExecutor {
   private enhanceInputForMCPTool(request: EnhancedToolExecutionRequest): any {
     // For MCP tools, we need to inject the execution context
     if (request.context) {
-      const contextBuilder = ExecutionContextBuilder.create()
-        .requestId(request.requestId);
+      const contextBuilder = ExecutionContextBuilder.create().requestId(
+        request.requestId,
+      );
 
       // Add context fields if available
       if (request.context.workspaceId) {
@@ -115,13 +116,14 @@ export class EnhancedToolExecutor {
 
       try {
         // Only build context if we have all required fields
-        if (request.context.workspaceId && 
-            request.context.userId && 
-            request.context.traceId && 
-            request.context.sessionId) {
-          
+        if (
+          request.context.workspaceId &&
+          request.context.userId &&
+          request.context.traceId &&
+          request.context.sessionId
+        ) {
           const executionContext = contextBuilder.build();
-          
+
           // Inject context into the input
           return {
             ...request.input,
@@ -131,9 +133,9 @@ export class EnhancedToolExecutor {
               sessionId: executionContext.sessionId,
               serverId: executionContext.traceId, // Use traceId as serverId for now
               roles: [],
-              permissions: []
+              permissions: [],
             },
-            __context: executionContext
+            __context: executionContext,
           };
         } else {
           // If missing required context fields, fall back to original input

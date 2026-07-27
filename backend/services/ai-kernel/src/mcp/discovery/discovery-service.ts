@@ -11,12 +11,12 @@ import {
   MCPDiscoveredTool,
   MCPDiscoveredPrompt,
   MCPDiscoveredResource,
-  MCPDiscoveredTemplate
+  MCPDiscoveredTemplate,
 } from "./types";
 import {
   DiscoveryTimeoutException,
   DiscoveryFailedException,
-  CapabilityNotFoundException
+  CapabilityNotFoundException,
 } from "./exceptions";
 
 export class DiscoveryService extends EventEmitter {
@@ -31,60 +31,78 @@ export class DiscoveryService extends EventEmitter {
       retries: config.retries ?? 3,
       retryDelay: config.retryDelay ?? 1000,
       enableLazyRefresh: config.enableLazyRefresh ?? true,
-      refreshThreshold: config.refreshThreshold ?? 0.8
+      refreshThreshold: config.refreshThreshold ?? 0.8,
     };
 
-    this.cache = new DiscoveryCache(this.config.cacheTtl, this.config.refreshThreshold);
+    this.cache = new DiscoveryCache(
+      this.config.cacheTtl,
+      this.config.refreshThreshold,
+    );
     this.setupCacheEvents();
   }
 
-  async discoverCapabilities(session: MCPSession, useCache: boolean = true): Promise<DiscoveryResult<MCPServerCapabilities>> {
+  async discoverCapabilities(
+    session: MCPSession,
+    useCache: boolean = true,
+  ): Promise<DiscoveryResult<MCPServerCapabilities>> {
     return this.discover<MCPServerCapabilities>(
       session,
       DiscoveryType.CAPABILITIES,
       "capabilities/list",
       this.normalizeCapabilities.bind(this),
-      useCache
+      useCache,
     );
   }
 
-  async discoverTools(session: MCPSession, useCache: boolean = true): Promise<DiscoveryResult<MCPDiscoveredTool>> {
+  async discoverTools(
+    session: MCPSession,
+    useCache: boolean = true,
+  ): Promise<DiscoveryResult<MCPDiscoveredTool>> {
     return this.discover<MCPDiscoveredTool>(
       session,
       DiscoveryType.TOOLS,
       "tools/list",
       this.normalizeTools.bind(this),
-      useCache
+      useCache,
     );
   }
 
-  async discoverPrompts(session: MCPSession, useCache: boolean = true): Promise<DiscoveryResult<MCPDiscoveredPrompt>> {
+  async discoverPrompts(
+    session: MCPSession,
+    useCache: boolean = true,
+  ): Promise<DiscoveryResult<MCPDiscoveredPrompt>> {
     return this.discover<MCPDiscoveredPrompt>(
       session,
       DiscoveryType.PROMPTS,
       "prompts/list",
       this.normalizePrompts.bind(this),
-      useCache
+      useCache,
     );
   }
 
-  async discoverResources(session: MCPSession, useCache: boolean = true): Promise<DiscoveryResult<MCPDiscoveredResource>> {
+  async discoverResources(
+    session: MCPSession,
+    useCache: boolean = true,
+  ): Promise<DiscoveryResult<MCPDiscoveredResource>> {
     return this.discover<MCPDiscoveredResource>(
       session,
       DiscoveryType.RESOURCES,
       "resources/list",
       this.normalizeResources.bind(this),
-      useCache
+      useCache,
     );
   }
 
-  async discoverTemplates(session: MCPSession, useCache: boolean = true): Promise<DiscoveryResult<MCPDiscoveredTemplate>> {
+  async discoverTemplates(
+    session: MCPSession,
+    useCache: boolean = true,
+  ): Promise<DiscoveryResult<MCPDiscoveredTemplate>> {
     return this.discover<MCPDiscoveredTemplate>(
       session,
       DiscoveryType.TEMPLATES,
       "templates/list",
       this.normalizeTemplates.bind(this),
-      useCache
+      useCache,
     );
   }
 
@@ -105,7 +123,7 @@ export class DiscoveryService extends EventEmitter {
     type: DiscoveryType,
     method: string,
     normalizer: (response: any) => T[],
-    useCache: boolean
+    useCache: boolean,
   ): Promise<DiscoveryResult<T>> {
     const serverId = session.serverId;
     const startTime = Date.now();
@@ -122,8 +140,8 @@ export class DiscoveryService extends EventEmitter {
             discoveredAt: new Date(),
             duration: 0,
             count: cached.length,
-            cached: true
-          }
+            cached: true,
+          },
         };
       }
     }
@@ -141,7 +159,7 @@ export class DiscoveryService extends EventEmitter {
       if (useCache) {
         this.cache.set(serverId, type, normalizedData, this.config.cacheTtl, {
           discoveredAt: new Date(),
-          duration
+          duration,
         });
       }
 
@@ -153,54 +171,76 @@ export class DiscoveryService extends EventEmitter {
           discoveredAt: new Date(),
           duration,
           count: normalizedData.length,
-          cached: false
-        }
+          cached: false,
+        },
       };
 
-      this.emitDiscoveryCompleted(serverId, type, duration, normalizedData.length);
+      this.emitDiscoveryCompleted(
+        serverId,
+        type,
+        duration,
+        normalizedData.length,
+      );
       return result;
-
     } catch (error) {
       const duration = Date.now() - startTime;
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+
       this.emitDiscoveryFailed(serverId, type, duration, errorMessage);
 
-      if (error instanceof DiscoveryTimeoutException || error instanceof DiscoveryFailedException) {
+      if (
+        error instanceof DiscoveryTimeoutException ||
+        error instanceof DiscoveryFailedException
+      ) {
         throw error;
       }
 
-      throw new DiscoveryFailedException(serverId, type, errorMessage, error instanceof Error ? error : undefined);
+      throw new DiscoveryFailedException(
+        serverId,
+        type,
+        errorMessage,
+        error instanceof Error ? error : undefined,
+      );
     }
   }
 
-  private async makeRequestWithRetries(session: MCPSession, method: string, params: any): Promise<any> {
+  private async makeRequestWithRetries(
+    session: MCPSession,
+    method: string,
+    params: any,
+  ): Promise<any> {
     let lastError: Error | null = null;
 
     for (let attempt = 0; attempt <= this.config.retries; attempt++) {
       try {
         const timeoutPromise = new Promise((_, reject) => {
           const timeout = setTimeout(() => {
-            reject(new DiscoveryTimeoutException(session.serverId, method, this.config.timeout));
+            reject(
+              new DiscoveryTimeoutException(
+                session.serverId,
+                method,
+                this.config.timeout,
+              ),
+            );
           }, this.config.timeout);
-          
+
           // Store timeout reference to clear it if needed
           (timeoutPromise as any)._timeout = timeout;
         });
 
         const requestPromise = session.request(method, params);
         const response = await Promise.race([requestPromise, timeoutPromise]);
-        
+
         // Clear timeout on successful completion
         if ((timeoutPromise as any)._timeout) {
           clearTimeout((timeoutPromise as any)._timeout);
         }
-        
-        return response;
 
+        return response;
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        
+
         if (error instanceof DiscoveryTimeoutException) {
           throw error;
         }
@@ -232,7 +272,7 @@ export class DiscoveryService extends EventEmitter {
       name: tool.name || "",
       description: tool.description || "",
       inputSchema: tool.inputSchema || { type: "object", properties: {} },
-      metadata: tool.metadata
+      metadata: tool.metadata,
     }));
   }
 
@@ -245,7 +285,7 @@ export class DiscoveryService extends EventEmitter {
       name: prompt.name || "",
       description: prompt.description || "",
       arguments: prompt.arguments || [],
-      metadata: prompt.metadata
+      metadata: prompt.metadata,
     }));
   }
 
@@ -259,7 +299,7 @@ export class DiscoveryService extends EventEmitter {
       name: resource.name || "",
       description: resource.description,
       mimeType: resource.mimeType,
-      metadata: resource.metadata
+      metadata: resource.metadata,
     }));
   }
 
@@ -273,12 +313,12 @@ export class DiscoveryService extends EventEmitter {
       description: template.description || "",
       arguments: template.arguments || [],
       content: template.content || "",
-      metadata: template.metadata
+      metadata: template.metadata,
     }));
   }
 
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   private setupCacheEvents(): void {
@@ -295,29 +335,39 @@ export class DiscoveryService extends EventEmitter {
     const payload: DiscoveryEventPayload = {
       serverId,
       type,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
     this.emit(DiscoveryEvent.DISCOVERY_STARTED, payload);
   }
 
-  private emitDiscoveryCompleted(serverId: string, type: DiscoveryType, duration: number, count: number): void {
+  private emitDiscoveryCompleted(
+    serverId: string,
+    type: DiscoveryType,
+    duration: number,
+    count: number,
+  ): void {
     const payload: DiscoveryEventPayload = {
       serverId,
       type,
       timestamp: new Date(),
       duration,
-      count
+      count,
     };
     this.emit(DiscoveryEvent.DISCOVERY_COMPLETED, payload);
   }
 
-  private emitDiscoveryFailed(serverId: string, type: DiscoveryType, duration: number, error: string): void {
+  private emitDiscoveryFailed(
+    serverId: string,
+    type: DiscoveryType,
+    duration: number,
+    error: string,
+  ): void {
     const payload: DiscoveryEventPayload = {
       serverId,
       type,
       timestamp: new Date(),
       duration,
-      error
+      error,
     };
     this.emit(DiscoveryEvent.DISCOVERY_FAILED, payload);
   }

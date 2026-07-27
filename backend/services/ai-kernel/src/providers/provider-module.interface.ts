@@ -7,9 +7,9 @@ import {
 
 export interface IProviderModule extends IKernelModule {
   getProvider(name: string): ILLMProvider;
-  
+
   hasProvider(name: string): boolean;
-  
+
   listProviders(): string[];
 
   execute(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse>;

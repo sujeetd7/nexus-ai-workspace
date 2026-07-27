@@ -10,14 +10,14 @@ export {
   DiscoveryType,
   DiscoveryEvent,
   DiscoveryEventPayload,
-  DiscoveryConfig
+  DiscoveryConfig,
 } from "./types";
 
 // Exceptions
 export {
   DiscoveryTimeoutException,
   DiscoveryFailedException,
-  CapabilityNotFoundException
+  CapabilityNotFoundException,
 } from "./exceptions";
 
 // Cache

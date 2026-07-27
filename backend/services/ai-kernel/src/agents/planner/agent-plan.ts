@@ -7,13 +7,13 @@ export enum PlanState {
   EXECUTING = "executing",
   COMPLETED = "completed",
   FAILED = "failed",
-  CANCELLED = "cancelled"
+  CANCELLED = "cancelled",
 }
 
 export enum ExecutionMode {
   SEQUENTIAL = "sequential",
   PARALLEL = "parallel",
-  MIXED = "mixed"
+  MIXED = "mixed",
 }
 
 export interface PlanMetrics {
@@ -34,20 +34,20 @@ export interface AgentPlan<T = unknown> {
   workspaceId: string;
   requestId: string;
   traceId: string;
-  
+
   name: string;
   description: string;
   state: PlanState;
   priority: AgentPriority;
   executionMode: ExecutionMode;
-  
+
   tasks: AgentTask<T>[];
   taskOrder: string[]; // Execution order for sequential tasks
   parallelGroups: string[][]; // Groups of tasks that can run in parallel
-  
+
   timeoutMs: number;
   maxConcurrency: number;
-  
+
   metadata: Record<string, unknown>;
   metrics: PlanMetrics;
 }
@@ -66,8 +66,8 @@ export class AgentPlanBuilder<T = unknown> {
       totalTasks: 0,
       completedTasks: 0,
       failedTasks: 0,
-      estimatedDurationMs: 0
-    }
+      estimatedDurationMs: 0,
+    },
   };
 
   public planId(planId: string): AgentPlanBuilder<T> {
@@ -164,10 +164,16 @@ export class AgentPlanBuilder<T = unknown> {
 
   public build(): AgentPlan<T> {
     const requiredFields = [
-      'planId', 'agentId', 'workspaceId', 'requestId', 'traceId',
-      'name', 'state', 'priority'
+      "planId",
+      "agentId",
+      "workspaceId",
+      "requestId",
+      "traceId",
+      "name",
+      "state",
+      "priority",
     ];
-    
+
     for (const field of requiredFields) {
       if (this.plan[field as keyof AgentPlan<T>] === undefined) {
         throw new Error(`Plan field '${field}' is required`);
@@ -175,18 +181,20 @@ export class AgentPlanBuilder<T = unknown> {
     }
 
     // Validate tasks exist for task order and parallel groups
-    const taskIds = new Set(this.plan.tasks!.map(t => t.taskId));
-    
+    const taskIds = new Set(this.plan.tasks!.map((t) => t.taskId));
+
     for (const taskId of this.plan.taskOrder!) {
       if (!taskIds.has(taskId)) {
         throw new Error(`Task '${taskId}' in task order not found in tasks`);
       }
     }
-    
+
     for (const group of this.plan.parallelGroups!) {
       for (const taskId of group) {
         if (!taskIds.has(taskId)) {
-          throw new Error(`Task '${taskId}' in parallel group not found in tasks`);
+          throw new Error(
+            `Task '${taskId}' in parallel group not found in tasks`,
+          );
         }
       }
     }
@@ -208,7 +216,7 @@ export class AgentPlanBuilder<T = unknown> {
       timeoutMs: this.plan.timeoutMs!,
       maxConcurrency: this.plan.maxConcurrency!,
       metadata: this.plan.metadata!,
-      metrics: this.plan.metrics!
+      metrics: this.plan.metrics!,
     };
   }
 

@@ -2,7 +2,7 @@ export enum SecurityRole {
   ADMIN = "admin",
   USER = "user",
   VIEWER = "viewer",
-  SERVICE = "service"
+  SERVICE = "service",
 }
 
 export enum PermissionAction {
@@ -11,16 +11,16 @@ export enum PermissionAction {
   EXECUTE = "execute",
   DELETE = "delete",
   CREATE = "create",
-  UPDATE = "update"
+  UPDATE = "update",
 }
 
 export enum ResourceType {
   TOOL = "tool",
   PROMPT = "prompt",
-  RESOURCE = "resource", 
+  RESOURCE = "resource",
   TEMPLATE = "template",
   SERVER = "server",
-  WORKSPACE = "workspace"
+  WORKSPACE = "workspace",
 }
 
 export interface Permission {
@@ -127,7 +127,7 @@ export enum SecurityEvent {
   DENIED = "security:denied",
   PERMISSION_UPDATED = "security:permission_updated",
   AUTHENTICATION_FAILED = "security:authentication_failed",
-  WORKSPACE_ISOLATION_VIOLATED = "security:workspace_isolation_violated"
+  WORKSPACE_ISOLATION_VIOLATED = "security:workspace_isolation_violated",
 }
 
 export interface SecurityEventPayload {

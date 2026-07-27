@@ -14,8 +14,6 @@ import { refreshSchema } from "../../schemas/auth/refresh.schema";
 
 const router: Router = Router();
 
-console.log("controller");
-
 /**
  * @swagger
  * /auth/register:
@@ -113,7 +111,12 @@ router.post("/refresh", validate(refreshSchema), authController.refresh);
  *         description: Logout successful
  */
 
-router.post("/logout", authenticate, authController.logout);
+router.post(
+  "/logout",
+  authenticate,
+  validate(refreshSchema),
+  authController.logout,
+);
 
 router.get("/sessions", authenticate, authController.sessions);
 

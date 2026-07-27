@@ -1,5 +1,10 @@
 import { AgentTask } from "../../planner/agent-task";
-import { SchedulerMetrics, SchedulerHealth, QueueSizes, RunningTaskInfo } from "../../scheduler/agent-scheduler";
+import {
+  SchedulerMetrics,
+  SchedulerHealth,
+  QueueSizes,
+  RunningTaskInfo,
+} from "../../scheduler/agent-scheduler";
 
 export enum SchedulerOperation {
   SCHEDULE = "schedule",
@@ -8,7 +13,7 @@ export enum SchedulerOperation {
   CANCEL = "cancel",
   PAUSE = "pause",
   RESUME = "resume",
-  METRICS = "metrics"
+  METRICS = "metrics",
 }
 
 export interface SchedulerOperationRequest {
@@ -118,11 +123,11 @@ export interface SchedulerAgentMetrics {
   successCounts: Record<SchedulerOperation, number>;
   errorCounts: Record<SchedulerOperation, number>;
   averageLatencies: Record<SchedulerOperation, number>;
-  
+
   totalOperations: number;
   successRate: number;
   uptime: number;
-  
+
   schedulingStats: {
     totalScheduled: number;
     totalEnqueued: number;
@@ -135,7 +140,7 @@ export interface SchedulerAgentMetrics {
     cancellationSuccessRate: number;
     dequeuingSuccessRate: number;
   };
-  
+
   taskStats: {
     totalTasks: number;
     completedTasks: number;

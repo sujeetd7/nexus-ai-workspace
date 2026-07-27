@@ -120,23 +120,18 @@ export class MemoryModule implements IMemoryModule {
       const client = chatModule.getClient();
 
       // Determine assistant response
-      const assistantText = 
-        context.parsedOutput?.text ||
-        context.llmOutput;
+      const assistantText = context.parsedOutput?.text || context.llmOutput;
 
       if (!assistantText) {
         console.log("No assistant response to persist");
         return;
       }
 
-      await client.createMessage(
-        context.conversationId,
-        {
-          type: "ASSISTANT",
-          senderId: "AI_KERNEL",
-          content: assistantText,
-        }
-      );
+      await client.createMessage(context.conversationId, {
+        type: "ASSISTANT",
+        senderId: "AI_KERNEL",
+        content: assistantText,
+      });
 
       console.log("Assistant response persisted successfully");
     } catch (error) {

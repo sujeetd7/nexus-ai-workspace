@@ -349,7 +349,10 @@ router.post("/chat/messages", async (req, res) => {
     );
     const client = chatModule.getClient();
 
-    const result = await client.createMessage(req.body.conversationId, req.body);
+    const result = await client.createMessage(
+      req.body.conversationId,
+      req.body,
+    );
     res.json(result);
   } catch (error: any) {
     console.error(error);
@@ -459,29 +462,31 @@ router.post("/test-tools", async (req, res) => {
   try {
     console.log("[KernelRoutes] Testing tool calling");
     const kernel = await getKernel();
-    
+
     const executionModule = kernel.getModule("ExecutionModule") as any;
     const toolRegistry = new ToolRegistry();
-    
+
     // Register built-in tools for demo
     toolRegistry.register(new CalculatorTool());
     toolRegistry.register(new DateTimeTool());
 
     const availableTools = toolRegistry.definitions();
-    
+
     res.json({
       success: true,
       message: "Tool calling test endpoint",
-      availableTools: availableTools.map(t => t.function.name),
+      availableTools: availableTools.map((t) => t.function.name),
       toolDefinitions: availableTools,
-      hasToolCallingExecutor: !!executionModule?.getExecutorRegistry()?.getExecutor("tool_calling"),
+      hasToolCallingExecutor: !!executionModule
+        ?.getExecutorRegistry()
+        ?.getExecutor("tool_calling"),
     });
   } catch (error: any) {
     console.error("[KernelRoutes] Tool calling test error:", error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: error.message,
-      error: "Failed to test tool calling"
+      error: "Failed to test tool calling",
     });
   }
 });

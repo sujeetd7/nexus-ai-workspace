@@ -6,12 +6,12 @@ export enum ToolOperation {
   LIST = "list",
   EXECUTE = "execute",
   EXECUTE_BATCH = "execute_batch",
-  VALIDATE = "validate"
+  VALIDATE = "validate",
 }
 
 export enum BatchExecutionMode {
   PARALLEL = "parallel",
-  SEQUENTIAL = "sequential"
+  SEQUENTIAL = "sequential",
 }
 
 export interface ToolOperationRequest {
@@ -151,18 +151,21 @@ export interface ToolAgentMetrics {
   successCounts: Record<ToolOperation, number>;
   errorCounts: Record<ToolOperation, number>;
   averageLatencies: Record<ToolOperation, number>;
-  
+
   totalExecutions: number;
   successRate: number;
   uptime: number;
-  
-  toolUsage: Record<string, {
-    executions: number;
-    successes: number;
-    failures: number;
-    averageLatency: number;
-  }>;
-  
+
+  toolUsage: Record<
+    string,
+    {
+      executions: number;
+      successes: number;
+      failures: number;
+      averageLatency: number;
+    }
+  >;
+
   batchExecutionStats: {
     totalBatches: number;
     parallelBatches: number;

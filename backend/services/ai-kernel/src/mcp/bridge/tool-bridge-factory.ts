@@ -2,7 +2,10 @@ import { EventEmitter } from "events";
 import { ITool } from "../../tools/interfaces/tool.interface";
 import { MCPManager } from "../manager";
 import { MCPSecurityManager } from "../security";
-import { MCPServerRegistry, RegisteredServer } from "../registry/mcp-server-registry";
+import {
+  MCPServerRegistry,
+  RegisteredServer,
+} from "../registry/mcp-server-registry";
 import { MCPToolBridge } from "./mcp-tool-bridge";
 import { DuplicateToolException } from "../registry/exceptions";
 
@@ -22,7 +25,7 @@ export class ToolBridgeFactory extends EventEmitter {
   constructor(
     mcpManager: MCPManager,
     securityManager: MCPSecurityManager,
-    registry: MCPServerRegistry
+    registry: MCPServerRegistry,
   ) {
     super();
     this.mcpManager = mcpManager;
@@ -47,7 +50,7 @@ export class ToolBridgeFactory extends EventEmitter {
       } catch (error) {
         errors.push({
           toolName: tool.name,
-          error: error instanceof Error ? error : new Error(String(error))
+          error: error instanceof Error ? error : new Error(String(error)),
         });
       }
     }
@@ -69,7 +72,7 @@ export class ToolBridgeFactory extends EventEmitter {
       return null;
     }
 
-    const tool = server.tools.find(t => t.name === toolName);
+    const tool = server.tools.find((t) => t.name === toolName);
     if (!tool) {
       return null;
     }
@@ -105,13 +108,13 @@ export class ToolBridgeFactory extends EventEmitter {
   }
 
   getAllBridges(): MCPToolBridge[] {
-    return Array.from(this.bridges.values()).map(info => info.bridge);
+    return Array.from(this.bridges.values()).map((info) => info.bridge);
   }
 
   getBridgesForServer(serverId: string): MCPToolBridge[] {
     return Array.from(this.bridges.values())
-      .filter(info => info.serverId === serverId)
-      .map(info => info.bridge);
+      .filter((info) => info.serverId === serverId)
+      .map((info) => info.bridge);
   }
 
   removeBridge(toolName: string): boolean {
@@ -133,7 +136,7 @@ export class ToolBridgeFactory extends EventEmitter {
       }
     }
 
-    toRemove.forEach(toolName => {
+    toRemove.forEach((toolName) => {
       this.bridges.delete(toolName);
     });
 
@@ -149,12 +152,13 @@ export class ToolBridgeFactory extends EventEmitter {
       totalBridges: this.bridges.size,
       bridgesByServer: {} as Record<string, number>,
       oldestBridge: undefined as Date | undefined,
-      newestBridge: undefined as Date | undefined
+      newestBridge: undefined as Date | undefined,
     };
 
     for (const info of this.bridges.values()) {
       // Count by server
-      stats.bridgesByServer[info.serverId] = (stats.bridgesByServer[info.serverId] || 0) + 1;
+      stats.bridgesByServer[info.serverId] =
+        (stats.bridgesByServer[info.serverId] || 0) + 1;
 
       // Track oldest/newest
       if (!stats.oldestBridge || info.createdAt < stats.oldestBridge) {
@@ -176,12 +180,16 @@ export class ToolBridgeFactory extends EventEmitter {
   private createBridge(
     tool: any,
     serverId: string,
-    server: RegisteredServer
+    server: RegisteredServer,
   ): MCPToolBridge {
     // Check for duplicate tool names
     if (this.bridges.has(tool.name)) {
       const existingInfo = this.bridges.get(tool.name)!;
-      throw new DuplicateToolException(tool.name, existingInfo.serverId, serverId);
+      throw new DuplicateToolException(
+        tool.name,
+        existingInfo.serverId,
+        serverId,
+      );
     }
 
     // Create the bridge
@@ -190,7 +198,7 @@ export class ToolBridgeFactory extends EventEmitter {
       serverId,
       this.mcpManager,
       this.securityManager,
-      this.registry
+      this.registry,
     );
 
     // Store bridge info
@@ -198,7 +206,7 @@ export class ToolBridgeFactory extends EventEmitter {
       bridge,
       serverId,
       toolName: tool.name,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     this.bridges.set(tool.name, bridgeInfo);
@@ -206,7 +214,7 @@ export class ToolBridgeFactory extends EventEmitter {
     this.emit("bridge:tool_created", {
       toolName: tool.name,
       serverId,
-      bridge
+      bridge,
     });
 
     return bridge;
@@ -217,13 +225,13 @@ export class ToolBridgeFactory extends EventEmitter {
     this.registry.on("server:refreshed", ({ serverId }: any) => {
       // Remove existing bridges for this server
       this.removeBridgesForServer(serverId);
-      
+
       // Create new bridges
       const newBridges = this.createBridgesForServer(serverId);
-      
+
       this.emit("bridge:server_refreshed", {
         serverId,
-        bridgeCount: newBridges.length
+        bridgeCount: newBridges.length,
       });
     });
 
@@ -239,7 +247,7 @@ export class ToolBridgeFactory extends EventEmitter {
       const bridges = this.getBridgesForServer(serverId);
       this.emit("bridge:server_error", {
         serverId,
-        affectedBridges: bridges.length
+        affectedBridges: bridges.length,
       });
     });
   }

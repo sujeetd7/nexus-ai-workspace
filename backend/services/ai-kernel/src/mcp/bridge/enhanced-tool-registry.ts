@@ -34,12 +34,16 @@ export class EnhancedToolRegistry extends EventEmitter {
     builtinRegistry: ToolRegistry,
     mcpManager: MCPManager,
     securityManager: MCPSecurityManager,
-    mcpRegistry: MCPServerRegistry
+    mcpRegistry: MCPServerRegistry,
   ) {
     super();
     this.builtinRegistry = builtinRegistry;
     this.mcpRegistry = mcpRegistry;
-    this.bridgeFactory = new ToolBridgeFactory(mcpManager, securityManager, mcpRegistry);
+    this.bridgeFactory = new ToolBridgeFactory(
+      mcpManager,
+      securityManager,
+      mcpRegistry,
+    );
     this.setupEventListeners();
   }
 
@@ -51,7 +55,7 @@ export class EnhancedToolRegistry extends EventEmitter {
         throw new DuplicateToolException(
           tool.name,
           existingSource.source || "unknown",
-          "builtin"
+          "builtin",
         );
       }
       // Allow overwriting existing built-in tools
@@ -59,11 +63,11 @@ export class EnhancedToolRegistry extends EventEmitter {
 
     this.builtinRegistry.register(tool);
     this.toolSources.set(tool.name, { type: "builtin" });
-    
+
     this.emit("tool:registered", {
       name: tool.name,
       type: "builtin",
-      tool
+      tool,
     });
   }
 
@@ -76,7 +80,7 @@ export class EnhancedToolRegistry extends EventEmitter {
       } catch (error) {
         errors.push({
           tool,
-          error: error instanceof Error ? error : new Error(String(error))
+          error: error instanceof Error ? error : new Error(String(error)),
         });
       }
     }
@@ -87,7 +91,7 @@ export class EnhancedToolRegistry extends EventEmitter {
 
     this.emit("tools:builtin_registered", {
       successful: tools.length - errors.length,
-      errors: errors.length
+      errors: errors.length,
     });
   }
 
@@ -117,13 +121,13 @@ export class EnhancedToolRegistry extends EventEmitter {
             name: bridge.name,
             type: "mcp",
             serverId,
-            tool: bridge
+            tool: bridge,
           });
         } catch (error) {
           this.emit("tool:registration_error", {
             name: bridge.name,
             serverId,
-            error
+            error,
           });
         }
       }
@@ -168,21 +172,21 @@ export class EnhancedToolRegistry extends EventEmitter {
   }
 
   listBuiltInTools(): ITool[] {
-    return this.builtinRegistry.getAll().filter(tool => {
+    return this.builtinRegistry.getAll().filter((tool) => {
       const source = this.toolSources.get(tool.name);
       return source?.type === "builtin" || !source; // Default to builtin if no source info
     });
   }
 
   listMCPTools(): ITool[] {
-    return this.builtinRegistry.getAll().filter(tool => {
+    return this.builtinRegistry.getAll().filter((tool) => {
       const source = this.toolSources.get(tool.name);
       return source?.type === "mcp";
     });
   }
 
   listMCPToolsFromServer(serverId: string): ITool[] {
-    return this.builtinRegistry.getAll().filter(tool => {
+    return this.builtinRegistry.getAll().filter((tool) => {
       const source = this.toolSources.get(tool.name);
       return source?.type === "mcp" && source.source === serverId;
     });
@@ -191,13 +195,13 @@ export class EnhancedToolRegistry extends EventEmitter {
   // Tool metadata and definitions (compatible with existing interface)
   metadata(): EnhancedToolMetadata[] {
     const baseMetadata = this.builtinRegistry.metadata();
-    
-    return baseMetadata.map(meta => {
+
+    return baseMetadata.map((meta) => {
       const source = this.toolSources.get(meta.name) || { type: "builtin" };
       return {
         ...meta,
         source,
-        registeredAt: new Date() // Could be tracked more precisely if needed
+        registeredAt: new Date(), // Could be tracked more precisely if needed
       } as EnhancedToolMetadata;
     });
   }
@@ -252,7 +256,7 @@ export class EnhancedToolRegistry extends EventEmitter {
       builtinTools: 0,
       mcpTools: 0,
       toolsByServer: {} as Record<string, number>,
-      bridgeStats: this.bridgeFactory.getBridgeStats()
+      bridgeStats: this.bridgeFactory.getBridgeStats(),
     };
 
     for (const [toolName, source] of this.toolSources.entries()) {
@@ -261,7 +265,8 @@ export class EnhancedToolRegistry extends EventEmitter {
       } else if (source.type === "mcp") {
         stats.mcpTools++;
         const serverId = source.source || "unknown";
-        stats.toolsByServer[serverId] = (stats.toolsByServer[serverId] || 0) + 1;
+        stats.toolsByServer[serverId] =
+          (stats.toolsByServer[serverId] || 0) + 1;
       }
     }
 
@@ -307,8 +312,11 @@ export class EnhancedToolRegistry extends EventEmitter {
       this.emit("tools:bridge_errors", { serverId, errors });
     });
 
-    this.bridgeFactory.on("bridge:tool_created", ({ toolName, serverId }: any) => {
-      this.emit("tools:bridge_created", { toolName, serverId });
-    });
+    this.bridgeFactory.on(
+      "bridge:tool_created",
+      ({ toolName, serverId }: any) => {
+        this.emit("tools:bridge_created", { toolName, serverId });
+      },
+    );
   }
 }

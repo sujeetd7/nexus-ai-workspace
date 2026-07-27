@@ -1,4 +1,8 @@
-import { AgentMessage, MessageType, MessageStatus } from "../../communication/agent-message";
+import {
+  AgentMessage,
+  MessageType,
+  MessageStatus,
+} from "../../communication/agent-message";
 import { AgentPriority } from "../../types";
 
 export enum CommunicationOperation {
@@ -6,7 +10,7 @@ export enum CommunicationOperation {
   RECEIVE = "receive",
   BROADCAST = "broadcast",
   SUBSCRIBE = "subscribe",
-  UNSUBSCRIBE = "unsubscribe"
+  UNSUBSCRIBE = "unsubscribe",
 }
 
 export interface CommunicationOperationRequest {
@@ -27,7 +31,7 @@ export interface ReceiveMessageRequest extends CommunicationOperationRequest {
 
 export interface BroadcastMessageRequest extends CommunicationOperationRequest {
   operation: CommunicationOperation.BROADCAST;
-  message: Omit<AgentMessage, 'receiverAgentId'>;
+  message: Omit<AgentMessage, "receiverAgentId">;
 }
 
 export interface SubscribeChannelRequest extends CommunicationOperationRequest {
@@ -119,11 +123,11 @@ export interface CommunicationAgentMetrics {
   successCounts: Record<CommunicationOperation, number>;
   errorCounts: Record<CommunicationOperation, number>;
   averageLatencies: Record<CommunicationOperation, number>;
-  
+
   totalOperations: number;
   successRate: number;
   uptime: number;
-  
+
   messageStats: {
     totalMessages: number;
     directMessages: number;
@@ -134,7 +138,7 @@ export interface CommunicationAgentMetrics {
     messagesByStatus: Record<MessageStatus, number>;
     messagesByPriority: Record<AgentPriority, number>;
   };
-  
+
   communicationStats: {
     totalSends: number;
     totalReceives: number;
@@ -144,10 +148,13 @@ export interface CommunicationAgentMetrics {
     sendSuccessRate: number;
     broadcastSuccessRate: number;
     averageRecipientsPerBroadcast: number;
-    channelUsage: Record<string, {
-      subscriptionCount: number;
-      messageCount: number;
-      lastActivity?: Date;
-    }>;
+    channelUsage: Record<
+      string,
+      {
+        subscriptionCount: number;
+        messageCount: number;
+        lastActivity?: Date;
+      }
+    >;
   };
 }

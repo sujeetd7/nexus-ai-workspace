@@ -51,7 +51,7 @@ export interface AggregatedRuntimeHealth {
 
 export class RuntimeHealthAggregatorException extends Error {
   public readonly name = "RuntimeHealthAggregatorException";
-  
+
   constructor(message?: string) {
     super(message || "Runtime health aggregation failed");
     Object.setPrototypeOf(this, RuntimeHealthAggregatorException.prototype);
@@ -98,17 +98,27 @@ export class RuntimeHealthAggregator {
     // Calculate summary
     const summary = {
       totalComponents: componentHealths.length,
-      healthyComponents: componentHealths.filter(h => h.status === "healthy").length,
-      degradedComponents: componentHealths.filter(h => h.status === "degraded").length,
-      unhealthyComponents: componentHealths.filter(h => h.status === "unhealthy").length,
-      unavailableComponents: componentHealths.filter(h => h.status === "unavailable").length
+      healthyComponents: componentHealths.filter((h) => h.status === "healthy")
+        .length,
+      degradedComponents: componentHealths.filter(
+        (h) => h.status === "degraded",
+      ).length,
+      unhealthyComponents: componentHealths.filter(
+        (h) => h.status === "unhealthy",
+      ).length,
+      unavailableComponents: componentHealths.filter(
+        (h) => h.status === "unavailable",
+      ).length,
     };
 
     // Determine overall status
     let overallStatus: "healthy" | "degraded" | "unhealthy";
     if (summary.unhealthyComponents > 0) {
       overallStatus = "unhealthy";
-    } else if (summary.degradedComponents > 0 || summary.unavailableComponents > 0) {
+    } else if (
+      summary.degradedComponents > 0 ||
+      summary.unavailableComponents > 0
+    ) {
       overallStatus = "degraded";
     } else {
       overallStatus = "healthy";
@@ -121,7 +131,7 @@ export class RuntimeHealthAggregator {
       aggregatedErrors: allErrors,
       aggregatedWarnings: allWarnings,
       lastHealthCheck,
-      uptime: Date.now() - this.startTime.getTime()
+      uptime: Date.now() - this.startTime.getTime(),
     };
   }
 
@@ -135,19 +145,19 @@ export class RuntimeHealthAggregator {
         componentName,
         status: "unavailable",
         details: { reason: "Component not initialized" },
-        lastCheck
+        lastCheck,
       };
     }
 
     try {
       const agentHealths = await this.components.agentRegistry.health();
       const agentCount = await this.components.agentRegistry.count();
-      
+
       // Aggregate status from all agents
-      const healthStatuses = Object.values(agentHealths).map(h => h.status);
+      const healthStatuses = Object.values(agentHealths).map((h) => h.status);
       const hasUnhealthy = healthStatuses.includes("unhealthy");
       const hasDegraded = healthStatuses.includes("degraded");
-      
+
       let overallStatus: "healthy" | "degraded" | "unhealthy";
       if (hasUnhealthy) {
         overallStatus = "unhealthy";
@@ -156,30 +166,39 @@ export class RuntimeHealthAggregator {
       } else {
         overallStatus = "healthy";
       }
-      
-      const allErrors = Object.values(agentHealths).flatMap(h => h.errors || []);
-      const allWarnings = Object.values(agentHealths).flatMap(h => h.warnings || []);
-      
+
+      const allErrors = Object.values(agentHealths).flatMap(
+        (h) => h.errors || [],
+      );
+      const allWarnings = Object.values(agentHealths).flatMap(
+        (h) => h.warnings || [],
+      );
+
       return {
         componentName,
         status: overallStatus,
         details: {
           registeredAgents: agentCount,
-          healthyAgents: healthStatuses.filter(s => s === "healthy").length,
-          degradedAgents: healthStatuses.filter(s => s === "degraded").length,
-          unhealthyAgents: healthStatuses.filter(s => s === "unhealthy").length
+          healthyAgents: healthStatuses.filter((s) => s === "healthy").length,
+          degradedAgents: healthStatuses.filter((s) => s === "degraded").length,
+          unhealthyAgents: healthStatuses.filter((s) => s === "unhealthy")
+            .length,
         },
         errors: allErrors,
         warnings: allWarnings,
-        lastCheck
+        lastCheck,
       };
     } catch (error) {
       return {
         componentName,
         status: "unhealthy",
-        details: { error: error instanceof Error ? error.message : "Unknown error" },
-        errors: [error instanceof Error ? error.message : "Health check failed"],
-        lastCheck
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+        errors: [
+          error instanceof Error ? error.message : "Health check failed",
+        ],
+        lastCheck,
       };
     }
   }
@@ -193,30 +212,34 @@ export class RuntimeHealthAggregator {
         componentName,
         status: "unavailable",
         details: { reason: "Component not initialized" },
-        lastCheck
+        lastCheck,
       };
     }
 
     try {
       // AgentRuntime doesn't have health method, so we check basic functionality
       const executions = await this.components.agentRuntime.listExecutions();
-      
+
       return {
         componentName,
         status: "healthy",
         details: {
           activeExecutions: executions.length,
-          available: true
+          available: true,
         },
-        lastCheck
+        lastCheck,
       };
     } catch (error) {
       return {
         componentName,
         status: "unhealthy",
-        details: { error: error instanceof Error ? error.message : "Unknown error" },
-        errors: [error instanceof Error ? error.message : "Health check failed"],
-        lastCheck
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+        errors: [
+          error instanceof Error ? error.message : "Health check failed",
+        ],
+        lastCheck,
       };
     }
   }
@@ -230,32 +253,36 @@ export class RuntimeHealthAggregator {
         componentName,
         status: "unavailable",
         details: { reason: "Component not initialized" },
-        lastCheck
+        lastCheck,
       };
     }
 
     try {
       const health = await this.components.scheduler.health();
-      
+
       return {
         componentName,
         status: health.status,
         details: {
           runningTasks: health.runningTasks,
           queueSizes: health.queueSizes,
-          lastActivity: health.lastActivity
+          lastActivity: health.lastActivity,
         },
         errors: health.errors,
         warnings: health.warnings,
-        lastCheck
+        lastCheck,
       };
     } catch (error) {
       return {
         componentName,
         status: "unhealthy",
-        details: { error: error instanceof Error ? error.message : "Unknown error" },
-        errors: [error instanceof Error ? error.message : "Health check failed"],
-        lastCheck
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+        errors: [
+          error instanceof Error ? error.message : "Health check failed",
+        ],
+        lastCheck,
       };
     }
   }
@@ -269,7 +296,7 @@ export class RuntimeHealthAggregator {
         componentName,
         status: "unavailable",
         details: { reason: "Component not initialized" },
-        lastCheck
+        lastCheck,
       };
     }
 
@@ -279,15 +306,19 @@ export class RuntimeHealthAggregator {
         componentName,
         status: "healthy",
         details: { available: true },
-        lastCheck
+        lastCheck,
       };
     } catch (error) {
       return {
         componentName,
         status: "unhealthy",
-        details: { error: error instanceof Error ? error.message : "Unknown error" },
-        errors: [error instanceof Error ? error.message : "Health check failed"],
-        lastCheck
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+        errors: [
+          error instanceof Error ? error.message : "Health check failed",
+        ],
+        lastCheck,
       };
     }
   }
@@ -301,7 +332,7 @@ export class RuntimeHealthAggregator {
         componentName,
         status: "unavailable",
         details: { reason: "Component not initialized" },
-        lastCheck
+        lastCheck,
       };
     }
 
@@ -311,15 +342,19 @@ export class RuntimeHealthAggregator {
         componentName,
         status: "healthy",
         details: { available: true },
-        lastCheck
+        lastCheck,
       };
     } catch (error) {
       return {
         componentName,
         status: "unhealthy",
-        details: { error: error instanceof Error ? error.message : "Unknown error" },
-        errors: [error instanceof Error ? error.message : "Health check failed"],
-        lastCheck
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+        errors: [
+          error instanceof Error ? error.message : "Health check failed",
+        ],
+        lastCheck,
       };
     }
   }
@@ -333,32 +368,36 @@ export class RuntimeHealthAggregator {
         componentName,
         status: "unavailable",
         details: { reason: "Component not initialized" },
-        lastCheck
+        lastCheck,
       };
     }
 
     try {
       const health = await this.components.coordinator.health();
-      
+
       return {
         componentName,
         status: health.status,
         details: {
           activeCoordinations: health.activeCoordinations,
           completedCoordinations: health.completedCoordinations,
-          failedCoordinations: health.failedCoordinations
+          failedCoordinations: health.failedCoordinations,
         },
         errors: health.errors,
         warnings: health.warnings,
-        lastCheck
+        lastCheck,
       };
     } catch (error) {
       return {
         componentName,
         status: "unhealthy",
-        details: { error: error instanceof Error ? error.message : "Unknown error" },
-        errors: [error instanceof Error ? error.message : "Health check failed"],
-        lastCheck
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+        errors: [
+          error instanceof Error ? error.message : "Health check failed",
+        ],
+        lastCheck,
       };
     }
   }
@@ -372,32 +411,36 @@ export class RuntimeHealthAggregator {
         componentName,
         status: "unavailable",
         details: { reason: "Component not initialized" },
-        lastCheck
+        lastCheck,
       };
     }
 
     try {
       const health = await this.components.orchestrator.health();
-      
+
       return {
         componentName,
         status: health.status,
         details: {
           state: health.state,
           runningExecutions: health.runningExecutions,
-          totalExecutions: health.totalExecutions
+          totalExecutions: health.totalExecutions,
         },
         errors: health.errors,
         warnings: health.warnings,
-        lastCheck
+        lastCheck,
       };
     } catch (error) {
       return {
         componentName,
         status: "unhealthy",
-        details: { error: error instanceof Error ? error.message : "Unknown error" },
-        errors: [error instanceof Error ? error.message : "Health check failed"],
-        lastCheck
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+        errors: [
+          error instanceof Error ? error.message : "Health check failed",
+        ],
+        lastCheck,
       };
     }
   }
@@ -411,32 +454,36 @@ export class RuntimeHealthAggregator {
         componentName,
         status: "unavailable",
         details: { reason: "Component not initialized" },
-        lastCheck
+        lastCheck,
       };
     }
 
     try {
       const health = await this.components.pluginLoader.health();
-      
+
       return {
         componentName,
         status: health.status,
         details: {
           loadedPlugins: health.loadedPlugins,
           failedPlugins: health.failedPlugins,
-          totalPlugins: health.totalPlugins
+          totalPlugins: health.totalPlugins,
         },
         errors: health.recentErrors,
         warnings: health.recentWarnings,
-        lastCheck
+        lastCheck,
       };
     } catch (error) {
       return {
         componentName,
         status: "unhealthy",
-        details: { error: error instanceof Error ? error.message : "Unknown error" },
-        errors: [error instanceof Error ? error.message : "Health check failed"],
-        lastCheck
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+        errors: [
+          error instanceof Error ? error.message : "Health check failed",
+        ],
+        lastCheck,
       };
     }
   }
@@ -450,13 +497,13 @@ export class RuntimeHealthAggregator {
         componentName,
         status: "unavailable",
         details: { reason: "Component not initialized" },
-        lastCheck
+        lastCheck,
       };
     }
 
     try {
       const health = await this.components.memory.health();
-      
+
       return {
         componentName,
         status: health.status,
@@ -464,19 +511,23 @@ export class RuntimeHealthAggregator {
           totalSize: health.totalSize,
           usedSize: health.usedSize,
           freeSize: health.freeSize,
-          lastAccess: health.lastAccess
+          lastAccess: health.lastAccess,
         },
         errors: health.errors,
         warnings: health.warnings,
-        lastCheck
+        lastCheck,
       };
     } catch (error) {
       return {
         componentName,
         status: "unhealthy",
-        details: { error: error instanceof Error ? error.message : "Unknown error" },
-        errors: [error instanceof Error ? error.message : "Health check failed"],
-        lastCheck
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+        errors: [
+          error instanceof Error ? error.message : "Health check failed",
+        ],
+        lastCheck,
       };
     }
   }
@@ -490,13 +541,13 @@ export class RuntimeHealthAggregator {
         componentName,
         status: "unavailable",
         details: { reason: "Component not initialized" },
-        lastCheck
+        lastCheck,
       };
     }
 
     try {
       const health = await this.components.communicationManager.health();
-      
+
       return {
         componentName,
         status: health.status,
@@ -504,19 +555,23 @@ export class RuntimeHealthAggregator {
           channelCount: health.channelCount,
           registeredAgents: health.registeredAgents,
           totalMessages: health.totalMessages,
-          lastActivity: health.lastActivity
+          lastActivity: health.lastActivity,
         },
         errors: health.errors,
         warnings: health.warnings,
-        lastCheck
+        lastCheck,
       };
     } catch (error) {
       return {
         componentName,
         status: "unhealthy",
-        details: { error: error instanceof Error ? error.message : "Unknown error" },
-        errors: [error instanceof Error ? error.message : "Health check failed"],
-        lastCheck
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+        errors: [
+          error instanceof Error ? error.message : "Health check failed",
+        ],
+        lastCheck,
       };
     }
   }
@@ -530,13 +585,13 @@ export class RuntimeHealthAggregator {
         componentName,
         status: "unavailable",
         details: { reason: "Component not initialized" },
-        lastCheck
+        lastCheck,
       };
     }
 
     try {
       const health = this.components.builtinRegistry.health();
-      
+
       return {
         componentName,
         status: health.status,
@@ -544,19 +599,23 @@ export class RuntimeHealthAggregator {
           registeredAgents: health.registeredAgents,
           activeAgents: health.activeAgents,
           totalUsage: health.totalUsage,
-          lastActivity: health.lastActivity
+          lastActivity: health.lastActivity,
         },
         errors: health.errors,
         warnings: health.warnings,
-        lastCheck
+        lastCheck,
       };
     } catch (error) {
       return {
         componentName,
         status: "unhealthy",
-        details: { error: error instanceof Error ? error.message : "Unknown error" },
-        errors: [error instanceof Error ? error.message : "Health check failed"],
-        lastCheck
+        details: {
+          error: error instanceof Error ? error.message : "Unknown error",
+        },
+        errors: [
+          error instanceof Error ? error.message : "Health check failed",
+        ],
+        lastCheck,
       };
     }
   }

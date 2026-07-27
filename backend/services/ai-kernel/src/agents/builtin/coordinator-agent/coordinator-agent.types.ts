@@ -1,11 +1,11 @@
-import { 
-  CoordinationRequest, 
-  CoordinationResult, 
-  HandoffRequest, 
-  HandoffResult, 
-  BroadcastRequest, 
-  BroadcastResult, 
-  CoordinationContext 
+import {
+  CoordinationRequest,
+  CoordinationResult,
+  HandoffRequest,
+  HandoffResult,
+  BroadcastRequest,
+  BroadcastResult,
+  CoordinationContext,
 } from "../../coordinator";
 
 export enum CoordinatorOperation {
@@ -14,7 +14,7 @@ export enum CoordinatorOperation {
   HANDOFF = "handoff",
   BROADCAST = "broadcast",
   COLLECT = "collect",
-  CANCEL = "cancel"
+  CANCEL = "cancel",
 }
 
 export interface CoordinatorOperationRequest {
@@ -126,11 +126,11 @@ export interface CoordinatorAgentMetrics {
   successCounts: Record<CoordinatorOperation, number>;
   errorCounts: Record<CoordinatorOperation, number>;
   averageLatencies: Record<CoordinatorOperation, number>;
-  
+
   totalOperations: number;
   successRate: number;
   uptime: number;
-  
+
   coordinationStats: {
     totalCoordinations: number;
     parallelCoordinations: number;
@@ -143,7 +143,7 @@ export interface CoordinatorAgentMetrics {
     timedOutCoordinations: number;
     cancelledCoordinations: number;
   };
-  
+
   operationStats: {
     totalDelegations: number;
     totalHandoffs: number;

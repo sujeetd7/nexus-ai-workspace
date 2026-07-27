@@ -7,7 +7,7 @@ export enum WorkflowState {
   PAUSED = "paused",
   FAILED = "failed",
   COMPLETED = "completed",
-  CANCELLED = "cancelled"
+  CANCELLED = "cancelled",
 }
 
 export enum WorkflowStepType {
@@ -16,13 +16,13 @@ export enum WorkflowStepType {
   PARALLEL = "parallel",
   CONDITIONAL = "conditional",
   LOOP = "loop",
-  COMPENSATION = "compensation"
+  COMPENSATION = "compensation",
 }
 
 export enum WorkflowExecutionMode {
   SEQUENTIAL = "sequential",
   PARALLEL = "parallel",
-  MIXED = "mixed"
+  MIXED = "mixed",
 }
 
 export interface WorkflowExecutionContext {
@@ -77,29 +77,29 @@ export interface WorkflowStep {
   name: string;
   type: WorkflowStepType;
   enabled: boolean;
-  
+
   // Task execution
   agentId?: string;
   taskName?: string;
   input?: unknown;
-  
+
   // Control flow
   condition?: WorkflowCondition;
   loop?: WorkflowLoop;
-  
+
   // Nested steps (for sequences, parallels, conditionals)
   steps?: WorkflowStep[];
-  
+
   // Compensation
   compensationStepId?: string;
-  
+
   // Policies
   retryPolicy?: RetryPolicy;
   timeoutMs?: number;
-  
+
   // Dependencies
   dependsOn: string[];
-  
+
   metadata: Record<string, unknown>;
 }
 
@@ -108,23 +108,23 @@ export interface WorkflowDefinition {
   name: string;
   description: string;
   version: string;
-  
+
   // Execution properties
   executionMode: WorkflowExecutionMode;
   priority: AgentPriority;
-  
+
   // Steps
   steps: WorkflowStep[];
-  
+
   // Policies
   retryPolicy: RetryPolicy;
   timeoutPolicy: TimeoutPolicy;
   failurePolicy: FailurePolicy;
-  
+
   // Context
   inputSchema?: Record<string, unknown>;
   outputSchema?: Record<string, unknown>;
-  
+
   metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
@@ -134,30 +134,30 @@ export interface WorkflowExecution {
   executionId: string;
   workflowId: string;
   state: WorkflowState;
-  
+
   context: WorkflowExecutionContext;
-  
+
   // Execution tracking
   currentStepId?: string;
   completedSteps: string[];
   failedSteps: string[];
   compensatedSteps: string[];
-  
+
   // Results
   input: unknown;
   output?: unknown;
   error?: string;
-  
+
   // Timing
   startedAt: Date;
   completedAt?: Date;
   duration?: number;
-  
+
   // Metrics
   stepCount: number;
   failureCount: number;
   retryCount: number;
-  
+
   metadata: Record<string, unknown>;
 }
 
@@ -165,18 +165,18 @@ export interface StepExecution {
   stepId: string;
   executionId: string;
   state: WorkflowState;
-  
+
   input?: unknown;
   output?: unknown;
   error?: string;
-  
+
   attempts: number;
   maxAttempts: number;
-  
+
   startedAt: Date;
   completedAt?: Date;
   duration?: number;
-  
+
   metadata: Record<string, unknown>;
 }
 
@@ -185,17 +185,20 @@ export interface WorkflowMetrics {
   successfulExecutions: number;
   failedExecutions: number;
   cancelledExecutions: number;
-  
+
   averageDuration: number;
   totalDuration: number;
-  
-  stepMetrics: Record<string, {
-    executions: number;
-    successes: number;
-    failures: number;
-    averageDuration: number;
-  }>;
-  
+
+  stepMetrics: Record<
+    string,
+    {
+      executions: number;
+      successes: number;
+      failures: number;
+      averageDuration: number;
+    }
+  >;
+
   lastExecutionAt?: Date;
 }
 

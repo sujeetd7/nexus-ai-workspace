@@ -10,7 +10,7 @@ import {
   MCPBatchExecutionRequest,
   MCPBatchExecutionResult,
   generateExecutionId,
-  isRetryableError
+  isRetryableError,
 } from "../runtime/execution-context";
 
 export interface MCPExecutionManagerConfig {
@@ -34,7 +34,7 @@ export class MCPExecutionManager extends EventEmitter {
   constructor(
     mcpManager: MCPManager,
     securityManager?: MCPSecurityManager,
-    config: MCPExecutionManagerConfig = {}
+    config: MCPExecutionManagerConfig = {},
   ) {
     super();
     this.mcpManager = mcpManager;
@@ -46,7 +46,7 @@ export class MCPExecutionManager extends EventEmitter {
       defaultRetryDelay: config.defaultRetryDelay ?? 1000,
       maxConcurrentExecutions: config.maxConcurrentExecutions ?? 10,
       enableMetrics: config.enableMetrics ?? true,
-      enableSecurity: config.enableSecurity ?? true
+      enableSecurity: config.enableSecurity ?? true,
     };
   }
 
@@ -57,7 +57,7 @@ export class MCPExecutionManager extends EventEmitter {
       timeout: this.config.defaultTimeout,
       retries: this.config.defaultRetries,
       retryDelay: this.config.defaultRetryDelay,
-      ...request.options
+      ...request.options,
     };
 
     // Check concurrent execution limit
@@ -67,7 +67,7 @@ export class MCPExecutionManager extends EventEmitter {
         error: {
           code: "EXECUTION_LIMIT_EXCEEDED",
           message: `Maximum concurrent executions (${this.config.maxConcurrentExecutions}) exceeded`,
-          retryable: true
+          retryable: true,
         },
         metadata: {
           executionId,
@@ -78,8 +78,8 @@ export class MCPExecutionManager extends EventEmitter {
           endTime: new Date(),
           duration: 0,
           retryAttempt: 0,
-          cached: false
-        }
+          cached: false,
+        },
       };
     }
 
@@ -104,9 +104,13 @@ export class MCPExecutionManager extends EventEmitter {
       let lastError: any = null;
       for (let attempt = 0; attempt <= options.retries!; attempt++) {
         try {
-          const executionPromise = this.executeInternal(request, executionId, attempt);
+          const executionPromise = this.executeInternal(
+            request,
+            executionId,
+            attempt,
+          );
           const result = await Promise.race([executionPromise, timeoutPromise]);
-          
+
           // Record success metrics
           if (this.config.enableMetrics) {
             const duration = Date.now() - startTime.getTime();
@@ -116,14 +120,14 @@ export class MCPExecutionManager extends EventEmitter {
               duration,
               result.success,
               attempt,
-              false
+              false,
             );
           }
 
           return result;
         } catch (error) {
           lastError = error;
-          
+
           // Don't retry if cancelled or non-retryable error
           if (abortController.signal.aborted || !isRetryableError(error)) {
             break;
@@ -149,7 +153,7 @@ export class MCPExecutionManager extends EventEmitter {
           duration,
           false,
           options.retries!,
-          timedOut
+          timedOut,
         );
       }
 
@@ -159,7 +163,7 @@ export class MCPExecutionManager extends EventEmitter {
           code: timedOut ? "EXECUTION_TIMEOUT" : "EXECUTION_FAILED",
           message: lastError?.message || "Execution failed after retries",
           details: lastError,
-          retryable: isRetryableError(lastError)
+          retryable: isRetryableError(lastError),
         },
         metadata: {
           executionId,
@@ -170,33 +174,34 @@ export class MCPExecutionManager extends EventEmitter {
           endTime,
           duration,
           retryAttempt: options.retries!,
-          cached: false
-        }
+          cached: false,
+        },
       };
 
       this.emit("execution:failed", { request, result, error: lastError });
       return result;
-
     } finally {
       this.activeExecutions.delete(executionId);
     }
   }
 
-  async executeBatch(batchRequest: MCPBatchExecutionRequest): Promise<MCPBatchExecutionResult> {
+  async executeBatch(
+    batchRequest: MCPBatchExecutionRequest,
+  ): Promise<MCPBatchExecutionResult> {
     const startTime = new Date();
     const options = {
       parallel: true,
       continueOnError: true,
       maxConcurrency: this.config.maxConcurrentExecutions,
-      ...batchRequest.options
+      ...batchRequest.options,
     };
 
     const results: MCPExecutionResult[] = [];
-    
+
     if (options.parallel) {
       // Execute in parallel with concurrency control
       const semaphore = this.createSemaphore(options.maxConcurrency);
-      
+
       const promises = batchRequest.requests.map(async (req) => {
         await semaphore.acquire();
         try {
@@ -205,7 +210,7 @@ export class MCPExecutionManager extends EventEmitter {
             serverId: req.serverId,
             toolName: req.toolName,
             parameters: req.parameters,
-            options: req.options
+            options: req.options,
           };
           return await this.execute(executionRequest);
         } finally {
@@ -214,7 +219,7 @@ export class MCPExecutionManager extends EventEmitter {
       });
 
       const batchResults = await Promise.allSettled(promises);
-      
+
       for (const result of batchResults) {
         if (result.status === "fulfilled") {
           results.push(result.value);
@@ -225,7 +230,7 @@ export class MCPExecutionManager extends EventEmitter {
             error: {
               code: "BATCH_EXECUTION_ERROR",
               message: result.reason?.message || "Batch execution failed",
-              retryable: false
+              retryable: false,
             },
             metadata: {
               executionId: `batch_error_${Date.now()}`,
@@ -236,8 +241,8 @@ export class MCPExecutionManager extends EventEmitter {
               endTime: new Date(),
               duration: 0,
               retryAttempt: 0,
-              cached: false
-            }
+              cached: false,
+            },
           });
         }
       }
@@ -250,12 +255,12 @@ export class MCPExecutionManager extends EventEmitter {
             serverId: req.serverId,
             toolName: req.toolName,
             parameters: req.parameters,
-            options: req.options
+            options: req.options,
           };
-          
+
           const result = await this.execute(executionRequest);
           results.push(result);
-          
+
           // Stop on error if continueOnError is false
           if (!result.success && !options.continueOnError) {
             break;
@@ -266,7 +271,7 @@ export class MCPExecutionManager extends EventEmitter {
             error: {
               code: "BATCH_EXECUTION_ERROR",
               message: error instanceof Error ? error.message : "Unknown error",
-              retryable: false
+              retryable: false,
             },
             metadata: {
               executionId: `batch_error_${Date.now()}`,
@@ -277,12 +282,12 @@ export class MCPExecutionManager extends EventEmitter {
               endTime: new Date(),
               duration: 0,
               retryAttempt: 0,
-              cached: false
-            }
+              cached: false,
+            },
           };
-          
+
           results.push(errorResult);
-          
+
           if (!options.continueOnError) {
             break;
           }
@@ -291,8 +296,8 @@ export class MCPExecutionManager extends EventEmitter {
     }
 
     const endTime = new Date();
-    const successful = results.filter(r => r.success).length;
-    const failed = results.filter(r => !r.success).length;
+    const successful = results.filter((r) => r.success).length;
+    const failed = results.filter((r) => !r.success).length;
 
     const batchResult: MCPBatchExecutionResult = {
       success: failed === 0,
@@ -301,8 +306,8 @@ export class MCPExecutionManager extends EventEmitter {
         total: results.length,
         successful,
         failed,
-        duration: endTime.getTime() - startTime.getTime()
-      }
+        duration: endTime.getTime() - startTime.getTime(),
+      },
     };
 
     this.emit("execution:batch_completed", { batchRequest, batchResult });
@@ -320,7 +325,10 @@ export class MCPExecutionManager extends EventEmitter {
 
   async cancelAll(): Promise<number> {
     let cancelled = 0;
-    for (const [executionId, abortController] of this.activeExecutions.entries()) {
+    for (const [
+      executionId,
+      abortController,
+    ] of this.activeExecutions.entries()) {
       abortController.abort();
       cancelled++;
     }
@@ -343,7 +351,7 @@ export class MCPExecutionManager extends EventEmitter {
   private async executeInternal(
     request: MCPExecutionRequest,
     executionId: string,
-    retryAttempt: number
+    retryAttempt: number,
   ): Promise<MCPExecutionResult> {
     const startTime = new Date();
 
@@ -356,13 +364,13 @@ export class MCPExecutionManager extends EventEmitter {
           sessionId: request.context.sessionId,
           serverId: request.serverId,
           roles: [],
-          permissions: []
+          permissions: [],
         };
 
         await this.securityManager.authorizeTool({
           context: securityContext,
           toolName: request.toolName,
-          parameters: request.parameters
+          parameters: request.parameters,
         });
       }
 
@@ -370,19 +378,21 @@ export class MCPExecutionManager extends EventEmitter {
       const mcpResult = await this.mcpManager.executeTool(
         request.serverId,
         request.toolName,
-        request.parameters
+        request.parameters,
       );
 
       const endTime = new Date();
       const result: MCPExecutionResult = {
         success: mcpResult.success,
         data: mcpResult.data,
-        error: mcpResult.error ? {
-          code: mcpResult.error.code,
-          message: mcpResult.error.message,
-          details: mcpResult.error.details,
-          retryable: isRetryableError(mcpResult.error)
-        } : undefined,
+        error: mcpResult.error
+          ? {
+              code: mcpResult.error.code,
+              message: mcpResult.error.message,
+              details: mcpResult.error.details,
+              retryable: isRetryableError(mcpResult.error),
+            }
+          : undefined,
         metadata: {
           executionId,
           serverId: request.serverId,
@@ -392,13 +402,12 @@ export class MCPExecutionManager extends EventEmitter {
           endTime,
           duration: endTime.getTime() - startTime.getTime(),
           retryAttempt,
-          cached: false
-        }
+          cached: false,
+        },
       };
 
       this.emit("execution:completed", { request, result });
       return result;
-
     } catch (error) {
       const endTime = new Date();
       const result: MCPExecutionResult = {
@@ -407,7 +416,7 @@ export class MCPExecutionManager extends EventEmitter {
           code: "EXECUTION_ERROR",
           message: error instanceof Error ? error.message : "Unknown error",
           details: error,
-          retryable: isRetryableError(error)
+          retryable: isRetryableError(error),
         },
         metadata: {
           executionId,
@@ -418,8 +427,8 @@ export class MCPExecutionManager extends EventEmitter {
           endTime,
           duration: endTime.getTime() - startTime.getTime(),
           retryAttempt,
-          cached: false
-        }
+          cached: false,
+        },
       };
 
       throw error; // Re-throw for retry logic
@@ -427,7 +436,7 @@ export class MCPExecutionManager extends EventEmitter {
   }
 
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   private createSemaphore(limit: number) {
@@ -453,7 +462,7 @@ export class MCPExecutionManager extends EventEmitter {
         } else {
           count--;
         }
-      }
+      },
     };
   }
 }

@@ -35,8 +35,8 @@ export class AgentInbox<T = unknown> implements IAgentInbox<T> {
       metadata: {
         ...message.metadata,
         deliveredAt: new Date(),
-        deliveredToAgent: this.agentId
-      }
+        deliveredToAgent: this.agentId,
+      },
     };
 
     // Insert message in priority order
@@ -45,7 +45,7 @@ export class AgentInbox<T = unknown> implements IAgentInbox<T> {
 
   public async pop(): Promise<AgentMessage<T> | undefined> {
     const message = this.messages.shift();
-    
+
     if (message) {
       // Update message status
       const processedMessage: AgentMessage<T> = {
@@ -54,13 +54,13 @@ export class AgentInbox<T = unknown> implements IAgentInbox<T> {
         metadata: {
           ...message.metadata,
           processedAt: new Date(),
-          processedByAgent: this.agentId
-        }
+          processedByAgent: this.agentId,
+        },
       };
-      
+
       return processedMessage;
     }
-    
+
     return undefined;
   }
 
@@ -84,16 +84,20 @@ export class AgentInbox<T = unknown> implements IAgentInbox<T> {
     return this.messages.length >= this.maxSize;
   }
 
-  public async getMessagesByPriority(priority: string): Promise<AgentMessage<T>[]> {
-    return this.messages.filter(msg => msg.priority === priority);
+  public async getMessagesByPriority(
+    priority: string,
+  ): Promise<AgentMessage<T>[]> {
+    return this.messages.filter((msg) => msg.priority === priority);
   }
 
   public async getMessagesByType(type: string): Promise<AgentMessage<T>[]> {
-    return this.messages.filter(msg => msg.type === type);
+    return this.messages.filter((msg) => msg.type === type);
   }
 
-  public async getMessagesBySender(senderAgentId: string): Promise<AgentMessage<T>[]> {
-    return this.messages.filter(msg => msg.senderAgentId === senderAgentId);
+  public async getMessagesBySender(
+    senderAgentId: string,
+  ): Promise<AgentMessage<T>[]> {
+    return this.messages.filter((msg) => msg.senderAgentId === senderAgentId);
   }
 
   public getAgentId(): string {
@@ -101,28 +105,30 @@ export class AgentInbox<T = unknown> implements IAgentInbox<T> {
   }
 
   private insertByPriority(message: AgentMessage<T>): void {
-    const priorityOrder = { 'critical': 0, 'high': 1, 'normal': 2, 'low': 3 };
+    const priorityOrder = { critical: 0, high: 1, normal: 2, low: 3 };
     const messagePriority = priorityOrder[message.priority] ?? 2;
-    
+
     let insertIndex = 0;
-    
+
     // Find correct position based on priority and timestamp
     for (let i = 0; i < this.messages.length; i++) {
       const existingPriority = priorityOrder[this.messages[i].priority] ?? 2;
-      
+
       if (messagePriority < existingPriority) {
         insertIndex = i;
         break;
       } else if (messagePriority === existingPriority) {
         // Same priority, order by timestamp (older first)
-        if (message.timestamp.getTime() < this.messages[i].timestamp.getTime()) {
+        if (
+          message.timestamp.getTime() < this.messages[i].timestamp.getTime()
+        ) {
           insertIndex = i;
           break;
         }
       }
       insertIndex = i + 1;
     }
-    
+
     this.messages.splice(insertIndex, 0, message);
   }
 }

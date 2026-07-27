@@ -3,9 +3,16 @@ import {
   IAgent,
   IAgentMetadata,
   IAgentCapability,
-  IAgentExecutionContext
+  IAgentExecutionContext,
 } from "../../interfaces";
-import { AgentType, AgentStatus, AgentPriority, AgentHealth, ExecutionResult, ExecutionStatus } from "../../types";
+import {
+  AgentType,
+  AgentStatus,
+  AgentPriority,
+  AgentHealth,
+  ExecutionResult,
+  ExecutionStatus,
+} from "../../types";
 import {
   ExecutionOperation,
   ExecutionOperationRequest,
@@ -19,7 +26,7 @@ import {
   CancelExecutionResult,
   ExecutionStatusResult,
   ExecutionAgentHealth,
-  ExecutionAgentMetrics
+  ExecutionAgentMetrics,
 } from "./execution-agent.types";
 import {
   ExecutionAgentException,
@@ -29,7 +36,7 @@ import {
   ExecutionCancellationException,
   ExecutionStatusException,
   AgentRuntimeUnavailableException,
-  InvalidExecutionContextException
+  InvalidExecutionContextException,
 } from "./execution-agent.exceptions";
 import { IAgentRuntime } from "../../runtime/agent-runtime";
 
@@ -42,24 +49,28 @@ export class ExecutionAgent implements IAgent {
   public readonly type: AgentType = AgentType.SERVICE;
   public readonly priority: AgentPriority = AgentPriority.NORMAL;
   public readonly capabilities: IAgentCapability[];
-  
+
   private agentStatus: AgentStatus = AgentStatus.IDLE;
   private agentHealth: AgentHealth;
   private readonly startTime: Date = new Date();
-  
+
   // Execution components
   private readonly components: ExecutionAgentComponents;
-  
+
   // Metrics
-  private readonly operationCounts: Record<ExecutionOperation, number> = {} as Record<ExecutionOperation, number>;
-  private readonly successCounts: Record<ExecutionOperation, number> = {} as Record<ExecutionOperation, number>;
-  private readonly errorCounts: Record<ExecutionOperation, number> = {} as Record<ExecutionOperation, number>;
-  private readonly latencies: Record<ExecutionOperation, number[]> = {} as Record<ExecutionOperation, number[]>;
-  
+  private readonly operationCounts: Record<ExecutionOperation, number> =
+    {} as Record<ExecutionOperation, number>;
+  private readonly successCounts: Record<ExecutionOperation, number> =
+    {} as Record<ExecutionOperation, number>;
+  private readonly errorCounts: Record<ExecutionOperation, number> =
+    {} as Record<ExecutionOperation, number>;
+  private readonly latencies: Record<ExecutionOperation, number[]> =
+    {} as Record<ExecutionOperation, number[]>;
+
   private readonly errors: string[] = [];
   private readonly warnings: string[] = [];
   private lastActivity?: Date;
-  
+
   // Execution tracking
   private totalExecutions = 0;
   private singleExecutions = 0;
@@ -71,50 +82,54 @@ export class ExecutionAgent implements IAgent {
   private batchStats = {
     totalRequests: 0,
     maxConcurrency: 0,
-    failFastUsage: 0
+    failFastUsage: 0,
   };
 
   constructor(components: ExecutionAgentComponents) {
     this.metadata = {
       id: "execution-agent",
       name: "Execution Agent",
-      description: "Built-in agent for managing agent execution operations using the existing AgentRuntime infrastructure",
+      description:
+        "Built-in agent for managing agent execution operations using the existing AgentRuntime infrastructure",
       version: "1.0.0",
       author: "Agent Runtime System",
       tags: ["execution", "builtin", "runtime"],
       category: "system",
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.capabilities = [
       {
         id: "agent-execution",
         name: "Agent Execution",
-        description: "Execute individual agents with context and timeout management",
+        description:
+          "Execute individual agents with context and timeout management",
         inputSchema: { operation: "string", executionRequest: "object" },
         outputSchema: { success: "boolean", result: "object" },
         parameters: { timeout: 300000 },
-        dependencies: []
+        dependencies: [],
       },
       {
         id: "batch-execution",
-        name: "Batch Execution", 
-        description: "Execute multiple agents in batch with concurrency control and fail-fast options",
+        name: "Batch Execution",
+        description:
+          "Execute multiple agents in batch with concurrency control and fail-fast options",
         inputSchema: { operation: "string", batchRequest: "object" },
         outputSchema: { success: "boolean", result: "object" },
         parameters: { maxConcurrency: 10, failFast: false },
-        dependencies: []
+        dependencies: [],
       },
       {
         id: "execution-control",
         name: "Execution Control",
-        description: "Control and monitor agent executions with cancel and status operations",
+        description:
+          "Control and monitor agent executions with cancel and status operations",
         inputSchema: { operation: "string", executionId: "string" },
         outputSchema: { success: "boolean", status: "string" },
         parameters: {},
-        dependencies: []
-      }
+        dependencies: [],
+      },
     ];
 
     this.components = components;
@@ -130,7 +145,7 @@ export class ExecutionAgent implements IAgent {
       cpuUsage: 0,
       errors: [],
       warnings: [],
-      metrics: {}
+      metrics: {},
     };
   }
 
@@ -145,17 +160,16 @@ export class ExecutionAgent implements IAgent {
   public async initialize(): Promise<void> {
     try {
       this.agentStatus = AgentStatus.INITIALIZING;
-      
+
       // Validate components
       if (!this.components.agentRuntime) {
         throw new AgentRuntimeUnavailableException();
       }
-      
+
       this.agentStatus = AgentStatus.IDLE;
-      
     } catch (error) {
       this.agentStatus = AgentStatus.ERROR;
-      const errorMsg = `Failed to initialize execution agent: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      const errorMsg = `Failed to initialize execution agent: ${error instanceof Error ? error.message : "Unknown error"}`;
       this.errors.push(errorMsg);
       throw new ExecutionAgentException("initialize", errorMsg);
     }
@@ -164,15 +178,14 @@ export class ExecutionAgent implements IAgent {
   public async shutdown(): Promise<void> {
     try {
       this.agentStatus = AgentStatus.SHUTTING_DOWN;
-      
+
       // Cleanup resources if needed
       // Agent runtime doesn't require special cleanup
-      
+
       this.agentStatus = AgentStatus.STOPPED;
-      
     } catch (error) {
       this.agentStatus = AgentStatus.ERROR;
-      const errorMsg = `Failed to shutdown execution agent: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      const errorMsg = `Failed to shutdown execution agent: ${error instanceof Error ? error.message : "Unknown error"}`;
       this.errors.push(errorMsg);
       throw new ExecutionAgentException("shutdown", errorMsg);
     }
@@ -181,16 +194,16 @@ export class ExecutionAgent implements IAgent {
   public async getHealth(): Promise<AgentHealth> {
     try {
       const uptime = Date.now() - this.startTime.getTime();
-      
+
       // Determine health status
       let status: "healthy" | "degraded" | "unhealthy" = "healthy";
-      
+
       if (this.errors.length > 0 || !this.components.agentRuntime) {
         status = "unhealthy";
       } else if (this.warnings.length > 0) {
         status = "degraded";
       }
-      
+
       this.agentHealth = {
         status,
         uptime,
@@ -201,17 +214,19 @@ export class ExecutionAgent implements IAgent {
         warnings: [...this.warnings],
         metrics: {
           totalExecutions: this.totalExecutions,
-          totalOperations: Object.values(this.operationCounts).reduce((sum, count) => sum + count, 0),
-          successRate: this.calculateSuccessRate()
-        }
+          totalOperations: Object.values(this.operationCounts).reduce(
+            (sum, count) => sum + count,
+            0,
+          ),
+          successRate: this.calculateSuccessRate(),
+        },
       };
-      
+
       return this.agentHealth;
-      
     } catch (error) {
-      const errorMsg = `Failed to get execution agent health: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      const errorMsg = `Failed to get execution agent health: ${error instanceof Error ? error.message : "Unknown error"}`;
       this.errors.push(errorMsg);
-      
+
       return {
         status: "unhealthy",
         uptime: Date.now() - this.startTime.getTime(),
@@ -220,7 +235,7 @@ export class ExecutionAgent implements IAgent {
         cpuUsage: 0,
         errors: [errorMsg],
         warnings: [...this.warnings],
-        metrics: { error: 1 }
+        metrics: { error: 1 },
       };
     }
   }
@@ -230,11 +245,11 @@ export class ExecutionAgent implements IAgent {
   }
 
   public hasCapability(capabilityId: string): boolean {
-    return this.capabilities.some(cap => cap.id === capabilityId);
+    return this.capabilities.some((cap) => cap.id === capabilityId);
   }
 
   public getCapability(capabilityId: string): IAgentCapability | undefined {
-    return this.capabilities.find(cap => cap.id === capabilityId);
+    return this.capabilities.find((cap) => cap.id === capabilityId);
   }
 
   public listCapabilities(): IAgentCapability[] {
@@ -242,41 +257,59 @@ export class ExecutionAgent implements IAgent {
   }
 
   // Main execution method - determines which operation to execute based on input
-  public async execute(input: unknown, context: IAgentExecutionContext): Promise<ExecutionResult> {
+  public async execute(
+    input: unknown,
+    context: IAgentExecutionContext,
+  ): Promise<ExecutionResult> {
     const startTime = Date.now();
     this.lastActivity = new Date();
-    
+
     try {
       // Validate input
       const request = this.validateAndParseRequest(input);
-      
+
       // Record operation attempt
       this.recordOperationAttempt(request.operation);
-      
+
       // Execute operation
       let result: ExecutionOperationResult;
-      
+
       switch (request.operation) {
         case ExecutionOperation.EXECUTE:
-          result = await this.executeAgent(request as ExecuteAgentRequest, context);
+          result = await this.executeAgent(
+            request as ExecuteAgentRequest,
+            context,
+          );
           break;
         case ExecutionOperation.EXECUTE_BATCH:
-          result = await this.executeBatch(request as ExecuteBatchRequest, context);
+          result = await this.executeBatch(
+            request as ExecuteBatchRequest,
+            context,
+          );
           break;
         case ExecutionOperation.CANCEL:
-          result = await this.cancelExecution(request as CancelExecutionRequest, context);
+          result = await this.cancelExecution(
+            request as CancelExecutionRequest,
+            context,
+          );
           break;
         case ExecutionOperation.STATUS:
-          result = await this.getExecutionStatus(request as ExecutionStatusRequest, context);
+          result = await this.getExecutionStatus(
+            request as ExecutionStatusRequest,
+            context,
+          );
           break;
         default:
-          throw new InvalidExecutionOperationException(request.operation as string, "Unsupported operation");
+          throw new InvalidExecutionOperationException(
+            request.operation as string,
+            "Unsupported operation",
+          );
       }
-      
+
       // Record success
       const duration = Date.now() - startTime;
       this.recordOperationSuccess(request.operation, duration);
-      
+
       return {
         executionId: randomUUID(),
         agentId: this.metadata.id,
@@ -287,24 +320,29 @@ export class ExecutionAgent implements IAgent {
         latency: duration,
         usage: undefined,
         errors: result.error ? [result.error] : [],
-        status: result.success ? ExecutionStatus.COMPLETED : ExecutionStatus.FAILED,
+        status: result.success
+          ? ExecutionStatus.COMPLETED
+          : ExecutionStatus.FAILED,
         metadata: {
           operation: request.operation,
-          ...result.metadata
-        }
+          ...result.metadata,
+        },
       };
-      
     } catch (error) {
       const duration = Date.now() - startTime;
-      const errorMsg = error instanceof Error ? error.message : 'Unknown execution error';
-      
+      const errorMsg =
+        error instanceof Error ? error.message : "Unknown execution error";
+
       // Record error
-      if (input && typeof input === 'object' && 'operation' in input) {
-        this.recordOperationError(input.operation as ExecutionOperation, duration);
+      if (input && typeof input === "object" && "operation" in input) {
+        this.recordOperationError(
+          input.operation as ExecutionOperation,
+          duration,
+        );
       }
-      
+
       this.errors.push(errorMsg);
-      
+
       return {
         executionId: randomUUID(),
         agentId: this.metadata.id,
@@ -316,25 +354,30 @@ export class ExecutionAgent implements IAgent {
         usage: undefined,
         errors: [errorMsg],
         status: ExecutionStatus.FAILED,
-        metadata: { error: errorMsg }
+        metadata: { error: errorMsg },
       };
     }
   }
 
   // Individual execution operations
-  public async executeAgent(request: ExecuteAgentRequest, context: IAgentExecutionContext): Promise<ExecuteAgentResult> {
+  public async executeAgent(
+    request: ExecuteAgentRequest,
+    context: IAgentExecutionContext,
+  ): Promise<ExecuteAgentResult> {
     const startedAt = new Date();
-    
+
     try {
       // Validate execution request
       this.validateExecutionRequest(request.executionRequest);
-      
+
       // Execute using existing runtime
-      const result = await this.components.agentRuntime.executeAgent(request.executionRequest);
-      
+      const result = await this.components.agentRuntime.executeAgent(
+        request.executionRequest,
+      );
+
       this.totalExecutions++;
       this.singleExecutions++;
-      
+
       return {
         success: true,
         operation: ExecutionOperation.EXECUTE,
@@ -347,38 +390,51 @@ export class ExecutionAgent implements IAgent {
           executionId: result.executionId,
           success: result.success,
           latency: result.latency,
-          timestamp: startedAt
-        }
+          timestamp: startedAt,
+        },
       };
-      
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Unknown agent execution error";
-      throw new ExecutionAgentRuntimeException(request.executionRequest.agentId, errorMsg);
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Unknown agent execution error";
+      throw new ExecutionAgentRuntimeException(
+        request.executionRequest.agentId,
+        errorMsg,
+      );
     }
   }
 
-  public async executeBatch(request: ExecuteBatchRequest, context: IAgentExecutionContext): Promise<ExecuteBatchResult> {
+  public async executeBatch(
+    request: ExecuteBatchRequest,
+    context: IAgentExecutionContext,
+  ): Promise<ExecuteBatchResult> {
     const startedAt = new Date();
-    
+
     try {
       // Validate batch request
       this.validateBatchRequest(request.batchRequest);
-      
+
       // Execute using existing runtime
-      const result = await this.components.agentRuntime.executeBatch(request.batchRequest);
-      
+      const result = await this.components.agentRuntime.executeBatch(
+        request.batchRequest,
+      );
+
       this.totalExecutions++;
       this.batchExecutions++;
-      
+
       // Update batch stats
       this.batchStats.totalRequests += request.batchRequest.requests.length;
-      if (request.batchRequest.maxConcurrency && request.batchRequest.maxConcurrency > this.batchStats.maxConcurrency) {
+      if (
+        request.batchRequest.maxConcurrency &&
+        request.batchRequest.maxConcurrency > this.batchStats.maxConcurrency
+      ) {
         this.batchStats.maxConcurrency = request.batchRequest.maxConcurrency;
       }
       if (request.batchRequest.failFast) {
         this.batchStats.failFastUsage++;
       }
-      
+
       return {
         success: true,
         operation: ExecutionOperation.EXECUTE_BATCH,
@@ -393,26 +449,34 @@ export class ExecutionAgent implements IAgent {
           totalLatency: result.totalLatency,
           maxConcurrency: request.batchRequest.maxConcurrency,
           failFast: request.batchRequest.failFast,
-          timestamp: startedAt
-        }
+          timestamp: startedAt,
+        },
       };
-      
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Unknown batch execution error";
-      throw new BatchExecutionAgentException(request.batchRequest.requests.length, errorMsg);
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Unknown batch execution error";
+      throw new BatchExecutionAgentException(
+        request.batchRequest.requests.length,
+        errorMsg,
+      );
     }
   }
 
-  public async cancelExecution(request: CancelExecutionRequest, context: IAgentExecutionContext): Promise<CancelExecutionResult> {
+  public async cancelExecution(
+    request: CancelExecutionRequest,
+    context: IAgentExecutionContext,
+  ): Promise<CancelExecutionResult> {
     const cancelledAt = new Date();
-    
+
     try {
       // Cancel using existing runtime
       await this.components.agentRuntime.cancelExecution(request.executionId);
-      
+
       this.totalCancellations++;
       this.successfulCancellations++;
-      
+
       return {
         success: true,
         operation: ExecutionOperation.CANCEL,
@@ -421,26 +485,33 @@ export class ExecutionAgent implements IAgent {
         cancelledAt,
         metadata: {
           executionId: request.executionId,
-          timestamp: cancelledAt
-        }
+          timestamp: cancelledAt,
+        },
       };
-      
     } catch (error) {
       this.totalCancellations++;
-      const errorMsg = error instanceof Error ? error.message : "Unknown execution cancellation error";
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Unknown execution cancellation error";
       throw new ExecutionCancellationException(request.executionId, errorMsg);
     }
   }
 
-  public async getExecutionStatus(request: ExecutionStatusRequest, context: IAgentExecutionContext): Promise<ExecutionStatusResult> {
+  public async getExecutionStatus(
+    request: ExecutionStatusRequest,
+    context: IAgentExecutionContext,
+  ): Promise<ExecutionStatusResult> {
     const retrievedAt = new Date();
-    
+
     try {
       // Get status using existing runtime
-      const result = await this.components.agentRuntime.getExecution(request.executionId);
-      
+      const result = await this.components.agentRuntime.getExecution(
+        request.executionId,
+      );
+
       this.totalStatusQueries++;
-      
+
       return {
         success: true,
         operation: ExecutionOperation.STATUS,
@@ -451,12 +522,14 @@ export class ExecutionAgent implements IAgent {
           executionId: request.executionId,
           found: !!result,
           status: result?.status,
-          timestamp: retrievedAt
-        }
+          timestamp: retrievedAt,
+        },
       };
-      
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Unknown execution status error";
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Unknown execution status error";
       throw new ExecutionStatusException(request.executionId, errorMsg);
     }
   }
@@ -464,13 +537,13 @@ export class ExecutionAgent implements IAgent {
   public async getExecutionAgentHealth(): Promise<ExecutionAgentHealth> {
     try {
       let status: "healthy" | "degraded" | "unhealthy" = "healthy";
-      
+
       if (this.errors.length > 0 || !this.components.agentRuntime) {
         status = "unhealthy";
       } else if (this.warnings.length > 0) {
         status = "degraded";
       }
-      
+
       return {
         runtimeAvailable: !!this.components.agentRuntime,
         executorAvailable: true, // Assumed since runtime manages executor
@@ -478,7 +551,8 @@ export class ExecutionAgent implements IAgent {
         status,
         totalExecutions: this.totalExecutions,
         runningExecutions: 0, // Would need to track this from runtime
-        completedExecutions: this.successCounts[ExecutionOperation.EXECUTE] || 0,
+        completedExecutions:
+          this.successCounts[ExecutionOperation.EXECUTE] || 0,
         failedExecutions: this.errorCounts[ExecutionOperation.EXECUTE] || 0,
         errors: [...this.errors],
         warnings: [...this.warnings],
@@ -489,14 +563,13 @@ export class ExecutionAgent implements IAgent {
           totalCancellations: this.totalCancellations,
           successfulCancellations: this.successfulCancellations,
           totalStatusQueries: this.totalStatusQueries,
-          batchStats: { ...this.batchStats }
-        }
+          batchStats: { ...this.batchStats },
+        },
       };
-      
     } catch (error) {
-      const errorMsg = `Failed to get execution agent health: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      const errorMsg = `Failed to get execution agent health: ${error instanceof Error ? error.message : "Unknown error"}`;
       this.errors.push(errorMsg);
-      
+
       return {
         runtimeAvailable: false,
         executorAvailable: false,
@@ -509,27 +582,41 @@ export class ExecutionAgent implements IAgent {
         errors: [errorMsg],
         warnings: [...this.warnings],
         lastActivity: this.lastActivity,
-        metadata: { error: errorMsg }
+        metadata: { error: errorMsg },
       };
     }
   }
 
   public getMetrics(): ExecutionAgentMetrics {
-    const totalOperations = Object.values(this.operationCounts).reduce((sum, count) => sum + count, 0);
-    const totalSuccesses = Object.values(this.successCounts).reduce((sum, count) => sum + count, 0);
-    const successRate = totalOperations > 0 ? totalSuccesses / totalOperations : 0;
-    
+    const totalOperations = Object.values(this.operationCounts).reduce(
+      (sum, count) => sum + count,
+      0,
+    );
+    const totalSuccesses = Object.values(this.successCounts).reduce(
+      (sum, count) => sum + count,
+      0,
+    );
+    const successRate =
+      totalOperations > 0 ? totalSuccesses / totalOperations : 0;
+
     // Calculate average latencies
-    const averageLatencies: Record<ExecutionOperation, number> = {} as Record<ExecutionOperation, number>;
-    Object.keys(this.latencies).forEach(op => {
+    const averageLatencies: Record<ExecutionOperation, number> = {} as Record<
+      ExecutionOperation,
+      number
+    >;
+    Object.keys(this.latencies).forEach((op) => {
       const operation = op as ExecutionOperation;
       const times = this.latencies[operation];
-      averageLatencies[operation] = times.length > 0 ? times.reduce((sum, time) => sum + time, 0) / times.length : 0;
+      averageLatencies[operation] =
+        times.length > 0
+          ? times.reduce((sum, time) => sum + time, 0) / times.length
+          : 0;
     });
-    
-    const successfulExecutions = this.successCounts[ExecutionOperation.EXECUTE] || 0;
+
+    const successfulExecutions =
+      this.successCounts[ExecutionOperation.EXECUTE] || 0;
     const failedExecutions = this.errorCounts[ExecutionOperation.EXECUTE] || 0;
-    
+
     return {
       operationCounts: { ...this.operationCounts },
       successCounts: { ...this.successCounts },
@@ -546,7 +633,7 @@ export class ExecutionAgent implements IAgent {
         successfulExecutions,
         failedExecutions,
         cancelledExecutions: this.successfulCancellations,
-        timeoutExecutions: 0 // Would need to track this from runtime
+        timeoutExecutions: 0, // Would need to track this from runtime
       },
       operationStats: {
         totalCancellations: this.totalCancellations,
@@ -554,75 +641,105 @@ export class ExecutionAgent implements IAgent {
         totalStatusQueries: this.totalStatusQueries,
         totalCleanups: this.totalCleanups,
         batchConcurrency: {
-          averageRequests: this.batchExecutions > 0 ? this.batchStats.totalRequests / this.batchExecutions : 0,
+          averageRequests:
+            this.batchExecutions > 0
+              ? this.batchStats.totalRequests / this.batchExecutions
+              : 0,
           maxConcurrency: this.batchStats.maxConcurrency,
-          failFastUsage: this.batchStats.failFastUsage
-        }
-      }
+          failFastUsage: this.batchStats.failFastUsage,
+        },
+      },
     };
   }
 
   // Private helper methods
   private validateAndParseRequest(input: unknown): ExecutionOperationRequest {
-    if (!input || typeof input !== 'object') {
-      throw new InvalidExecutionOperationException("unknown", "Input must be an object");
+    if (!input || typeof input !== "object") {
+      throw new InvalidExecutionOperationException(
+        "unknown",
+        "Input must be an object",
+      );
     }
-    
+
     const request = input as Record<string, unknown>;
-    
-    if (!request.operation || typeof request.operation !== 'string') {
-      throw new InvalidExecutionOperationException("unknown", "Operation is required and must be a string");
+
+    if (!request.operation || typeof request.operation !== "string") {
+      throw new InvalidExecutionOperationException(
+        "unknown",
+        "Operation is required and must be a string",
+      );
     }
-    
-    if (!Object.values(ExecutionOperation).includes(request.operation as ExecutionOperation)) {
-      throw new InvalidExecutionOperationException(request.operation as string, "Unsupported operation");
+
+    if (
+      !Object.values(ExecutionOperation).includes(
+        request.operation as ExecutionOperation,
+      )
+    ) {
+      throw new InvalidExecutionOperationException(
+        request.operation as string,
+        "Unsupported operation",
+      );
     }
-    
+
     // Validate operation-specific requirements
     const operation = request.operation as ExecutionOperation;
-    
+
     if (operation === ExecutionOperation.EXECUTE) {
-      if (!request.executionRequest || typeof request.executionRequest !== 'object') {
-        throw new InvalidExecutionOperationException(operation, "Execution request is required for execute operation");
+      if (
+        !request.executionRequest ||
+        typeof request.executionRequest !== "object"
+      ) {
+        throw new InvalidExecutionOperationException(
+          operation,
+          "Execution request is required for execute operation",
+        );
       }
     }
-    
+
     if (operation === ExecutionOperation.EXECUTE_BATCH) {
-      if (!request.batchRequest || typeof request.batchRequest !== 'object') {
-        throw new InvalidExecutionOperationException(operation, "Batch request is required for execute-batch operation");
+      if (!request.batchRequest || typeof request.batchRequest !== "object") {
+        throw new InvalidExecutionOperationException(
+          operation,
+          "Batch request is required for execute-batch operation",
+        );
       }
     }
-    
-    if ([ExecutionOperation.CANCEL, ExecutionOperation.STATUS].includes(operation)) {
-      if (!request.executionId || typeof request.executionId !== 'string') {
-        throw new InvalidExecutionOperationException(operation, "Execution ID is required for control operations");
+
+    if (
+      [ExecutionOperation.CANCEL, ExecutionOperation.STATUS].includes(operation)
+    ) {
+      if (!request.executionId || typeof request.executionId !== "string") {
+        throw new InvalidExecutionOperationException(
+          operation,
+          "Execution ID is required for control operations",
+        );
       }
     }
-    
+
     return {
       operation,
       metadata: (request.metadata as Record<string, unknown>) || {},
-      ...request
+      ...request,
     } as ExecutionOperationRequest;
   }
 
   private validateExecutionRequest(request: any): void {
-    if (!request.agentId || typeof request.agentId !== 'string') {
-      throw new InvalidExecutionContextException(['agentId']);
+    if (!request.agentId || typeof request.agentId !== "string") {
+      throw new InvalidExecutionContextException(["agentId"]);
     }
-    
+
     if (request.input === undefined) {
-      throw new InvalidExecutionContextException(['input']);
+      throw new InvalidExecutionContextException(["input"]);
     }
-    
-    if (!request.context || typeof request.context !== 'object') {
-      throw new InvalidExecutionContextException(['context']);
+
+    if (!request.context || typeof request.context !== "object") {
+      throw new InvalidExecutionContextException(["context"]);
     }
-    
+
     const context = request.context;
-    const requiredFields = ['requestId', 'traceId', 'workspaceId', 'userId'];
-    const missingFields = requiredFields.filter(field => !context[field]);
-    
+    const requiredFields = ["requestId", "traceId", "workspaceId", "userId"];
+    const missingFields = requiredFields.filter((field) => !context[field]);
+
     if (missingFields.length > 0) {
       throw new InvalidExecutionContextException(missingFields);
     }
@@ -630,32 +747,47 @@ export class ExecutionAgent implements IAgent {
 
   private validateBatchRequest(request: any): void {
     if (!Array.isArray(request.requests) || request.requests.length === 0) {
-      throw new InvalidExecutionOperationException("execute-batch", "Requests array is required and must not be empty");
+      throw new InvalidExecutionOperationException(
+        "execute-batch",
+        "Requests array is required and must not be empty",
+      );
     }
-    
+
     // Validate each individual request
     request.requests.forEach((req: any, index: number) => {
       try {
         this.validateExecutionRequest(req);
       } catch (error) {
         throw new InvalidExecutionOperationException(
-          "execute-batch", 
-          `Invalid request at index ${index}: ${error instanceof Error ? error.message : 'Unknown error'}`
+          "execute-batch",
+          `Invalid request at index ${index}: ${error instanceof Error ? error.message : "Unknown error"}`,
         );
       }
     });
-    
-    if (request.maxConcurrency !== undefined && (typeof request.maxConcurrency !== 'number' || request.maxConcurrency < 1)) {
-      throw new InvalidExecutionOperationException("execute-batch", "Max concurrency must be a positive number");
+
+    if (
+      request.maxConcurrency !== undefined &&
+      (typeof request.maxConcurrency !== "number" || request.maxConcurrency < 1)
+    ) {
+      throw new InvalidExecutionOperationException(
+        "execute-batch",
+        "Max concurrency must be a positive number",
+      );
     }
-    
-    if (request.failFast !== undefined && typeof request.failFast !== 'boolean') {
-      throw new InvalidExecutionOperationException("execute-batch", "Fail fast must be a boolean");
+
+    if (
+      request.failFast !== undefined &&
+      typeof request.failFast !== "boolean"
+    ) {
+      throw new InvalidExecutionOperationException(
+        "execute-batch",
+        "Fail fast must be a boolean",
+      );
     }
   }
 
   private initializeMetrics(): void {
-    Object.values(ExecutionOperation).forEach(operation => {
+    Object.values(ExecutionOperation).forEach((operation) => {
       this.operationCounts[operation] = 0;
       this.successCounts[operation] = 0;
       this.errorCounts[operation] = 0;
@@ -667,20 +799,26 @@ export class ExecutionAgent implements IAgent {
     this.operationCounts[operation]++;
   }
 
-  private recordOperationSuccess(operation: ExecutionOperation, duration: number): void {
+  private recordOperationSuccess(
+    operation: ExecutionOperation,
+    duration: number,
+  ): void {
     this.successCounts[operation]++;
     this.latencies[operation].push(duration);
-    
+
     // Keep only last 100 latency measurements per operation
     if (this.latencies[operation].length > 100) {
       this.latencies[operation].shift();
     }
   }
 
-  private recordOperationError(operation: ExecutionOperation, duration: number): void {
+  private recordOperationError(
+    operation: ExecutionOperation,
+    duration: number,
+  ): void {
     this.errorCounts[operation]++;
     this.latencies[operation].push(duration);
-    
+
     // Keep only last 100 latency measurements per operation
     if (this.latencies[operation].length > 100) {
       this.latencies[operation].shift();
@@ -688,8 +826,14 @@ export class ExecutionAgent implements IAgent {
   }
 
   private calculateSuccessRate(): number {
-    const totalOperations = Object.values(this.operationCounts).reduce((sum, count) => sum + count, 0);
-    const totalSuccesses = Object.values(this.successCounts).reduce((sum, count) => sum + count, 0);
+    const totalOperations = Object.values(this.operationCounts).reduce(
+      (sum, count) => sum + count,
+      0,
+    );
+    const totalSuccesses = Object.values(this.successCounts).reduce(
+      (sum, count) => sum + count,
+      0,
+    );
     return totalOperations > 0 ? totalSuccesses / totalOperations : 0;
   }
 }

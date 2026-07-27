@@ -1,8 +1,8 @@
-import { 
-  PluginDescriptor, 
-  PluginDiscoveryOptions, 
-  PluginLoadOptions, 
-  PluginValidationResult 
+import {
+  PluginDescriptor,
+  PluginDiscoveryOptions,
+  PluginLoadOptions,
+  PluginValidationResult,
 } from "../../plugins";
 
 export enum PluginOperation {
@@ -11,7 +11,7 @@ export enum PluginOperation {
   UNLOAD = "unload",
   RELOAD = "reload",
   VALIDATE = "validate",
-  LIST = "list"
+  LIST = "list",
 }
 
 export interface PluginOperationRequest {
@@ -119,11 +119,11 @@ export interface PluginAgentMetrics {
   successCounts: Record<PluginOperation, number>;
   errorCounts: Record<PluginOperation, number>;
   averageLatencies: Record<PluginOperation, number>;
-  
+
   totalOperations: number;
   successRate: number;
   uptime: number;
-  
+
   pluginStats: {
     totalPlugins: number;
     discoveredPlugins: number;
@@ -137,7 +137,7 @@ export interface PluginAgentMetrics {
     totalReloads: number;
     totalValidations: number;
   };
-  
+
   operationStats: {
     discoverySuccessRate: number;
     loadSuccessRate: number;
@@ -145,10 +145,13 @@ export interface PluginAgentMetrics {
     reloadSuccessRate: number;
     validationSuccessRate: number;
     averagePluginsPerDiscovery: number;
-    pluginUsageStats: Record<string, {
-      usageCount: number;
-      lastUsed?: Date;
-      averageLoadTime?: number;
-    }>;
+    pluginUsageStats: Record<
+      string,
+      {
+        usageCount: number;
+        lastUsed?: Date;
+        averageLoadTime?: number;
+      }
+    >;
   };
 }

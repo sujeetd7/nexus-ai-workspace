@@ -1,9 +1,9 @@
-import { 
-  AgentExecutionRequest, 
-  WorkflowExecutionRequest, 
-  PlanExecutionRequest, 
-  OrchestratorExecution, 
-  OrchestratorHealth 
+import {
+  AgentExecutionRequest,
+  WorkflowExecutionRequest,
+  PlanExecutionRequest,
+  OrchestratorExecution,
+  OrchestratorHealth,
 } from "../../orchestrator";
 
 export enum OrchestratorOperation {
@@ -11,7 +11,7 @@ export enum OrchestratorOperation {
   EXECUTE_WORKFLOW = "execute-workflow",
   EXECUTE_PLAN = "execute-plan",
   CANCEL = "cancel",
-  HEALTH = "health"
+  HEALTH = "health",
 }
 
 export interface OrchestratorOperationRequest {
@@ -104,11 +104,11 @@ export interface OrchestratorAgentMetrics {
   successCounts: Record<OrchestratorOperation, number>;
   errorCounts: Record<OrchestratorOperation, number>;
   averageLatencies: Record<OrchestratorOperation, number>;
-  
+
   totalOperations: number;
   successRate: number;
   uptime: number;
-  
+
   executionStats: {
     totalExecutions: number;
     agentExecutions: number;
@@ -120,7 +120,7 @@ export interface OrchestratorAgentMetrics {
     cancelledExecutions: number;
     averageExecutionTime: number;
   };
-  
+
   orchestrationStats: {
     totalCancellations: number;
     successfulCancellations: number;

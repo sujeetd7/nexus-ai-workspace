@@ -42,10 +42,10 @@ export class AgentOutbox<T = unknown> implements IAgentOutbox<T> {
     const outboxMessage: OutboxMessage<T> = {
       message: {
         ...message,
-        status: MessageStatus.PENDING
+        status: MessageStatus.PENDING,
       },
       attempts: 0,
-      maxAttempts: this.maxRetryAttempts
+      maxAttempts: this.maxRetryAttempts,
     };
 
     // Insert message in priority order
@@ -54,18 +54,18 @@ export class AgentOutbox<T = unknown> implements IAgentOutbox<T> {
 
   public async dequeue(): Promise<AgentMessage<T> | undefined> {
     const now = new Date();
-    
+
     // Find next message that's ready to send (considering retry delays)
-    const messageIndex = this.messages.findIndex(msg => 
-      !msg.nextRetry || msg.nextRetry <= now
+    const messageIndex = this.messages.findIndex(
+      (msg) => !msg.nextRetry || msg.nextRetry <= now,
     );
-    
+
     if (messageIndex === -1) {
       return undefined;
     }
-    
+
     const outboxMessage = this.messages.splice(messageIndex, 1)[0];
-    
+
     // Update message status and attempts
     outboxMessage.attempts++;
     const messageToSend: AgentMessage<T> = {
@@ -75,47 +75,49 @@ export class AgentOutbox<T = unknown> implements IAgentOutbox<T> {
         ...outboxMessage.message.metadata,
         sentAt: new Date(),
         attempt: outboxMessage.attempts,
-        sentFromAgent: this.agentId
-      }
+        sentFromAgent: this.agentId,
+      },
     };
-    
+
     return messageToSend;
   }
 
   public async retry(messageId: string): Promise<boolean> {
     // Find message in failed messages
-    const failedIndex = this.failedMessages.findIndex(msg => 
-      msg.message.messageId === messageId
+    const failedIndex = this.failedMessages.findIndex(
+      (msg) => msg.message.messageId === messageId,
     );
-    
+
     if (failedIndex === -1) {
       return false; // Message not found
     }
-    
+
     const failedMessage = this.failedMessages.splice(failedIndex, 1)[0];
-    
+
     // Check if we can retry
     if (failedMessage.attempts >= failedMessage.maxAttempts) {
       // Put back in failed messages
       this.failedMessages.push(failedMessage);
       return false;
     }
-    
+
     // Reset for retry
     const retryMessage: OutboxMessage<T> = {
       ...failedMessage,
-      nextRetry: new Date(Date.now() + this.retryDelay * failedMessage.attempts),
+      nextRetry: new Date(
+        Date.now() + this.retryDelay * failedMessage.attempts,
+      ),
       message: {
         ...failedMessage.message,
         status: MessageStatus.PENDING,
         metadata: {
           ...failedMessage.message.metadata,
           retryScheduledAt: new Date(),
-          retryAttempt: failedMessage.attempts + 1
-        }
-      }
+          retryAttempt: failedMessage.attempts + 1,
+        },
+      },
     };
-    
+
     // Re-enqueue for retry
     this.insertByPriority(retryMessage);
     return true;
@@ -127,10 +129,10 @@ export class AgentOutbox<T = unknown> implements IAgentOutbox<T> {
   }
 
   public async markAsFailed(messageId: string, error: string): Promise<void> {
-    const messageIndex = this.messages.findIndex(msg => 
-      msg.message.messageId === messageId
+    const messageIndex = this.messages.findIndex(
+      (msg) => msg.message.messageId === messageId,
     );
-    
+
     if (messageIndex !== -1) {
       const failedMessage = this.messages.splice(messageIndex, 1)[0];
       failedMessage.lastError = error;
@@ -138,9 +140,9 @@ export class AgentOutbox<T = unknown> implements IAgentOutbox<T> {
       failedMessage.message.metadata = {
         ...failedMessage.message.metadata,
         failedAt: new Date(),
-        error
+        error,
       };
-      
+
       this.failedMessages.push(failedMessage);
     }
   }
@@ -154,17 +156,19 @@ export class AgentOutbox<T = unknown> implements IAgentOutbox<T> {
   }
 
   public async getPendingMessages(): Promise<AgentMessage<T>[]> {
-    return this.messages.map(msg => msg.message);
+    return this.messages.map((msg) => msg.message);
   }
 
   public async getFailedMessages(): Promise<AgentMessage<T>[]> {
-    return this.failedMessages.map(msg => msg.message);
+    return this.failedMessages.map((msg) => msg.message);
   }
 
-  public async getMessagesByPriority(priority: string): Promise<AgentMessage<T>[]> {
+  public async getMessagesByPriority(
+    priority: string,
+  ): Promise<AgentMessage<T>[]> {
     return this.messages
-      .filter(msg => msg.message.priority === priority)
-      .map(msg => msg.message);
+      .filter((msg) => msg.message.priority === priority)
+      .map((msg) => msg.message);
   }
 
   public getAgentId(): string {
@@ -172,28 +176,32 @@ export class AgentOutbox<T = unknown> implements IAgentOutbox<T> {
   }
 
   private insertByPriority(outboxMessage: OutboxMessage<T>): void {
-    const priorityOrder = { 'critical': 0, 'high': 1, 'normal': 2, 'low': 3 };
+    const priorityOrder = { critical: 0, high: 1, normal: 2, low: 3 };
     const messagePriority = priorityOrder[outboxMessage.message.priority] ?? 2;
-    
+
     let insertIndex = 0;
-    
+
     // Find correct position based on priority and timestamp
     for (let i = 0; i < this.messages.length; i++) {
-      const existingPriority = priorityOrder[this.messages[i].message.priority] ?? 2;
-      
+      const existingPriority =
+        priorityOrder[this.messages[i].message.priority] ?? 2;
+
       if (messagePriority < existingPriority) {
         insertIndex = i;
         break;
       } else if (messagePriority === existingPriority) {
         // Same priority, order by timestamp (older first)
-        if (outboxMessage.message.timestamp.getTime() < this.messages[i].message.timestamp.getTime()) {
+        if (
+          outboxMessage.message.timestamp.getTime() <
+          this.messages[i].message.timestamp.getTime()
+        ) {
           insertIndex = i;
           break;
         }
       }
       insertIndex = i + 1;
     }
-    
+
     this.messages.splice(insertIndex, 0, outboxMessage);
   }
 }

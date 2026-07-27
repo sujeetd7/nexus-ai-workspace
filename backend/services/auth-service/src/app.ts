@@ -17,7 +17,6 @@ import { notFound } from "./middleware/error/not-found.middleware";
 
 import { errorHandler } from "./middleware/error/error.middleware";
 
-import sessionRoutes from "@routes/session.routes";
 import adminRoutes from "./routes/admin/admin.routes";
 import profileRoutes from "./routes/profile/profile.routes";
 
@@ -75,7 +74,11 @@ export default function createApp(): Express {
   app.use("/profile", profileRoutes);
 
   app.use("/admin", adminRoutes);
-  app.use("/api/v1/auth", sessionRoutes);
+
+  /*
+    Session list/revoke/logout-all remain on authRoutes (/api/v1/auth/*).
+    Duplicate session.routes mount removed (Auth B′).
+  */
 
   /*
     404 HANDLER

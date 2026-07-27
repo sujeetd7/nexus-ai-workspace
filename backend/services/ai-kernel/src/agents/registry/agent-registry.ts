@@ -1,9 +1,9 @@
 import { AgentType, AgentHealth } from "../types";
 import { IAgent, IAgentCapability, IAgentRegistry } from "../interfaces";
-import { 
-  AgentNotFoundException, 
-  DuplicateAgentException, 
-  AgentRegistrationException 
+import {
+  AgentNotFoundException,
+  DuplicateAgentException,
+  AgentRegistrationException,
 } from "../exceptions";
 
 export class AgentRegistry implements IAgentRegistry {
@@ -21,18 +21,20 @@ export class AgentRegistry implements IAgentRegistry {
     try {
       // Validate agent metadata
       this.validateAgent(agent);
-      
+
       // Store the agent
       this.agents.set(agent.metadata.id, agent);
-      
     } catch (error) {
-      if (error instanceof DuplicateAgentException || error instanceof AgentRegistrationException) {
+      if (
+        error instanceof DuplicateAgentException ||
+        error instanceof AgentRegistrationException
+      ) {
         throw error;
       }
-      
+
       throw new AgentRegistrationException(
         `Failed to register agent: ${error instanceof Error ? error.message : "Unknown error"}`,
-        agent.metadata.id
+        agent.metadata.id,
       );
     }
   }
@@ -43,13 +45,16 @@ export class AgentRegistry implements IAgentRegistry {
     }
 
     const agent = this.agents.get(agentId)!;
-    
+
     try {
       // Shutdown agent before removal
       await agent.shutdown();
     } catch (error) {
       // Continue with removal even if shutdown fails
-      console.warn(`Failed to shutdown agent ${agentId} during removal:`, error);
+      console.warn(
+        `Failed to shutdown agent ${agentId} during removal:`,
+        error,
+      );
     }
 
     this.agents.delete(agentId);
@@ -63,18 +68,17 @@ export class AgentRegistry implements IAgentRegistry {
     try {
       // Validate updated agent
       this.validateAgent(agent);
-      
+
       // Update the agent
       this.agents.set(agent.metadata.id, agent);
-      
     } catch (error) {
       if (error instanceof AgentNotFoundException) {
         throw error;
       }
-      
+
       throw new AgentRegistrationException(
         `Failed to update agent: ${error instanceof Error ? error.message : "Unknown error"}`,
-        agent.metadata.id
+        agent.metadata.id,
       );
     }
   }
@@ -88,20 +92,20 @@ export class AgentRegistry implements IAgentRegistry {
   }
 
   public async findByCapability(capabilityId: string): Promise<IAgent[]> {
-    return Array.from(this.agents.values()).filter(agent =>
-      agent.hasCapability(capabilityId)
+    return Array.from(this.agents.values()).filter((agent) =>
+      agent.hasCapability(capabilityId),
     );
   }
 
   public async findByType(type: AgentType): Promise<IAgent[]> {
-    return Array.from(this.agents.values()).filter(agent =>
-      agent.type === type
+    return Array.from(this.agents.values()).filter(
+      (agent) => agent.type === type,
     );
   }
 
   public async health(): Promise<Record<string, AgentHealth>> {
     const healthMap: Record<string, AgentHealth> = {};
-    
+
     for (const [agentId, agent] of this.agents) {
       try {
         healthMap[agentId] = await agent.getHealth();
@@ -112,11 +116,11 @@ export class AgentRegistry implements IAgentRegistry {
           lastHeartbeat: new Date(),
           errors: [error instanceof Error ? error.message : "Unknown error"],
           warnings: [],
-          metrics: {}
+          metrics: {},
         };
       }
     }
-    
+
     return healthMap;
   }
 
@@ -135,7 +139,7 @@ export class AgentRegistry implements IAgentRegistry {
         lastHeartbeat: new Date(),
         errors: [error instanceof Error ? error.message : "Unknown error"],
         warnings: [],
-        metrics: {}
+        metrics: {},
       };
     }
   }
@@ -150,13 +154,13 @@ export class AgentRegistry implements IAgentRegistry {
 
   public async listCapabilities(): Promise<IAgentCapability[]> {
     const capabilityMap = new Map<string, IAgentCapability>();
-    
+
     for (const agent of this.agents.values()) {
       for (const capability of agent.capabilities) {
         capabilityMap.set(capability.id, capability);
       }
     }
-    
+
     return Array.from(capabilityMap.values());
   }
 

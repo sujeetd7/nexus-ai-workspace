@@ -7,21 +7,30 @@ export class AgentRuntimeController {
 
   execute = async (req: Request, res: Response) => {
     try {
-      console.log("[CONTROLLER] Request body:", JSON.stringify(req.body, null, 2));
-      
+      console.log(
+        "[CONTROLLER] Request body:",
+        JSON.stringify(req.body, null, 2),
+      );
+
       const result = await this.service.execute(req.body);
-      
-      console.log("[CONTROLLER] Execution result:", JSON.stringify(result, null, 2));
-      
+
+      console.log(
+        "[CONTROLLER] Execution result:",
+        JSON.stringify(result, null, 2),
+      );
+
       res.json(result);
     } catch (error) {
       console.error("[CONTROLLER] ERROR:", error);
-      console.error("[CONTROLLER] Stack trace:", error instanceof Error ? error.stack : 'No stack trace');
-      
+      console.error(
+        "[CONTROLLER] Stack trace:",
+        error instanceof Error ? error.stack : "No stack trace",
+      );
+
       res.status(500).json({
         error: "Execution failed",
         message: error instanceof Error ? error.message : "Unknown error",
-        details: error instanceof Error ? error.stack : error
+        details: error instanceof Error ? error.stack : error,
       });
     }
   };

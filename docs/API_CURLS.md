@@ -12,13 +12,13 @@ Generated from registered Express routes in:
 
 Default ports are taken from each service `server.ts` (`process.env.PORT` fallback).
 
-| Service | Base URL (default) |
-|---------|-------------------|
-| AI-Service | `http://localhost:3007` |
-| Prompt-Service | `http://localhost:3005` |
+| Service          | Base URL (default)      |
+| ---------------- | ----------------------- |
+| AI-Service       | `http://localhost:3007` |
+| Prompt-Service   | `http://localhost:3005` |
 | Document-Service | `http://localhost:3004` |
-| AI-Kernel | `http://localhost:3004` |
-| Agent-Service | `http://localhost:3008` |
+| AI-Kernel        | `http://localhost:3004` |
+| Agent-Service    | `http://localhost:3008` |
 
 > **Note:** Document-Service and AI-Kernel both default to port `3004` in code. Set `PORT` when running both locally.
 

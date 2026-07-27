@@ -14,7 +14,9 @@ export class MCPManager {
       await server.connect();
       this.registry.registerServer(server);
     } catch (error) {
-      throw new Error(`Failed to connect to server ${server.id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to connect to server ${server.id}: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -31,7 +33,9 @@ export class MCPManager {
     }
   }
 
-  async health(serverId?: string): Promise<MCPServerHealth | Record<string, MCPServerHealth>> {
+  async health(
+    serverId?: string,
+  ): Promise<MCPServerHealth | Record<string, MCPServerHealth>> {
     if (serverId) {
       const server = this.registry.findServer(serverId);
       if (!server) {
@@ -41,7 +45,9 @@ export class MCPManager {
       try {
         return await server.health();
       } catch (error) {
-        throw new Error(`Health check failed for server ${serverId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        throw new Error(
+          `Health check failed for server ${serverId}: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
       }
     }
 
@@ -56,7 +62,7 @@ export class MCPManager {
         healthResults[server.id] = {
           status: "unhealthy",
           lastCheck: new Date(),
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : "Unknown error",
         };
       }
     });
@@ -65,15 +71,19 @@ export class MCPManager {
     return healthResults;
   }
 
-  async executeTool(serverId: string, toolName: string, parameters: any): Promise<MCPExecutionResult> {
+  async executeTool(
+    serverId: string,
+    toolName: string,
+    parameters: any,
+  ): Promise<MCPExecutionResult> {
     const server = this.registry.findServer(serverId);
     if (!server) {
       return {
         success: false,
         error: {
           code: "SERVER_NOT_FOUND",
-          message: `Server with id ${serverId} not found`
-        }
+          message: `Server with id ${serverId} not found`,
+        },
       };
     }
 
@@ -84,8 +94,8 @@ export class MCPManager {
           success: false,
           error: {
             code: "SERVER_UNHEALTHY",
-            message: `Server ${serverId} is not healthy: ${health.error || 'Unknown health issue'}`
-          }
+            message: `Server ${serverId} is not healthy: ${health.error || "Unknown health issue"}`,
+          },
         };
       }
     } catch (error) {
@@ -93,15 +103,15 @@ export class MCPManager {
         success: false,
         error: {
           code: "HEALTH_CHECK_FAILED",
-          message: `Health check failed for server ${serverId}: ${error instanceof Error ? error.message : 'Unknown error'}`
-        }
+          message: `Health check failed for server ${serverId}: ${error instanceof Error ? error.message : "Unknown error"}`,
+        },
       };
     }
 
     const startTime = Date.now();
     try {
       const result = await server.executeTool(toolName, parameters);
-      
+
       if (result.metadata) {
         result.metadata.executionTime = Date.now() - startTime;
         result.metadata.serverId = serverId;
@@ -115,15 +125,15 @@ export class MCPManager {
         success: false,
         error: {
           code: "EXECUTION_FAILED",
-          message: `Tool execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-          details: error
+          message: `Tool execution failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+          details: error,
         },
         metadata: {
           executionTime: Date.now() - startTime,
           serverId,
           toolName,
-          timestamp: new Date()
-        }
+          timestamp: new Date(),
+        },
       };
     }
   }
@@ -132,7 +142,9 @@ export class MCPManager {
     return this.registry.listServers();
   }
 
-  async listTools(serverId?: string): Promise<Array<{ server: MCPServer; tools: MCPTool[] }>> {
+  async listTools(
+    serverId?: string,
+  ): Promise<Array<{ server: MCPServer; tools: MCPTool[] }>> {
     if (serverId) {
       const server = this.registry.findServer(serverId);
       if (!server) {
@@ -143,14 +155,18 @@ export class MCPManager {
         const tools = await server.listTools();
         return [{ server, tools }];
       } catch (error) {
-        throw new Error(`Failed to list tools for server ${serverId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        throw new Error(
+          `Failed to list tools for server ${serverId}: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
       }
     }
 
     return this.registry.listTools();
   }
 
-  async findTool(toolName: string): Promise<Array<{ server: MCPServer; tool: MCPTool }>> {
+  async findTool(
+    toolName: string,
+  ): Promise<Array<{ server: MCPServer; tool: MCPTool }>> {
     return this.registry.findTool(toolName);
   }
 

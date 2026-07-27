@@ -48,7 +48,6 @@ export class GeminiProvider implements AIProvider {
     }
   }
 
-
   async *stream(request: ExecuteAIDto): AsyncGenerator<StreamEventDto> {
     try {
       const stream = await this.getClient().models.generateContentStream({

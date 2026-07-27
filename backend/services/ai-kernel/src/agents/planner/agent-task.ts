@@ -8,7 +8,7 @@ export enum TaskState {
   SUCCESS = "success",
   FAILED = "failed",
   CANCELLED = "cancelled",
-  TIMEOUT = "timeout"
+  TIMEOUT = "timeout",
 }
 
 export enum TaskType {
@@ -16,7 +16,7 @@ export enum TaskType {
   COMMUNICATION = "communication",
   MEMORY = "memory",
   ANALYSIS = "analysis",
-  COORDINATION = "coordination"
+  COORDINATION = "coordination",
 }
 
 export interface RetryStrategy {
@@ -47,21 +47,21 @@ export interface AgentTask<T = unknown> {
   workspaceId: string;
   requestId: string;
   traceId: string;
-  
+
   name: string;
   description: string;
   type: TaskType;
   state: TaskState;
   priority: AgentPriority;
-  
+
   input: T;
   output?: unknown;
   error?: string;
-  
+
   dependencies: TaskDependency[];
   timeoutMs: number;
   retryStrategy: RetryStrategy;
-  
+
   metadata: Record<string, unknown>;
   metrics: TaskMetrics;
 }
@@ -73,14 +73,14 @@ export class AgentTaskBuilder<T = unknown> {
       maxAttempts: 3,
       backoffMs: 1000,
       backoffMultiplier: 2,
-      maxBackoffMs: 30000
+      maxBackoffMs: 30000,
     },
     timeoutMs: 30000,
     metadata: {},
     metrics: {
       createdAt: new Date(),
-      attempts: 0
-    }
+      attempts: 0,
+    },
   };
 
   public taskId(taskId: string): AgentTaskBuilder<T> {
@@ -138,7 +138,11 @@ export class AgentTaskBuilder<T = unknown> {
     return this;
   }
 
-  public addDependency(taskId: string, type: "blocking" | "soft" = "blocking", condition?: string): AgentTaskBuilder<T> {
+  public addDependency(
+    taskId: string,
+    type: "blocking" | "soft" = "blocking",
+    condition?: string,
+  ): AgentTaskBuilder<T> {
     this.task.dependencies!.push({ taskId, type, condition });
     return this;
   }
@@ -160,10 +164,18 @@ export class AgentTaskBuilder<T = unknown> {
 
   public build(): AgentTask<T> {
     const requiredFields = [
-      'taskId', 'agentId', 'workspaceId', 'requestId', 'traceId',
-      'name', 'type', 'state', 'priority', 'input'
+      "taskId",
+      "agentId",
+      "workspaceId",
+      "requestId",
+      "traceId",
+      "name",
+      "type",
+      "state",
+      "priority",
+      "input",
     ];
-    
+
     for (const field of requiredFields) {
       if (this.task[field as keyof AgentTask<T>] === undefined) {
         throw new Error(`Task field '${field}' is required`);
@@ -188,7 +200,7 @@ export class AgentTaskBuilder<T = unknown> {
       timeoutMs: this.task.timeoutMs!,
       retryStrategy: this.task.retryStrategy!,
       metadata: this.task.metadata!,
-      metrics: this.task.metrics!
+      metrics: this.task.metrics!,
     };
   }
 

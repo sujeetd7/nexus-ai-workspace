@@ -1,4 +1,9 @@
-import { MCPConnectionStatus, MCPTransportType, MCPServerHealth, MCPExecutionResult } from "../types";
+import {
+  MCPConnectionStatus,
+  MCPTransportType,
+  MCPServerHealth,
+  MCPExecutionResult,
+} from "../types";
 import { MCPTool } from "./mcp-tool.interface";
 
 export interface MCPServer {

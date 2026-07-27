@@ -37,7 +37,7 @@ export class OpenAIProvider implements AIProvider {
 
       // Add tools if provided
       if (request.tools && request.tools.length > 0) {
-        completionRequest.tools = request.tools.map(tool => ({
+        completionRequest.tools = request.tools.map((tool) => ({
           type: "function",
           function: {
             name: tool.function.name,
@@ -48,13 +48,14 @@ export class OpenAIProvider implements AIProvider {
         completionRequest.tool_choice = "auto";
       }
 
-      const response = await this.getClient().chat.completions.create(completionRequest);
+      const response =
+        await this.getClient().chat.completions.create(completionRequest);
 
       const choice = response.choices[0];
       const message = choice?.message;
 
       // Extract tool calls if present
-      const toolCalls = message?.tool_calls?.map(call => ({
+      const toolCalls = message?.tool_calls?.map((call) => ({
         id: call.id,
         type: "function" as const,
         function: {
@@ -96,7 +97,7 @@ export class OpenAIProvider implements AIProvider {
 
       // Add tools if provided
       if (request.tools && request.tools.length > 0) {
-        streamRequest.tools = request.tools.map(tool => ({
+        streamRequest.tools = request.tools.map((tool) => ({
           type: "function",
           function: {
             name: tool.function.name,
@@ -107,7 +108,9 @@ export class OpenAIProvider implements AIProvider {
         streamRequest.tool_choice = "auto";
       }
 
-      const stream = await this.getClient().chat.completions.create(streamRequest) as any;
+      const stream = (await this.getClient().chat.completions.create(
+        streamRequest,
+      )) as any;
 
       let toolCalls: any[] = [];
       let currentToolCall: any = null;
@@ -140,7 +143,7 @@ export class OpenAIProvider implements AIProvider {
               }
 
               const toolCall = toolCalls[toolCallDelta.index];
-              
+
               if (toolCallDelta.function?.name) {
                 toolCall.function.name += toolCallDelta.function.name;
               }

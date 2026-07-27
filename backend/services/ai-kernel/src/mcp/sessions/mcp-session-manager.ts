@@ -30,14 +30,18 @@ export class MCPSessionManager {
       healthCheckInterval: config.healthCheckInterval ?? 30000,
       reconnectInterval: config.reconnectInterval ?? 10000,
       maxConcurrentSessions: config.maxConcurrentSessions ?? 50,
-      sessionTimeout: config.sessionTimeout ?? 300000 // 5 minutes
+      sessionTimeout: config.sessionTimeout ?? 300000, // 5 minutes
     };
 
     this.startHealthCheck();
     this.startReconnectMonitor();
   }
 
-  async create(serverId: string, transport: MCPTransport, sessionConfig?: Partial<MCPSessionConfig>): Promise<MCPSession> {
+  async create(
+    serverId: string,
+    transport: MCPTransport,
+    sessionConfig?: Partial<MCPSessionConfig>,
+  ): Promise<MCPSession> {
     if (this.shuttingDown) {
       throw new Error("Session manager is shutting down");
     }
@@ -48,7 +52,10 @@ export class MCPSessionManager {
 
     // Check if session already exists for this server
     const existingSession = this.getByServerId(serverId);
-    if (existingSession && existingSession.status === MCPSessionStatus.CONNECTED) {
+    if (
+      existingSession &&
+      existingSession.status === MCPSessionStatus.CONNECTED
+    ) {
       throw new Error(`Active session already exists for server ${serverId}`);
     }
 
@@ -58,7 +65,8 @@ export class MCPSessionManager {
       heartbeatInterval: sessionConfig?.heartbeatInterval ?? 30000,
       idleTimeout: sessionConfig?.idleTimeout ?? this.config.sessionTimeout,
       maxReconnectAttempts: sessionConfig?.maxReconnectAttempts ?? 5,
-      reconnectInterval: sessionConfig?.reconnectInterval ?? this.config.reconnectInterval
+      reconnectInterval:
+        sessionConfig?.reconnectInterval ?? this.config.reconnectInterval,
     };
 
     const session = new MCPSession(config);
@@ -114,13 +122,15 @@ export class MCPSessionManager {
     this.shuttingDown = true;
     this.stopMonitors();
 
-    const disconnectPromises = Array.from(this.sessions.values()).map(async (session) => {
-      try {
-        await session.disconnect();
-      } catch (error) {
-        // Ignore errors during shutdown
-      }
-    });
+    const disconnectPromises = Array.from(this.sessions.values()).map(
+      async (session) => {
+        try {
+          await session.disconnect();
+        } catch (error) {
+          // Ignore errors during shutdown
+        }
+      },
+    );
 
     await Promise.allSettled(disconnectPromises);
     this.sessions.clear();
@@ -128,19 +138,21 @@ export class MCPSessionManager {
 
   async heartbeatAll(): Promise<Record<string, boolean>> {
     const results: Record<string, boolean> = {};
-    
-    const heartbeatPromises = Array.from(this.sessions.entries()).map(async ([sessionId, session]) => {
-      if (session.status === MCPSessionStatus.CONNECTED) {
-        try {
-          await session.heartbeat();
-          results[sessionId] = true;
-        } catch (error) {
+
+    const heartbeatPromises = Array.from(this.sessions.entries()).map(
+      async ([sessionId, session]) => {
+        if (session.status === MCPSessionStatus.CONNECTED) {
+          try {
+            await session.heartbeat();
+            results[sessionId] = true;
+          } catch (error) {
+            results[sessionId] = false;
+          }
+        } else {
           results[sessionId] = false;
         }
-      } else {
-        results[sessionId] = false;
-      }
-    });
+      },
+    );
 
     await Promise.allSettled(heartbeatPromises);
     return results;
@@ -148,27 +160,32 @@ export class MCPSessionManager {
 
   async reconnectDeadSessions(): Promise<string[]> {
     const reconnected: string[] = [];
-    
-    const reconnectPromises = Array.from(this.sessions.values()).map(async (session) => {
-      if (session.shouldReconnect()) {
-        try {
-          await session.attemptReconnect();
-          reconnected.push(session.sessionId);
-        } catch (error) {
-          // If max attempts reached, remove the session
-          if (session.status === MCPSessionStatus.ERROR && !session.shouldReconnect()) {
-            this.sessions.delete(session.sessionId);
+
+    const reconnectPromises = Array.from(this.sessions.values()).map(
+      async (session) => {
+        if (session.shouldReconnect()) {
+          try {
+            await session.attemptReconnect();
+            reconnected.push(session.sessionId);
+          } catch (error) {
+            // If max attempts reached, remove the session
+            if (
+              session.status === MCPSessionStatus.ERROR &&
+              !session.shouldReconnect()
+            ) {
+              this.sessions.delete(session.sessionId);
+            }
           }
         }
-      }
-    });
+      },
+    );
 
     await Promise.allSettled(reconnectPromises);
     return reconnected;
   }
 
   listSessions(): SessionInfo[] {
-    return Array.from(this.sessions.values()).map(session => {
+    return Array.from(this.sessions.values()).map((session) => {
       const info = session.getSessionInfo();
       return {
         sessionId: info.sessionId,
@@ -177,17 +194,21 @@ export class MCPSessionManager {
         connectedAt: info.connectedAt,
         lastHeartbeat: info.lastHeartbeat,
         isHealthy: info.isHealthy,
-        transportType: info.transportType
+        transportType: info.transportType,
       };
     });
   }
 
   getHealthySessions(): MCPSession[] {
-    return Array.from(this.sessions.values()).filter(session => session.isHealthy());
+    return Array.from(this.sessions.values()).filter((session) =>
+      session.isHealthy(),
+    );
   }
 
   getUnhealthySessions(): MCPSession[] {
-    return Array.from(this.sessions.values()).filter(session => !session.isHealthy());
+    return Array.from(this.sessions.values()).filter(
+      (session) => !session.isHealthy(),
+    );
   }
 
   getSessionCount(): number {
@@ -195,7 +216,9 @@ export class MCPSessionManager {
   }
 
   getSessionsByStatus(status: MCPSessionStatus): MCPSession[] {
-    return Array.from(this.sessions.values()).filter(session => session.status === status);
+    return Array.from(this.sessions.values()).filter(
+      (session) => session.status === status,
+    );
   }
 
   async cleanupTimedOutSessions(): Promise<string[]> {
@@ -204,7 +227,7 @@ export class MCPSessionManager {
 
     for (const [sessionId, session] of this.sessions.entries()) {
       const info = session.getSessionInfo();
-      
+
       // Check if session is timed out
       if (info.lastHeartbeat) {
         const timeSinceLastHeartbeat = now - info.lastHeartbeat.getTime();

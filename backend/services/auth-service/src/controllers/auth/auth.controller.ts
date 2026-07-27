@@ -9,6 +9,7 @@ import { LoginRequest } from "../../dto/requests/login.request";
 import { ResendVerificationRequest } from "../../dto/requests/resend-verification.request";
 import { VerifyEmailRequest } from "../../dto/requests/verify-email.request";
 import { SessionContext } from "../../types/interfaces/auth.interface";
+import { ApiError } from "../../middleware/error/api-error";
 
 import { ResetPasswordRequest } from "../../dto/requests/reset-password.request";
 
@@ -167,15 +168,13 @@ export class AuthController {
   }
 
   async logout(
-    req: Request<Record<string, never>, unknown, { refreshToken: string }>,
+    req: Request<Record<string, never>, unknown, LogoutRequest>,
     res: Response,
     next: NextFunction,
   ) {
     try {
-      console.log("BODY:", req.body);
-
-      if (!req.body || !req.body.refreshToken) {
-        throw new Error("refreshToken missing");
+      if (!req.body?.refreshToken) {
+        throw new ApiError(400, "VALIDATION_ERROR", "refreshToken is required");
       }
 
       await authService.logout(req.body.refreshToken);

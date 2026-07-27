@@ -1,15 +1,19 @@
 import { randomUUID } from "crypto";
 import { ExecutionContext, ExecutionResult, ExecutionStatus } from "../types";
 import { IAgent, IAgentRegistry } from "../interfaces";
-import { 
-  AgentNotFoundException, 
-  AgentExecutionException, 
-  ExecutionTimeoutException, 
-  ExecutionCancelledException 
+import {
+  AgentNotFoundException,
+  AgentExecutionException,
+  ExecutionTimeoutException,
+  ExecutionCancelledException,
 } from "../exceptions";
 
 export interface IAgentExecutor {
-  execute(agent: IAgent, input: unknown, context: ExecutionContext): Promise<ExecutionResult>;
+  execute(
+    agent: IAgent,
+    input: unknown,
+    context: ExecutionContext,
+  ): Promise<ExecutionResult>;
   cancel(executionId: string): Promise<void>;
   timeout(executionId: string, timeoutMs: number): Promise<void>;
   validate(agent: IAgent, input: unknown): Promise<boolean>;
@@ -21,7 +25,11 @@ export class AgentExecutor implements IAgentExecutor {
 
   constructor(private readonly registry: IAgentRegistry) {}
 
-  public async execute(agent: IAgent, input: unknown, context: ExecutionContext): Promise<ExecutionResult> {
+  public async execute(
+    agent: IAgent,
+    input: unknown,
+    context: ExecutionContext,
+  ): Promise<ExecutionResult> {
     const executionId = randomUUID();
     const startTime = Date.now();
     const startedAt = new Date();
@@ -43,14 +51,17 @@ export class AgentExecutor implements IAgentExecutor {
 
     try {
       // Check if already cancelled
-      if (context.cancellationToken?.aborted || abortController.signal.aborted) {
+      if (
+        context.cancellationToken?.aborted ||
+        abortController.signal.aborted
+      ) {
         throw new ExecutionCancelledException(executionId);
       }
 
       // Execute the agent (simplified - no actual AI/LLM calls)
       const output = await this.executeAgent(agent, input, {
         ...context,
-        cancellationToken: abortController.signal
+        cancellationToken: abortController.signal,
       });
 
       const finishedAt = new Date();
@@ -69,13 +80,12 @@ export class AgentExecutor implements IAgentExecutor {
         metadata: {
           agentType: agent.type,
           agentVersion: agent.metadata.version,
-          ...context.metadata
+          ...context.metadata,
         },
-        status: ExecutionStatus.COMPLETED
+        status: ExecutionStatus.COMPLETED,
       };
 
       return result;
-
     } catch (error) {
       const finishedAt = new Date();
       const latency = Date.now() - startTime;
@@ -90,7 +100,9 @@ export class AgentExecutor implements IAgentExecutor {
         status = ExecutionStatus.TIMEOUT;
         errors.push(`Execution timed out after ${context.timeout}ms`);
       } else {
-        errors.push(error instanceof Error ? error.message : "Unknown execution error");
+        errors.push(
+          error instanceof Error ? error.message : "Unknown execution error",
+        );
       }
 
       const result: ExecutionResult = {
@@ -107,21 +119,20 @@ export class AgentExecutor implements IAgentExecutor {
           agentType: agent.type,
           agentVersion: agent.metadata.version,
           error: error instanceof Error ? error.name : "UnknownError",
-          ...context.metadata
+          ...context.metadata,
         },
-        status
+        status,
       };
 
       if (!(error instanceof ExecutionCancelledException)) {
         throw new AgentExecutionException(
-          agent.metadata.id, 
-          executionId, 
-          error instanceof Error ? error.message : "Unknown error"
+          agent.metadata.id,
+          executionId,
+          error instanceof Error ? error.message : "Unknown error",
         );
       }
 
       return result;
-
     } finally {
       // Cleanup
       if (timeoutId) {
@@ -156,11 +167,19 @@ export class AgentExecutor implements IAgentExecutor {
   public async validate(agent: IAgent, input: unknown): Promise<boolean> {
     // Basic validation
     if (!agent) {
-      throw new AgentExecutionException("unknown", "unknown", "Agent is required");
+      throw new AgentExecutionException(
+        "unknown",
+        "unknown",
+        "Agent is required",
+      );
     }
 
     if (!agent.metadata.id) {
-      throw new AgentExecutionException("unknown", "unknown", "Agent ID is required");
+      throw new AgentExecutionException(
+        "unknown",
+        "unknown",
+        "Agent ID is required",
+      );
     }
 
     // Verify agent exists in registry
@@ -173,9 +192,9 @@ export class AgentExecutor implements IAgentExecutor {
     const health = await agent.getHealth();
     if (health.status === "unhealthy") {
       throw new AgentExecutionException(
-        agent.metadata.id, 
-        "unknown", 
-        `Agent is unhealthy: ${health.errors.join(", ")}`
+        agent.metadata.id,
+        "unknown",
+        `Agent is unhealthy: ${health.errors.join(", ")}`,
       );
     }
 
@@ -184,7 +203,9 @@ export class AgentExecutor implements IAgentExecutor {
     return true;
   }
 
-  public collectMetrics(executionResult: ExecutionResult): Record<string, number> {
+  public collectMetrics(
+    executionResult: ExecutionResult,
+  ): Record<string, number> {
     return {
       latency: executionResult.latency,
       success: executionResult.success ? 1 : 0,
@@ -193,21 +214,25 @@ export class AgentExecutor implements IAgentExecutor {
       cpuTime: executionResult.usage?.cpuTime || 0,
       tokensUsed: executionResult.usage?.tokensUsed || 0,
       cost: executionResult.usage?.cost || 0,
-      errorCount: executionResult.errors.length
+      errorCount: executionResult.errors.length,
     };
   }
 
-  private async executeAgent(agent: IAgent, input: unknown, context: ExecutionContext): Promise<unknown> {
+  private async executeAgent(
+    agent: IAgent,
+    input: unknown,
+    context: ExecutionContext,
+  ): Promise<unknown> {
     // This is a simplified execution that doesn't call external services
     // In a real implementation, this would coordinate with the agent's capabilities
-    
+
     // Check for cancellation
     if (context.cancellationToken?.aborted) {
       throw new ExecutionCancelledException(context.requestId);
     }
 
     // Simulate agent processing time
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Check for cancellation again
     if (context.cancellationToken?.aborted) {
@@ -220,16 +245,21 @@ export class AgentExecutor implements IAgentExecutor {
       processedAt: new Date(),
       input: input,
       result: `Processed by ${agent.metadata.name} (${agent.type})`,
-      capabilities: agent.capabilities.map(c => c.id),
+      capabilities: agent.capabilities.map((c) => c.id),
       context: {
         workspaceId: context.workspaceId,
         userId: context.userId,
-        requestId: context.requestId
-      }
+        requestId: context.requestId,
+      },
     };
   }
 
-  private calculateUsage(agent: IAgent, input: unknown, output: unknown, latencyMs: number): {
+  private calculateUsage(
+    agent: IAgent,
+    input: unknown,
+    output: unknown,
+    latencyMs: number,
+  ): {
     memoryUsed?: number;
     cpuTime?: number;
     tokensUsed?: number;
@@ -237,12 +267,12 @@ export class AgentExecutor implements IAgentExecutor {
   } {
     // Simplified usage calculation
     // In a real implementation, this would be based on actual resource consumption
-    
+
     return {
       memoryUsed: Math.round(latencyMs * 0.1), // Approximate memory usage
       cpuTime: latencyMs,
       tokensUsed: 0, // No LLM tokens used in this executor
-      cost: 0 // No external service costs
+      cost: 0, // No external service costs
     };
   }
 }

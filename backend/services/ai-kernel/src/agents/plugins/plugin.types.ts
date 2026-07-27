@@ -9,13 +9,13 @@ export enum PluginStatus {
   INACTIVE = "inactive",
   FAILED = "failed",
   UNLOADING = "unloading",
-  UNLOADED = "unloaded"
+  UNLOADED = "unloaded",
 }
 
 export enum PluginValidationStatus {
   VALID = "valid",
   INVALID = "invalid",
-  WARNING = "warning"
+  WARNING = "warning",
 }
 
 export interface PluginMetadata {
@@ -27,25 +27,25 @@ export interface PluginMetadata {
   homepage?: string;
   license?: string;
   keywords?: string[];
-  
+
   // Agent-specific metadata
   agentType: AgentType;
   priority: AgentPriority;
-  
+
   // Plugin lifecycle
   createdAt: Date;
   updatedAt: Date;
   loadedAt?: Date;
-  
+
   // Dependencies and compatibility
   dependencies?: Record<string, string>;
   peerDependencies?: Record<string, string>;
   engineVersion?: string;
-  
+
   // Configuration
   configSchema?: Record<string, unknown>;
   defaultConfig?: Record<string, unknown>;
-  
+
   metadata: Record<string, unknown>;
 }
 
@@ -81,21 +81,21 @@ export interface PluginDescriptor {
   metadata: PluginMetadata;
   capabilities: PluginCapabilities;
   factory: PluginFactory;
-  
+
   // Plugin source information
   sourcePath: string;
   sourceType: "file" | "directory" | "npm" | "url";
-  
+
   // Runtime information
   loadedAt?: Date;
   lastUsed?: Date;
   usageCount: number;
-  
+
   // Health and metrics
   loadTime?: number;
   errors: string[];
   warnings: string[];
-  
+
   // Associated agent instance
   agentInstance?: IAgent;
 }
@@ -105,7 +105,7 @@ export interface PluginValidationResult {
   isValid: boolean;
   errors: string[];
   warnings: string[];
-  
+
   // Specific validation checks
   checks: {
     metadataValid: boolean;
@@ -143,21 +143,21 @@ export interface PluginHealth {
   loadedPlugins: number;
   activePlugins: number;
   failedPlugins: number;
-  
+
   // Performance metrics
   averageLoadTime: number;
   totalUsageCount: number;
-  
+
   // Error tracking
   recentErrors: string[];
   recentWarnings: string[];
-  
+
   // Resource usage
   memoryUsage: number;
   diskUsage: number;
-  
+
   lastDiscovery?: Date;
   lastValidation?: Date;
-  
+
   metadata: Record<string, unknown>;
 }

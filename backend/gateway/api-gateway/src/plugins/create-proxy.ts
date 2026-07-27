@@ -16,10 +16,10 @@ export function createProxy(serviceName: string, config: ProxyConfig) {
       upstream: config.upstream,
       prefix: config.prefix,
       rewritePrefix: config.rewritePrefix || "/api/v1",
-      
+
       // Timeout configuration
       httpTimeout: env.PROXY_TIMEOUT,
-      
+
       // Header forwarding
       replyOptions: {
         rewriteRequestHeaders: (originalReq: any, headers: any) => {
@@ -29,15 +29,15 @@ export function createProxy(serviceName: string, config: ProxyConfig) {
 
           // Preserve authentication and tracing headers
           const headersToForward = [
-            'authorization',
-            'x-request-id', 
-            'x-correlation-id',
-            'x-user-id',
-            'x-workspace-id',
-            'traceparent'
+            "authorization",
+            "x-request-id",
+            "x-correlation-id",
+            "x-user-id",
+            "x-workspace-id",
+            "traceparent",
           ];
 
-          headersToForward.forEach(header => {
+          headersToForward.forEach((header) => {
             if (originalReq.headers[header]) {
               forwardedHeaders[header] = originalReq.headers[header];
             }
@@ -49,7 +49,7 @@ export function createProxy(serviceName: string, config: ProxyConfig) {
 
       // Preserve streaming
       websocket: false, // Disable websocket proxy unless needed
-      
+
       // Error handling
       undici: {
         requestTimeout: env.PROXY_TIMEOUT,

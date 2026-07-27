@@ -25,17 +25,17 @@ When you add, change, or remove an HTTP route in any backend service, update **b
 
 ## Service mount prefixes (current)
 
-| Service | Default port | API prefix |
-|---------|--------------|------------|
-| workspace-service | 3002 | `/api/v1`, `/health` |
-| user-service | 3003 | `/api/v1` |
-| document-service | 3004 | `/api/v1` |
-| ai-kernel | 3004 | `/api/v1/kernel` |
-| prompt-service | 3005 | `/api/v1` |
-| chat-service | 3006 | `/api/v1` |
-| ai-service | 3007 | `/api/v1` |
-| agent-service | 3008 | `/api/v1` |
-| auth-service | see `auth-service` env | `/health`, `/api/v1/auth`, `/profile`, `/admin` |
+| Service           | Default port           | API prefix                                      |
+| ----------------- | ---------------------- | ----------------------------------------------- |
+| workspace-service | 3002                   | `/api/v1`, `/health`                            |
+| user-service      | 3003                   | `/api/v1`                                       |
+| document-service  | 3004                   | `/api/v1`                                       |
+| ai-kernel         | 3004                   | `/api/v1/kernel`                                |
+| prompt-service    | 3005                   | `/api/v1`                                       |
+| chat-service      | 3006                   | `/api/v1`                                       |
+| ai-service        | 3007                   | `/api/v1`                                       |
+| agent-service     | 3008                   | `/api/v1`                                       |
+| auth-service      | see `auth-service` env | `/health`, `/api/v1/auth`, `/profile`, `/admin` |
 
 ## Checklist for a new endpoint
 

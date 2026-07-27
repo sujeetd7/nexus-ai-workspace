@@ -17,7 +17,7 @@ export class OllamaProvider implements AIProvider {
       return retry(async () => {
         // Enhance prompt with tool information for Ollama
         let enhancedPrompt = request.prompt;
-        
+
         if (request.tools && request.tools.length > 0) {
           enhancedPrompt = this.buildToolPrompt(request.prompt, request.tools);
         }
@@ -39,7 +39,9 @@ export class OllamaProvider implements AIProvider {
         );
 
         // Parse tool calls from response if tools were available
-        const toolCalls = request.tools ? this.parseToolCalls(data.response) : undefined;
+        const toolCalls = request.tools
+          ? this.parseToolCalls(data.response)
+          : undefined;
 
         return {
           text: data.response,
@@ -60,19 +62,20 @@ export class OllamaProvider implements AIProvider {
 
   private buildToolPrompt(originalPrompt: string, tools: any[]): string {
     let prompt = originalPrompt;
-    
+
     prompt += "\n\nYou have access to the following tools:";
-    
+
     for (const tool of tools) {
       prompt += `\n\nTool: ${tool.function.name}`;
       prompt += `\nDescription: ${tool.function.description}`;
       prompt += `\nParameters: ${JSON.stringify(tool.function.parameters)}`;
     }
-    
+
     prompt += "\n\nTo use a tool, respond with a JSON object in this format:";
-    prompt += '\n{"tool_calls": [{"id": "call_1", "type": "function", "function": {"name": "tool_name", "arguments": "{\"param\": \"value\"}"}}]}';
+    prompt +=
+      '\n{"tool_calls": [{"id": "call_1", "type": "function", "function": {"name": "tool_name", "arguments": "{\"param\": \"value\"}"}}]}';
     prompt += "\n\nIf you don't need to use any tools, respond normally.";
-    
+
     return prompt;
   }
 
@@ -87,7 +90,7 @@ export class OllamaProvider implements AIProvider {
     } catch (error) {
       // Ignore parsing errors - no tool calls found
     }
-    
+
     return undefined;
   }
 

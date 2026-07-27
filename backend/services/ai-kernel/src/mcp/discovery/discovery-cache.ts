@@ -1,14 +1,14 @@
 import { EventEmitter } from "events";
-import { 
-  DiscoveryCacheEntry, 
-  DiscoveryType, 
-  DiscoveryEvent, 
+import {
+  DiscoveryCacheEntry,
+  DiscoveryType,
+  DiscoveryEvent,
   DiscoveryEventPayload,
   MCPServerCapabilities,
   MCPDiscoveredTool,
   MCPDiscoveredPrompt,
   MCPDiscoveredResource,
-  MCPDiscoveredTemplate
+  MCPDiscoveredTemplate,
 } from "./types";
 
 export class DiscoveryCache extends EventEmitter {
@@ -25,7 +25,7 @@ export class DiscoveryCache extends EventEmitter {
   get<T>(serverId: string, type: DiscoveryType): T[] | null {
     const key = this.getCacheKey(serverId, type);
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return null;
     }
@@ -45,19 +45,19 @@ export class DiscoveryCache extends EventEmitter {
   }
 
   set<T>(
-    serverId: string, 
-    type: DiscoveryType, 
-    data: T[], 
+    serverId: string,
+    type: DiscoveryType,
+    data: T[],
     ttl?: number,
     metadata?: {
       discoveredAt: Date;
       duration: number;
-    }
+    },
   ): void {
     const key = this.getCacheKey(serverId, type);
     const now = new Date();
     const expiresAt = new Date(now.getTime() + (ttl || this.defaultTtl));
-    
+
     const entry: DiscoveryCacheEntry<T[]> = {
       data,
       cachedAt: now,
@@ -67,8 +67,8 @@ export class DiscoveryCache extends EventEmitter {
       metadata: {
         count: data.length,
         discoveredAt: metadata?.discoveredAt || now,
-        duration: metadata?.duration || 0
-      }
+        duration: metadata?.duration || 0,
+      },
     };
 
     this.cache.set(key, entry);
@@ -78,18 +78,18 @@ export class DiscoveryCache extends EventEmitter {
   invalidate(serverId: string, type: DiscoveryType): boolean {
     const key = this.getCacheKey(serverId, type);
     const deleted = this.cache.delete(key);
-    
+
     if (deleted) {
       this.emitCacheInvalidated(serverId, type);
     }
-    
+
     return deleted;
   }
 
   invalidateServer(serverId: string): number {
     let count = 0;
     const keysToDelete: string[] = [];
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (entry.serverId === serverId) {
         keysToDelete.push(key);
@@ -97,7 +97,7 @@ export class DiscoveryCache extends EventEmitter {
       }
     }
 
-    keysToDelete.forEach(key => {
+    keysToDelete.forEach((key) => {
       const entry = this.cache.get(key);
       if (entry) {
         this.cache.delete(key);
@@ -111,7 +111,7 @@ export class DiscoveryCache extends EventEmitter {
   clear(): void {
     const servers = new Set<string>();
     const types = new Set<DiscoveryType>();
-    
+
     for (const entry of this.cache.values()) {
       servers.add(entry.serverId);
       types.add(entry.type);
@@ -136,7 +136,7 @@ export class DiscoveryCache extends EventEmitter {
     const totalTtl = entry.expiresAt.getTime() - entry.cachedAt.getTime();
     const elapsed = now - entry.cachedAt.getTime();
     const progress = elapsed / totalTtl;
-    
+
     return progress >= this.lazyRefreshThreshold;
   }
 
@@ -154,7 +154,7 @@ export class DiscoveryCache extends EventEmitter {
       entriesByServer: {} as Record<string, number>,
       entriesByType: {} as Record<DiscoveryType, number>,
       oldestEntry: undefined as Date | undefined,
-      newestEntry: undefined as Date | undefined
+      newestEntry: undefined as Date | undefined,
     };
 
     for (const entry of this.cache.values()) {
@@ -164,10 +164,12 @@ export class DiscoveryCache extends EventEmitter {
       }
 
       // Count by server
-      stats.entriesByServer[entry.serverId] = (stats.entriesByServer[entry.serverId] || 0) + 1;
+      stats.entriesByServer[entry.serverId] =
+        (stats.entriesByServer[entry.serverId] || 0) + 1;
 
       // Count by type
-      stats.entriesByType[entry.type] = (stats.entriesByType[entry.type] || 0) + 1;
+      stats.entriesByType[entry.type] =
+        (stats.entriesByType[entry.type] || 0) + 1;
 
       // Track oldest/newest
       if (!stats.oldestEntry || entry.cachedAt < stats.oldestEntry) {
@@ -183,14 +185,14 @@ export class DiscoveryCache extends EventEmitter {
 
   cleanupExpired(): number {
     const keysToDelete: string[] = [];
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (this.isExpired(entry)) {
         keysToDelete.push(key);
       }
     }
 
-    keysToDelete.forEach(key => {
+    keysToDelete.forEach((key) => {
       const entry = this.cache.get(key);
       if (entry) {
         this.cache.delete(key);
@@ -203,7 +205,7 @@ export class DiscoveryCache extends EventEmitter {
 
   getServerEntries(serverId: string): DiscoveryCacheEntry<any>[] {
     const entries: DiscoveryCacheEntry<any>[] = [];
-    
+
     for (const entry of this.cache.values()) {
       if (entry.serverId === serverId) {
         entries.push(entry);
@@ -223,12 +225,16 @@ export class DiscoveryCache extends EventEmitter {
     return `${serverId}:${type}`;
   }
 
-  private emitCacheUpdated(serverId: string, type: DiscoveryType, count: number): void {
+  private emitCacheUpdated(
+    serverId: string,
+    type: DiscoveryType,
+    count: number,
+  ): void {
     const payload: DiscoveryEventPayload = {
       serverId,
       type,
       timestamp: new Date(),
-      count
+      count,
     };
     this.emit(DiscoveryEvent.CACHE_UPDATED, payload);
   }
@@ -237,7 +243,7 @@ export class DiscoveryCache extends EventEmitter {
     const payload: DiscoveryEventPayload = {
       serverId,
       type,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
     this.emit(DiscoveryEvent.CACHE_INVALIDATED, payload);
   }
@@ -247,7 +253,7 @@ export class DiscoveryCache extends EventEmitter {
     const payload: DiscoveryEventPayload = {
       serverId,
       type,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
     this.emit("cache:refresh_needed", payload);
   }

@@ -10,7 +10,7 @@ import {
   MCPExecutionRequest,
   MCPExecutionResult,
   MCPBatchExecutionRequest,
-  MCPBatchExecutionResult
+  MCPBatchExecutionResult,
 } from "./execution-context";
 
 export interface MCPRuntimeConfig {
@@ -59,13 +59,13 @@ export class MCPRuntime extends EventEmitter {
     this.serverRegistry = config.serverRegistry;
     this.discoveryManager = config.discoveryManager;
     this.securityManager = config.securityManager;
-    
+
     // Create execution manager - we'll need to pass the MCPManager differently
     // For now, create a placeholder that will be properly initialized
     this.executionManager = new MCPExecutionManager(
       {} as any, // Placeholder - needs proper MCPManager
       this.securityManager,
-      config.executionConfig
+      config.executionConfig,
     );
 
     this.setupEventListeners();
@@ -91,7 +91,9 @@ export class MCPRuntime extends EventEmitter {
       this.emit("runtime:initialized");
     } catch (error) {
       this.emit("runtime:initialization_failed", error);
-      throw new Error(`Failed to initialize MCP Runtime: ${error instanceof Error ? error.message : "Unknown error"}`);
+      throw new Error(
+        `Failed to initialize MCP Runtime: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -119,7 +121,9 @@ export class MCPRuntime extends EventEmitter {
       this.emit("runtime:shutdown");
     } catch (error) {
       this.emit("runtime:shutdown_failed", error);
-      throw new Error(`Failed to shutdown MCP Runtime: ${error instanceof Error ? error.message : "Unknown error"}`);
+      throw new Error(
+        `Failed to shutdown MCP Runtime: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   }
 
@@ -128,7 +132,7 @@ export class MCPRuntime extends EventEmitter {
     serverId: string,
     toolName: string,
     parameters: any,
-    options?: MCPExecutionOptions
+    options?: MCPExecutionOptions,
   ): Promise<MCPExecutionResult> {
     this.ensureInitialized();
 
@@ -137,13 +141,15 @@ export class MCPRuntime extends EventEmitter {
       serverId,
       toolName,
       parameters,
-      options
+      options,
     };
 
     return this.executionManager.execute(request);
   }
 
-  async executeBatch(batchRequest: MCPBatchExecutionRequest): Promise<MCPBatchExecutionResult> {
+  async executeBatch(
+    batchRequest: MCPBatchExecutionRequest,
+  ): Promise<MCPBatchExecutionResult> {
     this.ensureInitialized();
     return this.executionManager.executeBatch(batchRequest);
   }
@@ -153,7 +159,7 @@ export class MCPRuntime extends EventEmitter {
     const activeServers = this.serverRegistry.listActiveServers().length;
     const activeSessions = this.sessionManager.getSessionCount();
     const activeExecutions = this.executionManager.getExecutionCount();
-    
+
     const metrics = this.executionManager.getMetrics().getGlobalMetrics();
     const issues: string[] = [];
 
@@ -171,16 +177,21 @@ export class MCPRuntime extends EventEmitter {
     }
 
     if (metrics.averageLatency > 10000) {
-      issues.push(`High average latency: ${metrics.averageLatency.toFixed(0)}ms`);
+      issues.push(
+        `High average latency: ${metrics.averageLatency.toFixed(0)}ms`,
+      );
     }
 
     // Determine overall status
     let status: "healthy" | "degraded" | "unhealthy" = "healthy";
     if (issues.length > 0) {
-      status = issues.some(issue => 
-        issue.includes("No active") || 
-        issue.includes("success rate") && metrics.successRate < 50
-      ) ? "unhealthy" : "degraded";
+      status = issues.some(
+        (issue) =>
+          issue.includes("No active") ||
+          (issue.includes("success rate") && metrics.successRate < 50),
+      )
+        ? "unhealthy"
+        : "degraded";
     }
 
     return {
@@ -192,7 +203,7 @@ export class MCPRuntime extends EventEmitter {
       errorRate: 100 - metrics.successRate,
       averageLatency: metrics.averageLatency,
       lastHealthCheck: now,
-      issues: issues.length > 0 ? issues : undefined
+      issues: issues.length > 0 ? issues : undefined,
     };
   }
 
@@ -200,15 +211,19 @@ export class MCPRuntime extends EventEmitter {
     this.ensureInitialized();
     return {
       global: this.executionManager.getMetrics().getGlobalMetrics(),
-      servers: this.serverRegistry.listActiveServers().map(server => 
-        this.executionManager.getMetrics().getAggregatedServerMetrics(server.server.id)
-      ),
+      servers: this.serverRegistry
+        .listActiveServers()
+        .map((server) =>
+          this.executionManager
+            .getMetrics()
+            .getAggregatedServerMetrics(server.server.id),
+        ),
       registry: this.serverRegistry.getRegistryStats(),
       sessions: {
         total: this.sessionManager.getSessionCount(),
         healthy: this.sessionManager.getHealthySessions().length,
-        unhealthy: this.sessionManager.getUnhealthySessions().length
-      }
+        unhealthy: this.sessionManager.getUnhealthySessions().length,
+      },
     };
   }
 
@@ -252,7 +267,9 @@ export class MCPRuntime extends EventEmitter {
 
   private ensureInitialized(): void {
     if (!this.initialized) {
-      throw new Error("MCP Runtime is not initialized. Call initialize() first.");
+      throw new Error(
+        "MCP Runtime is not initialized. Call initialize() first.",
+      );
     }
 
     if (this.shutdownInitiated) {
@@ -297,7 +314,7 @@ export class MCPRuntime extends EventEmitter {
 
   private startHealthCheck(): void {
     const interval = this.config.healthCheckInterval || 60000; // Default 1 minute
-    
+
     this.healthCheckTimer = setInterval(async () => {
       try {
         const health = await this.health();

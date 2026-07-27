@@ -15,10 +15,15 @@ export interface IAIServiceClient {
   health(): Promise<HealthStatus>;
   providerHealth(provider: string): Promise<HealthStatus>;
   getAvailableProviders(): Promise<string[]>;
-  
+
   // Legacy methods for backward compatibility
-  streamExecute(request: ProviderExecuteRequest): AsyncIterable<ProviderExecuteResponse>;
-  embed(payload: { input: string[]; model?: string; }): Promise<{ embeddings: number[][] }>;
+  streamExecute(
+    request: ProviderExecuteRequest,
+  ): AsyncIterable<ProviderExecuteResponse>;
+  embed(payload: {
+    input: string[];
+    model?: string;
+  }): Promise<{ embeddings: number[][] }>;
 }
 
 export interface AIServiceClientOptions {

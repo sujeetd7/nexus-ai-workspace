@@ -5,7 +5,9 @@ export class DiscoveryTimeoutException extends Error {
   public readonly timeout: number;
 
   constructor(serverId: string, discoveryType: string, timeout: number) {
-    super(`Discovery timeout for ${discoveryType} on server ${serverId} after ${timeout}ms`);
+    super(
+      `Discovery timeout for ${discoveryType} on server ${serverId} after ${timeout}ms`,
+    );
     this.name = "DiscoveryTimeoutException";
     this.serverId = serverId;
     this.discoveryType = discoveryType;
@@ -24,8 +26,15 @@ export class DiscoveryFailedException extends Error {
   public readonly discoveryType: string;
   public readonly originalError?: Error;
 
-  constructor(serverId: string, discoveryType: string, message: string, originalError?: Error) {
-    super(`Discovery failed for ${discoveryType} on server ${serverId}: ${message}`);
+  constructor(
+    serverId: string,
+    discoveryType: string,
+    message: string,
+    originalError?: Error,
+  ) {
+    super(
+      `Discovery failed for ${discoveryType} on server ${serverId}: ${message}`,
+    );
     this.name = "DiscoveryFailedException";
     this.serverId = serverId;
     this.discoveryType = discoveryType;
@@ -43,8 +52,14 @@ export class CapabilityNotFoundException extends Error {
   public readonly capability: string;
   public readonly availableCapabilities: string[];
 
-  constructor(serverId: string, capability: string, availableCapabilities: string[] = []) {
-    super(`Capability '${capability}' not found on server ${serverId}. Available: ${availableCapabilities.join(", ")}`);
+  constructor(
+    serverId: string,
+    capability: string,
+    availableCapabilities: string[] = [],
+  ) {
+    super(
+      `Capability '${capability}' not found on server ${serverId}. Available: ${availableCapabilities.join(", ")}`,
+    );
     this.name = "CapabilityNotFoundException";
     this.serverId = serverId;
     this.capability = capability;

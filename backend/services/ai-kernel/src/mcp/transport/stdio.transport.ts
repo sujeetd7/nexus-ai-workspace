@@ -26,7 +26,7 @@ export class STDIOTransport extends BaseTransport {
 
     this.config = {
       timeout: 30000,
-      ...config
+      ...config,
     };
 
     return new Promise((resolve, reject) => {
@@ -34,7 +34,7 @@ export class STDIOTransport extends BaseTransport {
         this.process = spawn(this.config!.command, this.config!.args || [], {
           cwd: this.config!.cwd,
           env: { ...process.env, ...this.config!.env },
-          stdio: ["pipe", "pipe", "pipe"]
+          stdio: ["pipe", "pipe", "pipe"],
         });
 
         this.process.on("error", (error) => {
@@ -62,7 +62,7 @@ export class STDIOTransport extends BaseTransport {
           id: this.generateRequestId(),
           method: "initialize",
           params: { clientInfo: { name: "nexus-ai", version: "1.0.0" } },
-          jsonrpc: "2.0"
+          jsonrpc: "2.0",
         };
 
         this.sendMessage(initMessage);
@@ -77,7 +77,9 @@ export class STDIOTransport extends BaseTransport {
             clearTimeout(timeout);
             this.removeListener("message", handleInit);
             if (message.error) {
-              reject(new Error(`Initialization failed: ${message.error.message}`));
+              reject(
+                new Error(`Initialization failed: ${message.error.message}`),
+              );
             } else {
               this.handleConnect();
               resolve();
@@ -112,7 +114,7 @@ export class STDIOTransport extends BaseTransport {
             id: this.generateRequestId(),
             method: "shutdown",
             params: {},
-            jsonrpc: "2.0"
+            jsonrpc: "2.0",
           };
           this.sendMessage(shutdownMessage);
         } catch (e) {
@@ -151,7 +153,7 @@ export class STDIOTransport extends BaseTransport {
       id: streamId,
       method,
       params,
-      jsonrpc: "2.0"
+      jsonrpc: "2.0",
     };
 
     const results: any[] = [];
@@ -179,7 +181,7 @@ export class STDIOTransport extends BaseTransport {
         if (results.length > 0) {
           yield results.shift();
         } else {
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise((resolve) => setTimeout(resolve, 10));
         }
       }
 
@@ -207,7 +209,7 @@ export class STDIOTransport extends BaseTransport {
 
   private handleStdoutData(data: Buffer): void {
     this.messageBuffer += data.toString();
-    
+
     const lines = this.messageBuffer.split("\n");
     this.messageBuffer = lines.pop() || "";
 

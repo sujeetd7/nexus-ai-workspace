@@ -1,7 +1,15 @@
 export interface MCPServerCapabilities {
   experimental?: Record<string, unknown>;
   logging?: {
-    level?: "debug" | "info" | "notice" | "warning" | "error" | "critical" | "alert" | "emergency";
+    level?:
+      | "debug"
+      | "info"
+      | "notice"
+      | "warning"
+      | "error"
+      | "critical"
+      | "alert"
+      | "emergency";
   };
   prompts?: {
     listChanged?: boolean;
@@ -20,12 +28,15 @@ export interface MCPDiscoveredTool {
   description: string;
   inputSchema: {
     type: "object";
-    properties: Record<string, {
-      type: string;
-      description?: string;
-      enum?: string[];
-      default?: unknown;
-    }>;
+    properties: Record<
+      string,
+      {
+        type: string;
+        description?: string;
+        enum?: string[];
+        default?: unknown;
+      }
+    >;
     required?: string[];
     additionalProperties?: boolean;
   };
@@ -144,16 +155,16 @@ export enum DiscoveryType {
   TOOLS = "tools",
   PROMPTS = "prompts",
   RESOURCES = "resources",
-  TEMPLATES = "templates"
+  TEMPLATES = "templates",
 }
 
 export enum DiscoveryEvent {
   DISCOVERY_STARTED = "discovery:started",
-  DISCOVERY_COMPLETED = "discovery:completed", 
+  DISCOVERY_COMPLETED = "discovery:completed",
   DISCOVERY_FAILED = "discovery:failed",
   CACHE_UPDATED = "cache:updated",
   CACHE_INVALIDATED = "cache:invalidated",
-  SERVER_REFRESHED = "server:refreshed"
+  SERVER_REFRESHED = "server:refreshed",
 }
 
 export interface DiscoveryEventPayload {

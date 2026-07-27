@@ -100,15 +100,19 @@ export class AIServiceClient implements IAIServiceClient {
     return resp.data as { embeddings: number[][] };
   }
 
-  public async generate(request: ProviderExecuteRequest): Promise<ProviderExecuteResponse> {
+  public async generate(
+    request: ProviderExecuteRequest,
+  ): Promise<ProviderExecuteResponse> {
     return this.execute(request);
   }
 
-  public async *stream(request: ProviderExecuteRequest): AsyncIterable<StreamChunk> {
+  public async *stream(
+    request: ProviderExecuteRequest,
+  ): AsyncIterable<StreamChunk> {
     const resp = await this.client.post("/api/v1/stream", request, {
       responseType: "stream",
       headers: {
-        "Accept": "text/event-stream",
+        Accept: "text/event-stream",
       },
     });
 
@@ -142,7 +146,9 @@ export class AIServiceClient implements IAIServiceClient {
     }
   }
 
-  public async embeddings(request: EmbeddingRequest): Promise<EmbeddingResponse> {
+  public async embeddings(
+    request: EmbeddingRequest,
+  ): Promise<EmbeddingResponse> {
     const payload = {
       input: request.input,
       model: request.model,
@@ -150,7 +156,7 @@ export class AIServiceClient implements IAIServiceClient {
     };
 
     const resp = await this.client.post("/api/v1/embeddings", payload);
-    
+
     return {
       embeddings: resp.data.embeddings || [],
       usage: resp.data.usage || {
@@ -187,8 +193,10 @@ export class AIServiceClient implements IAIServiceClient {
 
   public async providerHealth(provider: string): Promise<HealthStatus> {
     try {
-      const resp = await this.client.get(`/api/v1/provider-health?provider=${provider}`);
-      
+      const resp = await this.client.get(
+        `/api/v1/provider-health?provider=${provider}`,
+      );
+
       if (resp.data.status) {
         return {
           status: resp.data.status,

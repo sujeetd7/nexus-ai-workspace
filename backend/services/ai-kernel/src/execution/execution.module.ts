@@ -48,7 +48,7 @@ export class ExecutionModule implements IKernelModule {
       toolRegistry = new ToolRegistry();
       console.log("Using basic tool registry (MCP not available)");
     }
-    
+
     const toolExecutor = new EnhancedToolExecutor(toolRegistry);
 
     // Register built-in tools
@@ -76,12 +76,14 @@ export class ExecutionModule implements IKernelModule {
     this.executorRegistry.registerExecutor("llm", new LLMExecutor(kernel));
 
     // Register tool-calling executor
-    const aiServiceModule = kernel.getModule<AIServiceIntegrationModule>("AIServiceIntegrationModule");
+    const aiServiceModule = kernel.getModule<AIServiceIntegrationModule>(
+      "AIServiceIntegrationModule",
+    );
     if (aiServiceModule) {
       const aiServiceClient = aiServiceModule.getClient();
       this.executorRegistry.registerExecutor(
         "tool_calling",
-        new ToolCallingExecutor(aiServiceClient, toolRegistry, toolExecutor)
+        new ToolCallingExecutor(aiServiceClient, toolRegistry, toolExecutor),
       );
     }
 

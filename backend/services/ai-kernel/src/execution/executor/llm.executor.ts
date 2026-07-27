@@ -15,22 +15,27 @@ export class LLMExecutor implements IExecutionExecutor {
 
     // Check if tool calling is enabled and we have tools available
     const enableToolCalling = context.plan.enableToolCalling ?? false;
-    
+
     if (enableToolCalling) {
       // Try to get the tool-calling executor and use it
       try {
         const executionModule = this.kernel.getModule("ExecutionModule") as any;
         if (executionModule) {
           const executorRegistry = executionModule.getExecutorRegistry();
-          const toolCallingExecutor = executorRegistry.getExecutor("tool_calling") as ToolCallingExecutor;
-          
+          const toolCallingExecutor = executorRegistry.getExecutor(
+            "tool_calling",
+          ) as ToolCallingExecutor;
+
           if (toolCallingExecutor) {
             console.log("[LLMExecutor] Using tool-calling executor");
             return await toolCallingExecutor.execute(context);
           }
         }
       } catch (error) {
-        console.warn("[LLMExecutor] Tool calling not available, falling back to standard execution:", error);
+        console.warn(
+          "[LLMExecutor] Tool calling not available, falling back to standard execution:",
+          error,
+        );
       }
     }
 

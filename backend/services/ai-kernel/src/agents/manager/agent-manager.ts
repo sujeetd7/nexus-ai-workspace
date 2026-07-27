@@ -24,9 +24,9 @@ export class AgentManager implements IAgentManager {
 
     for (const agent of agents) {
       const initPromise = this.safeLifecycleOperation(
-        agent.metadata.id, 
+        agent.metadata.id,
         "initialize",
-        () => this.lifecycleManager.initialize(agent.metadata.id)
+        () => this.lifecycleManager.initialize(agent.metadata.id),
       );
       initializationPromises.push(initPromise);
     }
@@ -40,9 +40,9 @@ export class AgentManager implements IAgentManager {
 
     for (const agent of agents) {
       const shutdownPromise = this.safeLifecycleOperation(
-        agent.metadata.id, 
+        agent.metadata.id,
         "shutdown",
-        () => this.lifecycleManager.shutdown(agent.metadata.id)
+        () => this.lifecycleManager.shutdown(agent.metadata.id),
       );
       shutdownPromises.push(shutdownPromise);
     }
@@ -56,9 +56,9 @@ export class AgentManager implements IAgentManager {
 
     for (const agent of agents) {
       const startPromise = this.safeLifecycleOperation(
-        agent.metadata.id, 
+        agent.metadata.id,
         "start",
-        () => this.lifecycleManager.start(agent.metadata.id)
+        () => this.lifecycleManager.start(agent.metadata.id),
       );
       startPromises.push(startPromise);
     }
@@ -72,9 +72,9 @@ export class AgentManager implements IAgentManager {
 
     for (const agent of agents) {
       const stopPromise = this.safeLifecycleOperation(
-        agent.metadata.id, 
+        agent.metadata.id,
         "stop",
-        () => this.lifecycleManager.stop(agent.metadata.id)
+        () => this.lifecycleManager.stop(agent.metadata.id),
       );
       stopPromises.push(stopPromise);
     }
@@ -88,7 +88,8 @@ export class AgentManager implements IAgentManager {
 
   public async healthAll(): Promise<Record<string, AgentHealth>> {
     const agents = await this.registry.list();
-    const healthPromises: Promise<{ agentId: string; health: AgentHealth }>[] = [];
+    const healthPromises: Promise<{ agentId: string; health: AgentHealth }>[] =
+      [];
 
     for (const agent of agents) {
       const healthPromise = this.safeHealthCheck(agent.metadata.id);
@@ -112,9 +113,9 @@ export class AgentManager implements IAgentManager {
   }
 
   private async safeLifecycleOperation(
-    agentId: string, 
-    operation: string, 
-    operationFn: () => Promise<void>
+    agentId: string,
+    operation: string,
+    operationFn: () => Promise<void>,
   ): Promise<void> {
     try {
       await operationFn();
@@ -125,7 +126,9 @@ export class AgentManager implements IAgentManager {
     }
   }
 
-  private async safeHealthCheck(agentId: string): Promise<{ agentId: string; health: AgentHealth }> {
+  private async safeHealthCheck(
+    agentId: string,
+  ): Promise<{ agentId: string; health: AgentHealth }> {
     try {
       const health = await this.lifecycleManager.health(agentId);
       return { agentId, health };
@@ -139,8 +142,8 @@ export class AgentManager implements IAgentManager {
           lastHeartbeat: new Date(),
           errors: [error instanceof Error ? error.message : "Unknown error"],
           warnings: [],
-          metrics: {}
-        }
+          metrics: {},
+        },
       };
     }
   }

@@ -1,18 +1,18 @@
 import { randomUUID } from "crypto";
-import { 
-  ExecutionRequest, 
-  BatchExecutionRequest, 
-  ExecutionResult, 
-  BatchExecutionResult, 
-  ExecutionStatus 
+import {
+  ExecutionRequest,
+  BatchExecutionRequest,
+  ExecutionResult,
+  BatchExecutionResult,
+  ExecutionStatus,
 } from "../types";
 import { IAgent, IAgentRegistry } from "../interfaces";
 import { IAgentExecutor, AgentExecutor } from "../executor";
 import { IExecutionRegistry, ExecutionRegistry } from "./execution-registry";
-import { 
-  AgentNotFoundException, 
-  ExecutionNotFoundException, 
-  AgentExecutionException 
+import {
+  AgentNotFoundException,
+  ExecutionNotFoundException,
+  AgentExecutionException,
 } from "../exceptions";
 
 export interface IAgentRuntime {
@@ -33,7 +33,9 @@ export class AgentRuntime implements IAgentRuntime {
     this.executionRegistry = new ExecutionRegistry();
   }
 
-  public async executeAgent(request: ExecutionRequest): Promise<ExecutionResult> {
+  public async executeAgent(
+    request: ExecutionRequest,
+  ): Promise<ExecutionResult> {
     const startTime = Date.now();
     const executionId = randomUUID();
 
@@ -50,9 +52,9 @@ export class AgentRuntime implements IAgentRuntime {
       errors: [],
       metadata: {
         ...request.context.metadata,
-        requestId: request.context.requestId
+        requestId: request.context.requestId,
       },
-      status: ExecutionStatus.PENDING
+      status: ExecutionStatus.PENDING,
     };
 
     // Register the execution
@@ -69,31 +71,30 @@ export class AgentRuntime implements IAgentRuntime {
       const runningResult = {
         ...initialResult,
         status: ExecutionStatus.RUNNING,
-        startedAt: new Date()
+        startedAt: new Date(),
       };
       await this.executionRegistry.update(executionId, runningResult);
 
       // Execute the agent
       const result = await this.executor.execute(agent, request.input, {
         ...request.context,
-        timeout: request.timeout
+        timeout: request.timeout,
       });
 
       // Update the execution result with the actual execution ID
       const finalResult = {
         ...result,
-        executionId
+        executionId,
       };
 
       // Update registry with final result
       await this.executionRegistry.update(executionId, finalResult);
 
       return finalResult;
-
     } catch (error) {
       const finishedAt = new Date();
       const latency = Date.now() - startTime;
-      
+
       const errorResult: ExecutionResult = {
         ...initialResult,
         executionId,
@@ -103,9 +104,9 @@ export class AgentRuntime implements IAgentRuntime {
         errors: [error instanceof Error ? error.message : "Unknown error"],
         metadata: {
           ...initialResult.metadata,
-          error: error instanceof Error ? error.name : "UnknownError"
+          error: error instanceof Error ? error.name : "UnknownError",
         },
-        status: ExecutionStatus.FAILED
+        status: ExecutionStatus.FAILED,
       };
 
       await this.executionRegistry.update(executionId, errorResult);
@@ -113,7 +114,9 @@ export class AgentRuntime implements IAgentRuntime {
     }
   }
 
-  public async executeBatch(request: BatchExecutionRequest): Promise<BatchExecutionResult> {
+  public async executeBatch(
+    request: BatchExecutionRequest,
+  ): Promise<BatchExecutionResult> {
     const batchId = randomUUID();
     const startTime = Date.now();
     const maxConcurrency = request.maxConcurrency || 5;
@@ -125,24 +128,27 @@ export class AgentRuntime implements IAgentRuntime {
     // Create semaphore for concurrency control
     const semaphore = this.createSemaphore(maxConcurrency);
 
-    const executeRequest = async (execRequest: ExecutionRequest): Promise<void> => {
+    const executeRequest = async (
+      execRequest: ExecutionRequest,
+    ): Promise<void> => {
       await semaphore.acquire();
-      
+
       try {
         const result = await this.executeAgent(execRequest);
         results.push(result);
-        
+
         if (failFast && !result.success) {
           throw new AgentExecutionException(
-            result.agentId, 
-            result.executionId, 
-            result.errors.join(", ")
+            result.agentId,
+            result.executionId,
+            result.errors.join(", "),
           );
         }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
         errors.push(errorMessage);
-        
+
         if (failFast) {
           throw error;
         }
@@ -157,7 +163,7 @@ export class AgentRuntime implements IAgentRuntime {
       await Promise.allSettled(promises);
 
       const totalLatency = Date.now() - startTime;
-      const success = errors.length === 0 && results.every(r => r.success);
+      const success = errors.length === 0 && results.every((r) => r.success);
 
       const batchResult: BatchExecutionResult = {
         batchId,
@@ -166,21 +172,20 @@ export class AgentRuntime implements IAgentRuntime {
         totalLatency,
         metadata: {
           requestCount: request.requests.length,
-          successCount: results.filter(r => r.success).length,
-          failureCount: results.filter(r => !r.success).length,
+          successCount: results.filter((r) => r.success).length,
+          failureCount: results.filter((r) => !r.success).length,
           errorCount: errors.length,
           maxConcurrency,
-          failFast
-        }
+          failFast,
+        },
       };
 
       return batchResult;
-
     } catch (error) {
       throw new AgentExecutionException(
-        "batch", 
-        batchId, 
-        `Batch execution failed: ${error instanceof Error ? error.message : "Unknown error"}`
+        "batch",
+        batchId,
+        `Batch execution failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
   }
@@ -191,7 +196,10 @@ export class AgentRuntime implements IAgentRuntime {
       throw new ExecutionNotFoundException(executionId);
     }
 
-    if (execution.status !== ExecutionStatus.RUNNING && execution.status !== ExecutionStatus.PENDING) {
+    if (
+      execution.status !== ExecutionStatus.RUNNING &&
+      execution.status !== ExecutionStatus.PENDING
+    ) {
       return; // Already completed
     }
 
@@ -204,7 +212,7 @@ export class AgentRuntime implements IAgentRuntime {
       finishedAt: new Date(),
       latency: Date.now() - execution.startedAt.getTime(),
       errors: ["Execution was cancelled"],
-      status: ExecutionStatus.CANCELLED
+      status: ExecutionStatus.CANCELLED,
     };
 
     await this.executionRegistry.update(executionId, cancelledResult);
@@ -241,7 +249,9 @@ export class AgentRuntime implements IAgentRuntime {
     return await this.executionRegistry.listByStatus(ExecutionStatus.RUNNING);
   }
 
-  public async listExecutionsByAgent(agentId: string): Promise<ExecutionResult[]> {
+  public async listExecutionsByAgent(
+    agentId: string,
+  ): Promise<ExecutionResult[]> {
     return await this.executionRegistry.listByAgent(agentId);
   }
 
@@ -268,7 +278,7 @@ export class AgentRuntime implements IAgentRuntime {
         } else {
           count--;
         }
-      }
+      },
     };
   }
 }

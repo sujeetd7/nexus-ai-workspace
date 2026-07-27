@@ -26,19 +26,21 @@ export class TransportFactory {
         throw new Error("WebSocket transport not yet implemented");
 
       case MCPTransportType.IPC:
-        // Future implementation - placeholder for extensibility  
+        // Future implementation - placeholder for extensibility
         throw new Error("IPC transport not yet implemented");
 
       default:
         // Handle SSE case (not in enum but supported)
-        if (type === "sse" as any) {
+        if (type === ("sse" as any)) {
           return new SSETransport(id);
         }
         throw new Error(`Unsupported transport type: ${type}`);
     }
   }
 
-  static async createAndConnect(factoryConfig: TransportFactoryConfig): Promise<MCPTransport> {
+  static async createAndConnect(
+    factoryConfig: TransportFactoryConfig,
+  ): Promise<MCPTransport> {
     const transport = this.create(factoryConfig);
     await transport.connect(factoryConfig.config);
     return transport;
@@ -48,7 +50,7 @@ export class TransportFactory {
     return [
       MCPTransportType.HTTP,
       MCPTransportType.STDIO,
-      "sse" // SSE support (not in original enum but implemented)
+      "sse", // SSE support (not in original enum but implemented)
       // MCPTransportType.WEBSOCKET, // Future
       // MCPTransportType.IPC, // Future
     ];
@@ -58,7 +60,10 @@ export class TransportFactory {
     return this.getSupportedTypes().includes(type);
   }
 
-  static validateConfig(type: MCPTransportType | string, config: MCPTransportConfig): void {
+  static validateConfig(
+    type: MCPTransportType | string,
+    config: MCPTransportConfig,
+  ): void {
     switch (type) {
       case MCPTransportType.HTTP:
       case "sse":

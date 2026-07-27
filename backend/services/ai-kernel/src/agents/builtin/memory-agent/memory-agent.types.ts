@@ -8,14 +8,14 @@ export enum MemoryOperation {
   LOAD_SCRATCHPAD = "load_scratchpad",
   SAVE_SCRATCHPAD = "save_scratchpad",
   SUMMARY = "summary",
-  CLEAR = "clear"
+  CLEAR = "clear",
 }
 
 export enum MemoryType {
   CONVERSATION = "conversation",
   WORKSPACE = "workspace",
   SCRATCHPAD = "scratchpad",
-  SHARED = "shared"
+  SHARED = "shared",
 }
 
 export interface MemoryOperationRequest {
@@ -27,12 +27,20 @@ export interface MemoryOperationRequest {
 }
 
 export interface MemoryLoadRequest extends MemoryOperationRequest {
-  operation: MemoryOperation.LOAD_CONVERSATION | MemoryOperation.LOAD_WORKSPACE | MemoryOperation.LOAD_SHARED | MemoryOperation.LOAD_SCRATCHPAD;
+  operation:
+    | MemoryOperation.LOAD_CONVERSATION
+    | MemoryOperation.LOAD_WORKSPACE
+    | MemoryOperation.LOAD_SHARED
+    | MemoryOperation.LOAD_SCRATCHPAD;
   key: string;
 }
 
 export interface MemorySaveRequest extends MemoryOperationRequest {
-  operation: MemoryOperation.SAVE_CONVERSATION | MemoryOperation.SAVE_WORKSPACE | MemoryOperation.SAVE_SHARED | MemoryOperation.SAVE_SCRATCHPAD;
+  operation:
+    | MemoryOperation.SAVE_CONVERSATION
+    | MemoryOperation.SAVE_WORKSPACE
+    | MemoryOperation.SAVE_SHARED
+    | MemoryOperation.SAVE_SCRATCHPAD;
   key: string;
   value: unknown;
 }
@@ -63,13 +71,21 @@ export interface MemoryOperationResult {
 }
 
 export interface MemoryLoadResult extends MemoryOperationResult {
-  operation: MemoryOperation.LOAD_CONVERSATION | MemoryOperation.LOAD_WORKSPACE | MemoryOperation.LOAD_SHARED | MemoryOperation.LOAD_SCRATCHPAD;
+  operation:
+    | MemoryOperation.LOAD_CONVERSATION
+    | MemoryOperation.LOAD_WORKSPACE
+    | MemoryOperation.LOAD_SHARED
+    | MemoryOperation.LOAD_SCRATCHPAD;
   found: boolean;
   value?: unknown;
 }
 
 export interface MemorySaveResult extends MemoryOperationResult {
-  operation: MemoryOperation.SAVE_CONVERSATION | MemoryOperation.SAVE_WORKSPACE | MemoryOperation.SAVE_SHARED | MemoryOperation.SAVE_SCRATCHPAD;
+  operation:
+    | MemoryOperation.SAVE_CONVERSATION
+    | MemoryOperation.SAVE_WORKSPACE
+    | MemoryOperation.SAVE_SHARED
+    | MemoryOperation.SAVE_SCRATCHPAD;
   saved: boolean;
   previousValue?: unknown;
 }

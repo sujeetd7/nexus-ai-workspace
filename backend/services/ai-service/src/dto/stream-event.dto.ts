@@ -18,7 +18,7 @@ export interface StreamEventDto {
   type: StreamEventType;
 
   content?: string;
-  
+
   data?: {
     totalTokens?: number;
     promptTokens?: number;

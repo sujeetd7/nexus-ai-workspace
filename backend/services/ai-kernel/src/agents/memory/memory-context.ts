@@ -53,8 +53,15 @@ export class MemoryContextBuilder {
   }
 
   public build(): MemoryContext {
-    const requiredFields = ['requestId', 'traceId', 'workspaceId', 'userId', 'agentId', 'executionId'];
-    
+    const requiredFields = [
+      "requestId",
+      "traceId",
+      "workspaceId",
+      "userId",
+      "agentId",
+      "executionId",
+    ];
+
     for (const field of requiredFields) {
       if (!this.context[field as keyof MemoryContext]) {
         throw new Error(`Memory context field '${field}' is required`);
@@ -69,7 +76,7 @@ export class MemoryContextBuilder {
       conversationId: this.context.conversationId,
       agentId: this.context.agentId!,
       executionId: this.context.executionId!,
-      metadata: this.context.metadata || {}
+      metadata: this.context.metadata || {},
     };
   }
 

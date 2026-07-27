@@ -6,15 +6,17 @@ export function loggerMiddleware(
   next: NextFunction,
 ): void {
   const start = Date.now();
-  
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} - RequestId: ${req.requestId}`);
-  
+
+  console.log(
+    `[${new Date().toISOString()}] ${req.method} ${req.path} - RequestId: ${req.requestId}`,
+  );
+
   res.on("finish", () => {
     const duration = Date.now() - start;
     console.log(
-      `[${new Date().toISOString()}] ${req.method} ${req.path} - ${res.statusCode} - ${duration}ms - RequestId: ${req.requestId}`
+      `[${new Date().toISOString()}] ${req.method} ${req.path} - ${res.statusCode} - ${duration}ms - RequestId: ${req.requestId}`,
     );
   });
-  
+
   next();
 }

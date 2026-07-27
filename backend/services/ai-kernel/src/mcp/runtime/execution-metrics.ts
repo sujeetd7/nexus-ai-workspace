@@ -39,7 +39,7 @@ export class ExecutionMetricsCollector {
     duration: number,
     success: boolean,
     retryAttempt: number = 0,
-    timedOut: boolean = false
+    timedOut: boolean = false,
   ): void {
     const key = `${serverId}:${toolName}`;
     const now = new Date();
@@ -60,7 +60,7 @@ export class ExecutionMetricsCollector {
         timeoutCount: 0,
         retryCount: 0,
         lastExecution: now,
-        firstExecution: now
+        firstExecution: now,
       };
     }
 
@@ -97,7 +97,7 @@ export class ExecutionMetricsCollector {
       duration,
       success,
       retryAttempt,
-      timedOut
+      timedOut,
     };
 
     this.snapshots.push(snapshot);
@@ -114,7 +114,9 @@ export class ExecutionMetricsCollector {
   }
 
   getServerMetrics(serverId: string): ExecutionMetric[] {
-    return Array.from(this.metrics.values()).filter(metric => metric.serverId === serverId);
+    return Array.from(this.metrics.values()).filter(
+      (metric) => metric.serverId === serverId,
+    );
   }
 
   getAllMetrics(): ExecutionMetric[] {
@@ -132,7 +134,7 @@ export class ExecutionMetricsCollector {
     toolCount: number;
   } {
     const serverMetrics = this.getServerMetrics(serverId);
-    
+
     if (serverMetrics.length === 0) {
       return {
         serverId,
@@ -142,35 +144,39 @@ export class ExecutionMetricsCollector {
         averageLatency: 0,
         totalTimeouts: 0,
         totalRetries: 0,
-        toolCount: 0
+        toolCount: 0,
       };
     }
 
-    const totals = serverMetrics.reduce((acc, metric) => ({
-      executions: acc.executions + metric.executionCount,
-      successes: acc.successes + metric.successCount,
-      failures: acc.failures + metric.failureCount,
-      latency: acc.latency + metric.totalLatency,
-      timeouts: acc.timeouts + metric.timeoutCount,
-      retries: acc.retries + metric.retryCount
-    }), { 
-      executions: 0, 
-      successes: 0, 
-      failures: 0, 
-      latency: 0, 
-      timeouts: 0, 
-      retries: 0 
-    });
+    const totals = serverMetrics.reduce(
+      (acc, metric) => ({
+        executions: acc.executions + metric.executionCount,
+        successes: acc.successes + metric.successCount,
+        failures: acc.failures + metric.failureCount,
+        latency: acc.latency + metric.totalLatency,
+        timeouts: acc.timeouts + metric.timeoutCount,
+        retries: acc.retries + metric.retryCount,
+      }),
+      {
+        executions: 0,
+        successes: 0,
+        failures: 0,
+        latency: 0,
+        timeouts: 0,
+        retries: 0,
+      },
+    );
 
     return {
       serverId,
       totalExecutions: totals.executions,
       totalSuccesses: totals.successes,
       totalFailures: totals.failures,
-      averageLatency: totals.executions > 0 ? totals.latency / totals.executions : 0,
+      averageLatency:
+        totals.executions > 0 ? totals.latency / totals.executions : 0,
       totalTimeouts: totals.timeouts,
       totalRetries: totals.retries,
-      toolCount: serverMetrics.length
+      toolCount: serverMetrics.length,
     };
   }
 
@@ -186,7 +192,7 @@ export class ExecutionMetricsCollector {
     successRate: number;
   } {
     const allMetrics = this.getAllMetrics();
-    
+
     if (allMetrics.length === 0) {
       return {
         totalExecutions: 0,
@@ -197,38 +203,45 @@ export class ExecutionMetricsCollector {
         totalRetries: 0,
         serverCount: 0,
         toolCount: 0,
-        successRate: 0
+        successRate: 0,
       };
     }
 
-    const totals = allMetrics.reduce((acc, metric) => ({
-      executions: acc.executions + metric.executionCount,
-      successes: acc.successes + metric.successCount,
-      failures: acc.failures + metric.failureCount,
-      latency: acc.latency + metric.totalLatency,
-      timeouts: acc.timeouts + metric.timeoutCount,
-      retries: acc.retries + metric.retryCount,
-      servers: acc.servers.add(metric.serverId)
-    }), { 
-      executions: 0, 
-      successes: 0, 
-      failures: 0, 
-      latency: 0, 
-      timeouts: 0, 
-      retries: 0,
-      servers: new Set<string>()
-    });
+    const totals = allMetrics.reduce(
+      (acc, metric) => ({
+        executions: acc.executions + metric.executionCount,
+        successes: acc.successes + metric.successCount,
+        failures: acc.failures + metric.failureCount,
+        latency: acc.latency + metric.totalLatency,
+        timeouts: acc.timeouts + metric.timeoutCount,
+        retries: acc.retries + metric.retryCount,
+        servers: acc.servers.add(metric.serverId),
+      }),
+      {
+        executions: 0,
+        successes: 0,
+        failures: 0,
+        latency: 0,
+        timeouts: 0,
+        retries: 0,
+        servers: new Set<string>(),
+      },
+    );
 
     return {
       totalExecutions: totals.executions,
       totalSuccesses: totals.successes,
       totalFailures: totals.failures,
-      averageLatency: totals.executions > 0 ? totals.latency / totals.executions : 0,
+      averageLatency:
+        totals.executions > 0 ? totals.latency / totals.executions : 0,
       totalTimeouts: totals.timeouts,
       totalRetries: totals.retries,
       serverCount: totals.servers.size,
       toolCount: allMetrics.length,
-      successRate: totals.executions > 0 ? (totals.successes / totals.executions) * 100 : 0
+      successRate:
+        totals.executions > 0
+          ? (totals.successes / totals.executions) * 100
+          : 0,
     };
   }
 
@@ -236,15 +249,25 @@ export class ExecutionMetricsCollector {
     return this.snapshots.slice(-limit);
   }
 
-  getSnapshotsForServer(serverId: string, limit: number = 100): MetricSnapshot[] {
+  getSnapshotsForServer(
+    serverId: string,
+    limit: number = 100,
+  ): MetricSnapshot[] {
     return this.snapshots
-      .filter(snapshot => snapshot.serverId === serverId)
+      .filter((snapshot) => snapshot.serverId === serverId)
       .slice(-limit);
   }
 
-  getSnapshotsForTool(serverId: string, toolName: string, limit: number = 100): MetricSnapshot[] {
+  getSnapshotsForTool(
+    serverId: string,
+    toolName: string,
+    limit: number = 100,
+  ): MetricSnapshot[] {
     return this.snapshots
-      .filter(snapshot => snapshot.serverId === serverId && snapshot.toolName === toolName)
+      .filter(
+        (snapshot) =>
+          snapshot.serverId === serverId && snapshot.toolName === toolName,
+      )
       .slice(-limit);
   }
 
@@ -254,20 +277,24 @@ export class ExecutionMetricsCollector {
   }
 
   resetServer(serverId: string): void {
-    const keysToDelete = Array.from(this.metrics.keys())
-      .filter(key => key.startsWith(`${serverId}:`));
-    
-    keysToDelete.forEach(key => this.metrics.delete(key));
-    
-    this.snapshots = this.snapshots.filter(snapshot => snapshot.serverId !== serverId);
+    const keysToDelete = Array.from(this.metrics.keys()).filter((key) =>
+      key.startsWith(`${serverId}:`),
+    );
+
+    keysToDelete.forEach((key) => this.metrics.delete(key));
+
+    this.snapshots = this.snapshots.filter(
+      (snapshot) => snapshot.serverId !== serverId,
+    );
   }
 
   resetTool(serverId: string, toolName: string): void {
     const key = `${serverId}:${toolName}`;
     this.metrics.delete(key);
-    
+
     this.snapshots = this.snapshots.filter(
-      snapshot => !(snapshot.serverId === serverId && snapshot.toolName === toolName)
+      (snapshot) =>
+        !(snapshot.serverId === serverId && snapshot.toolName === toolName),
     );
   }
 
@@ -279,7 +306,7 @@ export class ExecutionMetricsCollector {
     return {
       metrics: this.getAllMetrics(),
       snapshots: [...this.snapshots],
-      exportedAt: new Date()
+      exportedAt: new Date(),
     };
   }
 }

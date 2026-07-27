@@ -1,12 +1,12 @@
 export enum AgentStatus {
   IDLE = "idle",
-  RUNNING = "running", 
+  RUNNING = "running",
   BUSY = "busy",
   PAUSED = "paused",
   STOPPED = "stopped",
   ERROR = "error",
   INITIALIZING = "initializing",
-  SHUTTING_DOWN = "shutting_down"
+  SHUTTING_DOWN = "shutting_down",
 }
 
 export enum AgentLifecycleState {
@@ -17,24 +17,24 @@ export enum AgentLifecycleState {
   PAUSED = "paused",
   STOPPING = "stopping",
   STOPPED = "stopped",
-  FAILED = "failed"
+  FAILED = "failed",
 }
 
 export enum AgentType {
   SYSTEM = "system",
-  WORKFLOW = "workflow", 
+  WORKFLOW = "workflow",
   TASK = "task",
   SERVICE = "service",
   AUTONOMOUS = "autonomous",
   REACTIVE = "reactive",
-  COLLABORATIVE = "collaborative"
+  COLLABORATIVE = "collaborative",
 }
 
 export enum AgentPriority {
   LOW = "low",
-  NORMAL = "normal", 
+  NORMAL = "normal",
   HIGH = "high",
-  CRITICAL = "critical"
+  CRITICAL = "critical",
 }
 
 export interface AgentExecutionResult {
@@ -68,7 +68,7 @@ export enum ExecutionStatus {
   COMPLETED = "completed",
   CANCELLED = "cancelled",
   FAILED = "failed",
-  TIMEOUT = "timeout"
+  TIMEOUT = "timeout",
 }
 
 export interface ExecutionContext {

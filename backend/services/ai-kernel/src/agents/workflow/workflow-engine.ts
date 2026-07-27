@@ -7,13 +7,13 @@ import {
   WorkflowStep,
   StepExecution,
   CompensationAction,
-  WorkflowStepType
+  WorkflowStepType,
 } from "./workflow.types";
 import {
   IWorkflowEngine,
   IWorkflowExecutor,
   IWorkflowRegistry,
-  WorkflowValidationResult
+  WorkflowValidationResult,
 } from "./workflow.interface";
 import { WorkflowRunner } from "./workflow-runner";
 import {
@@ -22,19 +22,22 @@ import {
   WorkflowExecutionException,
   WorkflowStepException,
   WorkflowTimeoutException,
-  WorkflowCancelledException
+  WorkflowCancelledException,
 } from "./workflow.exceptions";
 
 export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
   private readonly executions: Map<string, WorkflowExecution> = new Map();
-  private readonly stepExecutions: Map<string, Map<string, StepExecution>> = new Map();
+  private readonly stepExecutions: Map<string, Map<string, StepExecution>> =
+    new Map();
   private readonly runner: WorkflowRunner;
 
   constructor(private readonly registry: IWorkflowRegistry) {
     this.runner = new WorkflowRunner(this);
   }
 
-  public async validate(workflow: WorkflowDefinition): Promise<WorkflowValidationResult> {
+  public async validate(
+    workflow: WorkflowDefinition,
+  ): Promise<WorkflowValidationResult> {
     const errors: string[] = [];
     const warnings: string[] = [];
 
@@ -63,23 +66,29 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
 
       // Validate execution policies
       this.validatePolicies(workflow, errors, warnings);
-
     } catch (error) {
-      errors.push(`Validation error: ${error instanceof Error ? error.message : "Unknown error"}`);
+      errors.push(
+        `Validation error: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
 
     return {
       valid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
-  public async compile(workflow: WorkflowDefinition): Promise<WorkflowDefinition> {
+  public async compile(
+    workflow: WorkflowDefinition,
+  ): Promise<WorkflowDefinition> {
     // Validate workflow first
     const validation = await this.validate(workflow);
     if (!validation.valid) {
-      throw new WorkflowValidationException(workflow.workflowId, validation.errors);
+      throw new WorkflowValidationException(
+        workflow.workflowId,
+        validation.errors,
+      );
     }
 
     // Create compiled version with optimizations
@@ -90,8 +99,8 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
         ...workflow.metadata,
         compiled: true,
         compiledAt: new Date(),
-        stepCount: this.countTotalSteps(workflow.steps)
-      }
+        stepCount: this.countTotalSteps(workflow.steps),
+      },
     };
 
     return compiled;
@@ -100,7 +109,7 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
   public async execute(
     workflowId: string,
     input: unknown,
-    context: WorkflowExecutionContext
+    context: WorkflowExecutionContext,
   ): Promise<WorkflowExecution> {
     const workflow = await this.registry.find(workflowId);
     if (!workflow) {
@@ -126,8 +135,8 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
         workflowName: workflow.name,
         workflowVersion: workflow.version,
         executionMode: workflow.executionMode,
-        ...workflow.failurePolicy
-      }
+        ...workflow.failurePolicy,
+      },
     };
 
     // Store execution
@@ -160,15 +169,17 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
       }
 
       execution.completedAt = new Date();
-      execution.duration = execution.completedAt.getTime() - execution.startedAt.getTime();
+      execution.duration =
+        execution.completedAt.getTime() - execution.startedAt.getTime();
 
       return execution;
-
     } catch (error) {
       execution.state = WorkflowState.FAILED;
-      execution.error = error instanceof Error ? error.message : "Unknown execution error";
+      execution.error =
+        error instanceof Error ? error.message : "Unknown execution error";
       execution.completedAt = new Date();
-      execution.duration = execution.completedAt.getTime() - execution.startedAt.getTime();
+      execution.duration =
+        execution.completedAt.getTime() - execution.startedAt.getTime();
 
       // Run compensation if required
       if (workflow.failurePolicy.compensationRequired) {
@@ -179,7 +190,7 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
         executionId,
         workflowId,
         execution.currentStepId,
-        error instanceof Error ? error.message : "Unknown execution error"
+        error instanceof Error ? error.message : "Unknown execution error",
       );
     }
   }
@@ -190,13 +201,17 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
       return false;
     }
 
-    if (execution.state !== WorkflowState.RUNNING && execution.state !== WorkflowState.PAUSED) {
+    if (
+      execution.state !== WorkflowState.RUNNING &&
+      execution.state !== WorkflowState.PAUSED
+    ) {
       return false; // Already completed
     }
 
     execution.state = WorkflowState.CANCELLED;
     execution.completedAt = new Date();
-    execution.duration = execution.completedAt.getTime() - execution.startedAt.getTime();
+    execution.duration =
+      execution.completedAt.getTime() - execution.startedAt.getTime();
 
     return true;
   }
@@ -227,14 +242,18 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
       }
     } catch (error) {
       execution.state = WorkflowState.FAILED;
-      execution.error = error instanceof Error ? error.message : "Resume failed";
+      execution.error =
+        error instanceof Error ? error.message : "Resume failed";
     }
 
     return true;
   }
 
   // IWorkflowExecutor implementation
-  public async executeStep(stepId: string, execution: WorkflowExecution): Promise<StepExecution> {
+  public async executeStep(
+    stepId: string,
+    execution: WorkflowExecution,
+  ): Promise<StepExecution> {
     const workflow = await this.registry.find(execution.workflowId);
     if (!workflow) {
       throw new WorkflowNotFoundException(execution.workflowId);
@@ -242,7 +261,12 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
 
     const step = this.findStep(stepId, workflow.steps);
     if (!step) {
-      throw new WorkflowStepException(stepId, execution.executionId, "unknown", "Step not found");
+      throw new WorkflowStepException(
+        stepId,
+        execution.executionId,
+        "unknown",
+        "Step not found",
+      );
     }
 
     const stepExecution: StepExecution = {
@@ -250,12 +274,13 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
       executionId: execution.executionId,
       state: WorkflowState.RUNNING,
       attempts: 1,
-      maxAttempts: step.retryPolicy?.maxAttempts || workflow.retryPolicy.maxAttempts,
+      maxAttempts:
+        step.retryPolicy?.maxAttempts || workflow.retryPolicy.maxAttempts,
       startedAt: new Date(),
       metadata: {
         stepType: step.type,
-        stepName: step.name
-      }
+        stepName: step.name,
+      },
     };
 
     try {
@@ -265,12 +290,16 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
       // Execute based on step type
       switch (step.type) {
         case WorkflowStepType.TASK:
-          stepExecution.output = await this.executeTaskStep(step, stepExecution, execution);
+          stepExecution.output = await this.executeTaskStep(
+            step,
+            stepExecution,
+            execution,
+          );
           break;
 
         case WorkflowStepType.SEQUENCE:
           if (step.steps) {
-            const stepIds = step.steps.map(s => s.stepId);
+            const stepIds = step.steps.map((s) => s.stepId);
             await this.runner.runSequential(stepIds, execution);
           }
           stepExecution.output = { sequenceCompleted: true };
@@ -278,7 +307,7 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
 
         case WorkflowStepType.PARALLEL:
           if (step.steps) {
-            const stepIds = step.steps.map(s => s.stepId);
+            const stepIds = step.steps.map((s) => s.stepId);
             await this.runner.runParallel(stepIds, execution);
           }
           stepExecution.output = { parallelCompleted: true };
@@ -286,16 +315,25 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
 
         case WorkflowStepType.CONDITIONAL:
           if (step.condition && step.steps) {
-            const thenSteps = step.steps.filter(s => s.metadata.branch === "then").map(s => s.stepId);
-            const elseSteps = step.steps.filter(s => s.metadata.branch === "else").map(s => s.stepId);
-            await this.runner.runConditional(step.condition.expression, thenSteps, elseSteps, execution);
+            const thenSteps = step.steps
+              .filter((s) => s.metadata.branch === "then")
+              .map((s) => s.stepId);
+            const elseSteps = step.steps
+              .filter((s) => s.metadata.branch === "else")
+              .map((s) => s.stepId);
+            await this.runner.runConditional(
+              step.condition.expression,
+              thenSteps,
+              elseSteps,
+              execution,
+            );
           }
           stepExecution.output = { conditionalCompleted: true };
           break;
 
         case WorkflowStepType.LOOP:
           if (step.loop && step.steps) {
-            const stepIds = step.steps.map(s => s.stepId);
+            const stepIds = step.steps.map((s) => s.stepId);
             await this.runner.runLoop(step.loop, stepIds, execution);
           }
           stepExecution.output = { loopCompleted: true };
@@ -307,13 +345,15 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
 
       stepExecution.state = WorkflowState.COMPLETED;
       stepExecution.completedAt = new Date();
-      stepExecution.duration = stepExecution.completedAt.getTime() - stepExecution.startedAt.getTime();
-
+      stepExecution.duration =
+        stepExecution.completedAt.getTime() - stepExecution.startedAt.getTime();
     } catch (error) {
       stepExecution.state = WorkflowState.FAILED;
-      stepExecution.error = error instanceof Error ? error.message : "Unknown step error";
+      stepExecution.error =
+        error instanceof Error ? error.message : "Unknown step error";
       stepExecution.completedAt = new Date();
-      stepExecution.duration = stepExecution.completedAt.getTime() - stepExecution.startedAt.getTime();
+      stepExecution.duration =
+        stepExecution.completedAt.getTime() - stepExecution.startedAt.getTime();
     }
 
     // Store step execution
@@ -323,12 +363,15 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
     return stepExecution;
   }
 
-  public async compensateStep(stepId: string, execution: WorkflowExecution): Promise<CompensationAction> {
+  public async compensateStep(
+    stepId: string,
+    execution: WorkflowExecution,
+  ): Promise<CompensationAction> {
     const action: CompensationAction = {
       stepId,
       action: "rollback",
       parameters: {},
-      executed: false
+      executed: false,
     };
 
     try {
@@ -337,13 +380,17 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
       action.executed = true;
       action.executedAt = new Date();
     } catch (error) {
-      action.error = error instanceof Error ? error.message : "Compensation failed";
+      action.error =
+        error instanceof Error ? error.message : "Compensation failed";
     }
 
     return action;
   }
 
-  public async evaluateCondition(condition: string, context: WorkflowExecutionContext): Promise<boolean> {
+  public async evaluateCondition(
+    condition: string,
+    context: WorkflowExecutionContext,
+  ): Promise<boolean> {
     // Simple expression evaluation - in a real implementation, this would use a proper expression engine
     try {
       // For demo purposes, evaluate simple variable-based conditions
@@ -360,22 +407,29 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
     }
   }
 
-  public async getStepInput(stepId: string, execution: WorkflowExecution): Promise<unknown> {
+  public async getStepInput(
+    stepId: string,
+    execution: WorkflowExecution,
+  ): Promise<unknown> {
     // Get input from previous steps or workflow input
     if (execution.completedSteps.length === 0) {
       return execution.input;
     }
 
     // For now, return the output of the last completed step
-    const lastStepId = execution.completedSteps[execution.completedSteps.length - 1];
+    const lastStepId =
+      execution.completedSteps[execution.completedSteps.length - 1];
     const executionSteps = this.stepExecutions.get(execution.executionId);
     const lastStepExecution = executionSteps?.get(lastStepId);
 
     return lastStepExecution?.output || execution.input;
   }
 
-  private async executeWorkflowSteps(workflow: WorkflowDefinition, execution: WorkflowExecution): Promise<void> {
-    const rootStepIds = workflow.steps.map(step => step.stepId);
+  private async executeWorkflowSteps(
+    workflow: WorkflowDefinition,
+    execution: WorkflowExecution,
+  ): Promise<void> {
+    const rootStepIds = workflow.steps.map((step) => step.stepId);
 
     switch (workflow.executionMode) {
       case "sequential":
@@ -394,14 +448,18 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
     }
   }
 
-  private async executeTaskStep(step: WorkflowStep, stepExecution: StepExecution, execution: WorkflowExecution): Promise<unknown> {
+  private async executeTaskStep(
+    step: WorkflowStep,
+    stepExecution: StepExecution,
+    execution: WorkflowExecution,
+  ): Promise<unknown> {
     // Placeholder task execution - in a real implementation, this would delegate to agents
     return {
       taskId: step.stepId,
       agentId: step.agentId,
       taskName: step.taskName,
       executedAt: new Date(),
-      input: stepExecution.input
+      input: stepExecution.input,
     };
   }
 
@@ -409,7 +467,7 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
     step: WorkflowStep,
     stepIds: Set<string>,
     errors: string[],
-    warnings: string[]
+    warnings: string[],
   ): void {
     if (!step.stepId) {
       errors.push("Step ID is required");
@@ -439,20 +497,30 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
     }
   }
 
-  private validateStepConnectivity(steps: WorkflowStep[], errors: string[], warnings: string[]): void {
+  private validateStepConnectivity(
+    steps: WorkflowStep[],
+    errors: string[],
+    warnings: string[],
+  ): void {
     // Check that all dependency references are valid
     const allStepIds = this.collectAllStepIds(steps);
 
     for (const step of steps) {
       for (const depId of step.dependsOn) {
         if (!allStepIds.has(depId)) {
-          errors.push(`Step ${step.stepId} depends on non-existent step: ${depId}`);
+          errors.push(
+            `Step ${step.stepId} depends on non-existent step: ${depId}`,
+          );
         }
       }
     }
   }
 
-  private validatePolicies(workflow: WorkflowDefinition, errors: string[], warnings: string[]): void {
+  private validatePolicies(
+    workflow: WorkflowDefinition,
+    errors: string[],
+    warnings: string[],
+  ): void {
     // Validate retry policy
     if (workflow.retryPolicy.maxAttempts < 1) {
       errors.push("Retry policy maxAttempts must be at least 1");
@@ -475,14 +543,17 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
       stepIds.add(step.stepId);
       if (step.steps) {
         const nestedIds = this.collectAllStepIds(step.steps);
-        nestedIds.forEach(id => stepIds.add(id));
+        nestedIds.forEach((id) => stepIds.add(id));
       }
     }
 
     return stepIds;
   }
 
-  private findStep(stepId: string, steps: WorkflowStep[]): WorkflowStep | undefined {
+  private findStep(
+    stepId: string,
+    steps: WorkflowStep[],
+  ): WorkflowStep | undefined {
     for (const step of steps) {
       if (step.stepId === stepId) {
         return step;
@@ -505,7 +576,10 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
     return count;
   }
 
-  private extractWorkflowOutput(workflow: WorkflowDefinition, execution: WorkflowExecution): unknown {
+  private extractWorkflowOutput(
+    workflow: WorkflowDefinition,
+    execution: WorkflowExecution,
+  ): unknown {
     // Extract output from the last step or combine outputs
     const executionSteps = this.stepExecutions.get(execution.executionId);
     if (!executionSteps || executionSteps.size === 0) {
@@ -523,8 +597,10 @@ export class WorkflowEngine implements IWorkflowEngine, IWorkflowExecutor {
   }
 
   private getNestedValue(obj: Record<string, unknown>, path: string): unknown {
-    return path.split('.').reduce((current, key) => {
-      return current && typeof current === 'object' ? (current as any)[key] : undefined;
+    return path.split(".").reduce((current, key) => {
+      return current && typeof current === "object"
+        ? (current as any)[key]
+        : undefined;
     }, obj);
   }
 }

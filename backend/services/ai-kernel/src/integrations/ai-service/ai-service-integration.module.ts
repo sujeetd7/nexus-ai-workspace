@@ -22,8 +22,7 @@ export class AIServiceIntegrationModule implements IKernelModule {
     this.client = new AIServiceClient({
       url: baseUrl,
       apiKey: process.env.AI_SERVICE_KEY,
-      timeoutMs:
-        Number(process.env.AI_SERVICE_TIMEOUT) || this.opts?.timeoutMs,
+      timeoutMs: Number(process.env.AI_SERVICE_TIMEOUT) || this.opts?.timeoutMs,
     });
 
     // Test health to verify connection

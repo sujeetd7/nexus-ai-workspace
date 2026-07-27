@@ -89,14 +89,17 @@ export class AIService {
     });
   }
 
-  async chat(messages: Array<{role: "system" | "user" | "assistant"; content: string}>, options?: {
-    provider?: string;
-    model?: string;
-    temperature?: number;
-    maxTokens?: number;
-    workspaceId?: string;
-    userId?: string;
-  }) {
+  async chat(
+    messages: Array<{ role: "system" | "user" | "assistant"; content: string }>,
+    options?: {
+      provider?: string;
+      model?: string;
+      temperature?: number;
+      maxTokens?: number;
+      workspaceId?: string;
+      userId?: string;
+    },
+  ) {
     return this.completionService.chat({
       messages,
       provider: options?.provider,
@@ -108,14 +111,17 @@ export class AIService {
     });
   }
 
-  async *streamChat(messages: Array<{role: "system" | "user" | "assistant"; content: string}>, options?: {
-    provider?: string;
-    model?: string;
-    temperature?: number;
-    maxTokens?: number;
-    workspaceId?: string;
-    userId?: string;
-  }): AsyncGenerator<StreamEventDto> {
+  async *streamChat(
+    messages: Array<{ role: "system" | "user" | "assistant"; content: string }>,
+    options?: {
+      provider?: string;
+      model?: string;
+      temperature?: number;
+      maxTokens?: number;
+      workspaceId?: string;
+      userId?: string;
+    },
+  ): AsyncGenerator<StreamEventDto> {
     yield* this.streamingService.streamChat({
       messages,
       provider: options?.provider,
@@ -127,12 +133,15 @@ export class AIService {
     });
   }
 
-  async embeddings(input: string | string[], options?: {
-    provider?: string;
-    model?: string;
-    workspaceId?: string;
-    userId?: string;
-  }) {
+  async embeddings(
+    input: string | string[],
+    options?: {
+      provider?: string;
+      model?: string;
+      workspaceId?: string;
+      userId?: string;
+    },
+  ) {
     return this.llmService.embeddings({
       input,
       provider: options?.provider,

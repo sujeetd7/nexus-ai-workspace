@@ -12,7 +12,9 @@ async function testRefactoring() {
     apiKey: undefined,
     timeoutMs: 30000,
   });
-  console.log("✅ AIServiceIntegrationModule created - delegates to AI Service");
+  console.log(
+    "✅ AIServiceIntegrationModule created - delegates to AI Service",
+  );
 
   // Test Provider Module - should only delegate, no direct providers
   const providerModule = new ProviderModule();

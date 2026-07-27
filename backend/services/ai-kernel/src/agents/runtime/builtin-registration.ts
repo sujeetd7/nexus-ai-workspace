@@ -1,8 +1,8 @@
-import { 
-  BuiltinAgentFactory, 
-  BuiltinAgentRegistry, 
+import {
+  BuiltinAgentFactory,
+  BuiltinAgentRegistry,
   BuiltinAgentType,
-  BuiltinAgentFactoryComponents
+  BuiltinAgentFactoryComponents,
 } from "../builtin/factory";
 import { IAgentRegistry } from "../interfaces";
 
@@ -17,9 +17,12 @@ export interface BuiltinRegistrationResult {
 export class BuiltinRegistrationException extends Error {
   public readonly name = "BuiltinRegistrationException";
   public readonly failedAgents: BuiltinAgentType[];
-  
+
   constructor(failedAgents: BuiltinAgentType[], message?: string) {
-    super(message || `Failed to register builtin agents: ${failedAgents.join(', ')}`);
+    super(
+      message ||
+        `Failed to register builtin agents: ${failedAgents.join(", ")}`,
+    );
     this.failedAgents = failedAgents;
     Object.setPrototypeOf(this, BuiltinRegistrationException.prototype);
   }
@@ -34,9 +37,14 @@ export class BuiltinRegistrationManager {
     this.agentRegistry = agentRegistry;
   }
 
-  public async registerAllBuiltinAgents(components: BuiltinAgentFactoryComponents): Promise<BuiltinRegistrationResult> {
+  public async registerAllBuiltinAgents(
+    components: BuiltinAgentFactoryComponents,
+  ): Promise<BuiltinRegistrationResult> {
     const registeredAgents: string[] = [];
-    const failedRegistrations: { agentType: BuiltinAgentType; error: string }[] = [];
+    const failedRegistrations: {
+      agentType: BuiltinAgentType;
+      error: string;
+    }[] = [];
 
     try {
       // Create factory and registry
@@ -49,7 +57,10 @@ export class BuiltinRegistrationManager {
           await this.registerBuiltinAgent(agentType, components);
           registeredAgents.push(agentType);
         } catch (error) {
-          const errorMsg = error instanceof Error ? error.message : 'Unknown registration error';
+          const errorMsg =
+            error instanceof Error
+              ? error.message
+              : "Unknown registration error";
           failedRegistrations.push({ agentType, error: errorMsg });
         }
       }
@@ -59,18 +70,25 @@ export class BuiltinRegistrationManager {
         registeredAgents,
         failedRegistrations,
         factory: this.factory,
-        registry: this.registry
+        registry: this.registry,
       };
-
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-      throw new BuiltinRegistrationException(Object.values(BuiltinAgentType), errorMsg);
+      const errorMsg = error instanceof Error ? error.message : "Unknown error";
+      throw new BuiltinRegistrationException(
+        Object.values(BuiltinAgentType),
+        errorMsg,
+      );
     }
   }
 
-  private async registerBuiltinAgent(agentType: BuiltinAgentType, components: BuiltinAgentFactoryComponents): Promise<void> {
+  private async registerBuiltinAgent(
+    agentType: BuiltinAgentType,
+    components: BuiltinAgentFactoryComponents,
+  ): Promise<void> {
     if (!this.factory || !this.registry) {
-      throw new Error("Factory and registry must be initialized before registering agents");
+      throw new Error(
+        "Factory and registry must be initialized before registering agents",
+      );
     }
 
     // Check if required components are available for this agent type
@@ -78,10 +96,10 @@ export class BuiltinRegistrationManager {
 
     // Register in builtin registry
     const instance = this.registry.registerAgent(agentType);
-    
+
     // Initialize the agent
     await instance.agent.initialize();
-    
+
     // Register in main agent registry
     await this.agentRegistry.register(instance.agent);
 
@@ -89,7 +107,10 @@ export class BuiltinRegistrationManager {
     this.registry.updateAgentStatus(instance.id, instance.agent.status);
   }
 
-  private validateComponentsForAgentType(agentType: BuiltinAgentType, components: BuiltinAgentFactoryComponents): void {
+  private validateComponentsForAgentType(
+    agentType: BuiltinAgentType,
+    components: BuiltinAgentFactoryComponents,
+  ): void {
     switch (agentType) {
       case BuiltinAgentType.MEMORY:
         if (!components.memoryComponents) {
@@ -152,15 +173,15 @@ export class BuiltinRegistrationManager {
     }
 
     const allAgents = this.registry.listAllAgents();
-    
+
     for (const instance of allAgents) {
       try {
         // Shutdown agent
         await instance.agent.shutdown();
-        
+
         // Unregister from main registry
         await this.agentRegistry.remove(instance.agent.metadata.id);
-        
+
         // Unregister from builtin registry
         this.registry.unregisterAgent(instance.id);
       } catch (error) {

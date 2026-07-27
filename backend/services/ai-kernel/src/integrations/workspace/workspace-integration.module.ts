@@ -30,7 +30,8 @@ export class WorkspaceIntegrationModule implements IKernelModule {
     });
 
     const healthy = await this.client.health();
-    if (!healthy) console.warn("WorkspaceService appears unhealthy during init");
+    if (!healthy)
+      console.warn("WorkspaceService appears unhealthy during init");
   }
 
   public async dispose(): Promise<void> {}

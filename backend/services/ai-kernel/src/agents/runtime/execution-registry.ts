@@ -27,13 +27,19 @@ export class ExecutionRegistry implements IExecutionRegistry {
 
   public async register(executionResult: ExecutionResult): Promise<void> {
     this.executions.set(executionResult.executionId, executionResult);
-    
-    if (executionResult.status === ExecutionStatus.RUNNING || executionResult.status === ExecutionStatus.PENDING) {
+
+    if (
+      executionResult.status === ExecutionStatus.RUNNING ||
+      executionResult.status === ExecutionStatus.PENDING
+    ) {
       this.activeExecutions.add(executionResult.executionId);
     }
   }
 
-  public async update(executionId: string, executionResult: ExecutionResult): Promise<void> {
+  public async update(
+    executionId: string,
+    executionResult: ExecutionResult,
+  ): Promise<void> {
     if (!this.executions.has(executionId)) {
       throw new ExecutionNotFoundException(executionId);
     }
@@ -41,7 +47,10 @@ export class ExecutionRegistry implements IExecutionRegistry {
     this.executions.set(executionId, executionResult);
 
     // Update active tracking
-    if (executionResult.status === ExecutionStatus.RUNNING || executionResult.status === ExecutionStatus.PENDING) {
+    if (
+      executionResult.status === ExecutionStatus.RUNNING ||
+      executionResult.status === ExecutionStatus.PENDING
+    ) {
       this.activeExecutions.add(executionId);
     } else {
       this.activeExecutions.delete(executionId);
@@ -56,15 +65,17 @@ export class ExecutionRegistry implements IExecutionRegistry {
     return Array.from(this.executions.values());
   }
 
-  public async listByStatus(status: ExecutionStatus): Promise<ExecutionResult[]> {
+  public async listByStatus(
+    status: ExecutionStatus,
+  ): Promise<ExecutionResult[]> {
     return Array.from(this.executions.values()).filter(
-      execution => execution.status === status
+      (execution) => execution.status === status,
     );
   }
 
   public async listByAgent(agentId: string): Promise<ExecutionResult[]> {
     return Array.from(this.executions.values()).filter(
-      execution => execution.agentId === agentId
+      (execution) => execution.agentId === agentId,
     );
   }
 
@@ -79,8 +90,10 @@ export class ExecutionRegistry implements IExecutionRegistry {
 
     for (const [executionId, execution] of this.executions.entries()) {
       // Only cleanup non-active executions that are older than maxAge
-      if (!this.activeExecutions.has(executionId) && 
-          execution.finishedAt.getTime() < cutoffTime) {
+      if (
+        !this.activeExecutions.has(executionId) &&
+        execution.finishedAt.getTime() < cutoffTime
+      ) {
         this.executions.delete(executionId);
         removedCount++;
       }
@@ -102,14 +115,20 @@ export class ExecutionRegistry implements IExecutionRegistry {
     timeout: number;
   }> {
     const executions = Array.from(this.executions.values());
-    
+
     return {
       total: executions.length,
       active: this.activeExecutions.size,
-      completed: executions.filter(e => e.status === ExecutionStatus.COMPLETED).length,
-      failed: executions.filter(e => e.status === ExecutionStatus.FAILED).length,
-      cancelled: executions.filter(e => e.status === ExecutionStatus.CANCELLED).length,
-      timeout: executions.filter(e => e.status === ExecutionStatus.TIMEOUT).length
+      completed: executions.filter(
+        (e) => e.status === ExecutionStatus.COMPLETED,
+      ).length,
+      failed: executions.filter((e) => e.status === ExecutionStatus.FAILED)
+        .length,
+      cancelled: executions.filter(
+        (e) => e.status === ExecutionStatus.CANCELLED,
+      ).length,
+      timeout: executions.filter((e) => e.status === ExecutionStatus.TIMEOUT)
+        .length,
     };
   }
 

@@ -5,7 +5,7 @@ export enum MessageType {
   RESPONSE = "response",
   NOTIFICATION = "notification",
   BROADCAST = "broadcast",
-  ERROR = "error"
+  ERROR = "error",
 }
 
 export enum MessageStatus {
@@ -13,7 +13,7 @@ export enum MessageStatus {
   SENT = "sent",
   DELIVERED = "delivered",
   PROCESSED = "processed",
-  FAILED = "failed"
+  FAILED = "failed",
 }
 
 export interface AgentMessage<T = unknown> {
@@ -102,10 +102,18 @@ export class AgentMessageBuilder<T = unknown> {
 
   public build(): AgentMessage<T> {
     const requiredFields = [
-      'messageId', 'senderAgentId', 'workspaceId', 'requestId', 
-      'traceId', 'timestamp', 'priority', 'type', 'status', 'payload'
+      "messageId",
+      "senderAgentId",
+      "workspaceId",
+      "requestId",
+      "traceId",
+      "timestamp",
+      "priority",
+      "type",
+      "status",
+      "payload",
     ];
-    
+
     for (const field of requiredFields) {
       if (this.message[field as keyof AgentMessage<T>] === undefined) {
         throw new Error(`Message field '${field}' is required`);
@@ -125,7 +133,7 @@ export class AgentMessageBuilder<T = unknown> {
       type: this.message.type!,
       status: this.message.status!,
       payload: this.message.payload!,
-      metadata: this.message.metadata || {}
+      metadata: this.message.metadata || {},
     };
   }
 

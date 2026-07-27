@@ -1,17 +1,27 @@
 import { EventEmitter } from "events";
-import { MCPTransport, MCPTransportConfig, MCPTransportMessage } from "./transport.interface";
+import {
+  MCPTransport,
+  MCPTransportConfig,
+  MCPTransportMessage,
+} from "./transport.interface";
 import { MCPServerHealth } from "../types";
 
-export abstract class BaseTransport extends EventEmitter implements MCPTransport {
+export abstract class BaseTransport
+  extends EventEmitter
+  implements MCPTransport
+{
   public readonly id: string;
   public readonly type: string;
   protected _connected: boolean = false;
   protected requestId: number = 0;
-  protected pendingRequests = new Map<string, {
-    resolve: (value: any) => void;
-    reject: (error: Error) => void;
-    timeout: NodeJS.Timeout;
-  }>();
+  protected pendingRequests = new Map<
+    string,
+    {
+      resolve: (value: any) => void;
+      reject: (error: Error) => void;
+      timeout: NodeJS.Timeout;
+    }
+  >();
 
   constructor(id: string, type: string) {
     super();
@@ -34,7 +44,9 @@ export abstract class BaseTransport extends EventEmitter implements MCPTransport
       clearTimeout(pending.timeout);
 
       if (message.error) {
-        pending.reject(new Error(`${message.error.code}: ${message.error.message}`));
+        pending.reject(
+          new Error(`${message.error.code}: ${message.error.message}`),
+        );
       } else {
         pending.resolve(message.result);
       }
@@ -49,7 +61,7 @@ export abstract class BaseTransport extends EventEmitter implements MCPTransport
 
   protected handleDisconnect(): void {
     this._connected = false;
-    
+
     // Reject all pending requests
     for (const [id, pending] of this.pendingRequests) {
       clearTimeout(pending.timeout);
@@ -65,7 +77,11 @@ export abstract class BaseTransport extends EventEmitter implements MCPTransport
     this.emit("connect");
   }
 
-  async request(method: string, params?: any, timeout: number = 30000): Promise<any> {
+  async request(
+    method: string,
+    params?: any,
+    timeout: number = 30000,
+  ): Promise<any> {
     if (!this._connected) {
       throw new Error("Transport not connected");
     }
@@ -75,7 +91,7 @@ export abstract class BaseTransport extends EventEmitter implements MCPTransport
       id,
       method,
       params,
-      jsonrpc: "2.0"
+      jsonrpc: "2.0",
     };
 
     return new Promise((resolve, reject) => {
@@ -87,7 +103,7 @@ export abstract class BaseTransport extends EventEmitter implements MCPTransport
       this.pendingRequests.set(id, {
         resolve,
         reject,
-        timeout: timeoutHandle
+        timeout: timeoutHandle,
       });
 
       this.send(message).catch(reject);
@@ -101,13 +117,13 @@ export abstract class BaseTransport extends EventEmitter implements MCPTransport
       return {
         status: "healthy",
         latency: Date.now() - startTime,
-        lastCheck: new Date()
+        lastCheck: new Date(),
       };
     } catch (error) {
       return {
         status: "unhealthy",
         lastCheck: new Date(),
-        error: error instanceof Error ? error.message : "Unknown error"
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
