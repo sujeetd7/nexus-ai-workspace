@@ -13,7 +13,6 @@ export function errorMiddleware(
       provider: err.provider,
       code: err.code,
       message: err.message,
-      details: err.details,
     });
   }
 

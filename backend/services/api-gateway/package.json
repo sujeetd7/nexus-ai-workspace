@@ -1,31 +1,16 @@
 {
-  "name": "api-gateway",
+  "name": "@nexus/api-gateway-retired",
   "version": "1.0.0",
-  "description": "API Gateway for Nexus AI Workspace",
+  "private": true,
+  "description": "RETIRED — non-production duplicate Express gateway. Canonical: @nexus/api-gateway at backend/gateway/api-gateway.",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js"
+    "dev": "node -e \"console.error('RETIRED: use @nexus/api-gateway (backend/gateway/api-gateway)'); process.exit(1)\"",
+    "build": "node -e \"console.error('RETIRED: use @nexus/api-gateway (backend/gateway/api-gateway)'); process.exit(1)\"",
+    "start": "node -e \"console.error('RETIRED: use @nexus/api-gateway (backend/gateway/api-gateway)'); process.exit(1)\"",
+    "test": "node -e \"console.error('RETIRED: use @nexus/api-gateway (backend/gateway/api-gateway)'); process.exit(1)\""
   },
-  "keywords": [],
+  "keywords": ["retired"],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "compression": "^1.8.1",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "helmet": "^8.2.0",
-    "uuid": "^14.0.1"
-  },
-  "devDependencies": {
-    "@types/compression": "^1.7.8",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/node": "^26.0.1",
-    "@types/uuid": "^14.0.1",
-    "tsx": "^4.22.4",
-    "typescript": "^5.4.0"
-  }
+  "license": "ISC"
 }

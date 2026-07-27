@@ -2,7 +2,13 @@
   "name": "user-service",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/server.js",
+  "exports": {
+    "./openapi": {
+      "types": "./dist/openapi/index.d.ts",
+      "default": "./dist/openapi/index.js"
+    }
+  },
   "prisma": {
     "schema": "./prisma/schema.prisma"
   },
@@ -10,6 +16,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev"
   },
@@ -17,6 +24,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nexus/openapi": "workspace:*",
     "@prisma/client": "5.22.0",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",

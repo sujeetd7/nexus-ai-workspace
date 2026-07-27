@@ -7,5 +7,9 @@ export const env = {
 
   DATABASE_URL: process.env.DATABASE_URL || "",
 
-  JWT_SECRET: process.env.JWT_SECRET || "development-secret",
+  /**
+   * Same access-token secret as Auth Service / Gateway (JWT_ACCESS_SECRET).
+   */
+  JWT_ACCESS_SECRET:
+    process.env.JWT_ACCESS_SECRET || "development-secret",
 };

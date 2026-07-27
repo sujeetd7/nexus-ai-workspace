@@ -1,13 +1,12 @@
-export async function loggerMiddleware(req: any, reply: any) {
-  const start = Date.now();
-
-  reply.raw.on("finish", () => {
-    console.log({
+export async function loggerMiddleware(req: any, reply: any): Promise<void> {
+  req.log.info(
+    {
       requestId: req.requestId,
+      correlationId: req.correlationId,
       method: req.method,
       url: req.url,
       status: reply.statusCode,
-      duration: `${Date.now() - start}ms`,
-    });
-  });
+    },
+    "request completed",
+  );
 }

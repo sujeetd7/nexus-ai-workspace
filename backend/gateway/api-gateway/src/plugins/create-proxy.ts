@@ -1,59 +1,201 @@
 import fastifyProxy from "@fastify/http-proxy";
 import fp from "fastify-plugin";
 import { env } from "../config/env";
+import {
+  classifyUpstreamFailure,
+  gatewayError,
+} from "../errors/gateway-error";
+import { authenticate } from "../middleware/authenticate.middleware";
+import {
+  injectVerifiedIdentity,
+  stripClientIdentityHeaders,
+} from "../middleware/identity.middleware";
 
-interface ProxyConfig {
+export interface ProxyConfig {
+  /** Public Gateway prefix (incoming). */
   prefix: string;
+  /** Upstream origin (scheme + host + port), no path. */
   upstream: string;
-  rewritePrefix?: string;
+  /**
+   * Explicit upstream path prefix replacing `prefix`.
+   * Must match the real mounted service route root.
+   */
+  rewritePrefix: string;
+  /**
+   * When true (default), require a valid access token except for publicPathMatchers.
+   * Auth Service proxy sets requireAuth=false and relies on Auth's own middleware
+   * for protected auth endpoints, while still stripping spoofed identity headers.
+   */
+  requireAuth?: boolean;
+  /** Paths (relative to prefix or full url) that remain public when requireAuth is true. */
+  publicPathMatchers?: RegExp[];
+  /** Override proxy timeout (use STREAM_TIMEOUT for SSE routes). */
+  httpTimeout?: number;
 }
 
+function isPublicPath(url: string, matchers?: RegExp[]): boolean {
+  if (!matchers?.length) return false;
+  const pathOnly = url.split("?")[0] ?? url;
+  return matchers.some((re) => re.test(pathOnly));
+}
+
+/**
+ * Create a path-preserving HTTP proxy to one product service.
+ * Preserves method, path suffix, query, body, headers, and upstream status.
+ * Streams multipart and SSE without buffering the response body.
+ */
 export function createProxy(serviceName: string, config: ProxyConfig) {
+  const requireAuth = config.requireAuth !== false;
+
   return fp(async (fastify: any) => {
-    console.log(`${serviceName.toUpperCase()} UPSTREAM:`, config.upstream);
+    fastify.log.info(
+      { service: serviceName, upstream: config.upstream, prefix: config.prefix, rewritePrefix: config.rewritePrefix },
+      "registering upstream proxy",
+    );
 
     await fastify.register(fastifyProxy as any, {
       upstream: config.upstream,
       prefix: config.prefix,
-      rewritePrefix: config.rewritePrefix || "/api/v1",
+      rewritePrefix: config.rewritePrefix,
+      httpTimeout: config.httpTimeout ?? env.PROXY_TIMEOUT,
 
-      // Timeout configuration
-      httpTimeout: env.PROXY_TIMEOUT,
+      preHandler: async (request: any, reply: any) => {
+        stripClientIdentityHeaders(request.headers);
 
-      // Header forwarding
+        const publicRoute = isPublicPath(request.url, config.publicPathMatchers);
+
+        if (requireAuth && !publicRoute) {
+          await authenticate(request, reply);
+          if (reply.sent) return;
+        }
+
+        if (request.user) {
+          injectVerifiedIdentity(request.headers, request.user);
+        }
+      },
+
       replyOptions: {
-        rewriteRequestHeaders: (originalReq: any, headers: any) => {
-          const forwardedHeaders = {
-            ...headers,
-          };
+        rewriteRequestHeaders: (originalReq: any, headers: Record<string, unknown>) => {
+          const forwarded: Record<string, unknown> = { ...headers };
 
-          // Preserve authentication and tracing headers
-          const headersToForward = [
-            "authorization",
-            "x-request-id",
-            "x-correlation-id",
-            "x-user-id",
-            "x-workspace-id",
-            "traceparent",
-          ];
+          stripClientIdentityHeaders(forwarded);
 
-          headersToForward.forEach((header) => {
-            if (originalReq.headers[header]) {
-              forwardedHeaders[header] = originalReq.headers[header];
-            }
-          });
+          const correlationId =
+            originalReq.correlationId ??
+            originalReq.requestId ??
+            originalReq.headers["x-correlation-id"] ??
+            originalReq.headers["x-request-id"];
 
-          return forwardedHeaders;
+          if (correlationId) {
+            forwarded["x-request-id"] = correlationId;
+            forwarded["x-correlation-id"] = correlationId;
+          }
+
+          if (originalReq.headers?.authorization) {
+            forwarded.authorization = originalReq.headers.authorization;
+          }
+
+          if (originalReq.user) {
+            injectVerifiedIdentity(forwarded, originalReq.user);
+          }
+
+          // Preserve content-type (critical for multipart boundaries)
+          if (originalReq.headers?.["content-type"]) {
+            forwarded["content-type"] = originalReq.headers["content-type"];
+          }
+
+          return forwarded;
+        },
+
+        onError: (reply: any, payload: { error: Error }) => {
+          const classified = classifyUpstreamFailure(payload?.error ?? payload);
+          const correlationId = reply.request?.correlationId;
+
+          if (!reply.sent) {
+            reply
+              .status(classified.status)
+              .send(
+                gatewayError(
+                  classified.code,
+                  classified.message,
+                  correlationId,
+                ),
+              );
+          }
         },
       },
 
-      // Preserve streaming
-      websocket: false, // Disable websocket proxy unless needed
-
-      // Error handling
       undici: {
-        requestTimeout: env.PROXY_TIMEOUT,
+        connections: 128,
+        pipelining: 1,
+        bodyTimeout: config.httpTimeout ?? env.PROXY_TIMEOUT,
+        headersTimeout: config.httpTimeout ?? env.PROXY_TIMEOUT,
       },
     });
+  }, {
+    name: `proxy-${serviceName}`,
   });
 }
+
+/**
+ * Public route mapping table (used by tests and docs).
+ * Incoming public path prefix → upstream rewrite prefix → service.
+ */
+export const ROUTE_MAP = [
+  {
+    service: "auth",
+    publicPrefix: "/api/v1/auth",
+    rewritePrefix: "/api/v1/auth",
+    upstreamEnv: "AUTH_SERVICE_URL",
+  },
+  {
+    service: "users",
+    publicPrefix: "/api/v1/users",
+    rewritePrefix: "/api/v1/users",
+    upstreamEnv: "USER_SERVICE_URL",
+  },
+  {
+    service: "workspaces",
+    publicPrefix: "/api/v1/workspaces",
+    rewritePrefix: "/api/v1/workspaces",
+    upstreamEnv: "WORKSPACE_SERVICE_URL",
+  },
+  {
+    service: "documents",
+    publicPrefix: "/api/v1/documents",
+    rewritePrefix: "/api/v1/documents",
+    upstreamEnv: "DOCUMENT_SERVICE_URL",
+  },
+  {
+    service: "prompts",
+    publicPrefix: "/api/v1/prompts",
+    rewritePrefix: "/api/v1/prompts",
+    upstreamEnv: "PROMPT_SERVICE_URL",
+  },
+  {
+    // Chat service mounts conversations under /api/v1 (not /api/v1/chat).
+    service: "chat",
+    publicPrefix: "/api/v1/chat",
+    rewritePrefix: "/api/v1",
+    upstreamEnv: "CHAT_SERVICE_URL",
+  },
+  {
+    // AI service mounts execute/stream under /api/v1 (not /api/v1/ai).
+    service: "ai",
+    publicPrefix: "/api/v1/ai",
+    rewritePrefix: "/api/v1",
+    upstreamEnv: "AI_SERVICE_URL",
+  },
+  {
+    service: "agents",
+    publicPrefix: "/api/v1/agents",
+    rewritePrefix: "/api/v1/agents",
+    upstreamEnv: "AGENT_SERVICE_URL",
+  },
+  {
+    service: "kernel",
+    publicPrefix: "/api/v1/kernel",
+    rewritePrefix: "/api/v1/kernel",
+    upstreamEnv: "AI_KERNEL_URL",
+  },
+] as const;

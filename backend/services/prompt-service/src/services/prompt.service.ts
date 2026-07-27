@@ -4,6 +4,7 @@ import { PromptCompiler } from "../compiler/prompt-compiler";
 
 import {
   ComparePromptVersionDto,
+  ExecuteDirectPromptDto,
   ExecutePromptDto,
   PlaygroundPromptDto,
   RollbackPromptDto,
@@ -64,15 +65,63 @@ export class PromptService {
     return this.versionRepository.create(payload);
   }
 
-  async execute(data: any) {
-    return this.executionRepository.create({
-      promptVersionId: data.promptVersionId,
-      input: data.input,
-      output: {
-        response: "Mock LLM Response",
+  async execute(data: {
+    promptVersionId: string;
+    provider?: string;
+    model?: string;
+    input: Record<string, unknown>;
+  }) {
+    const version = await this.versionRepository.findById(data.promptVersionId);
+
+    if (!version) {
+      throw new Error("Prompt version not found.");
+    }
+
+    // Single persistence path: executePrompt creates exactly one execution record.
+    return this.executePrompt(
+      {
+        id: version.id,
+        systemPrompt: version.systemPrompt,
+        userPrompt: version.userPrompt,
+        provider: data.provider ?? version.provider,
+        model: data.model ?? version.model,
       },
-      tokens: 100,
-      latency: 250,
+      data.input ?? {},
+    );
+  }
+
+  /**
+   * Raw / Chat execution path.
+   * Owns provider/model defaults and optional template compilation.
+   * Does not persist a PromptExecution (no promptVersionId).
+   * Does not fabricate output on AI failure.
+   */
+  async executeDirect(dto: ExecuteDirectPromptDto) {
+    if (!dto.prompt || typeof dto.prompt !== "string") {
+      throw new Error("prompt is required.");
+    }
+
+    const variables = dto.variables ?? {};
+    const systemTemplate = dto.systemPrompt ?? "";
+    const userTemplate = dto.prompt;
+
+    const validation = this.compiler.validate(
+      `${systemTemplate}\n\n${userTemplate}`,
+      variables,
+    );
+
+    if (!validation.valid) {
+      throw new Error(`Missing variables: ${validation.missing.join(", ")}`);
+    }
+
+    const systemPrompt = this.compiler.compile(systemTemplate, variables);
+    const prompt = this.compiler.compile(userTemplate, variables);
+
+    return this.aiClient.execute({
+      provider: dto.provider ?? process.env.DEFAULT_PROVIDER ?? "ollama",
+      model: dto.model ?? process.env.DEFAULT_MODEL,
+      systemPrompt: systemPrompt || undefined,
+      prompt,
     });
   }
 

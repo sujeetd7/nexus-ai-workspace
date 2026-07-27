@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 export interface ExecutePromptRequest {
   provider: string;
@@ -17,6 +17,17 @@ export interface ExecutePromptResponse {
   model: string;
 }
 
+export class AIServiceClientError extends Error {
+  constructor(
+    message: string,
+    public readonly cause?: unknown,
+  ) {
+    super(message);
+    this.name = "AIServiceClientError";
+    Object.setPrototypeOf(this, AIServiceClientError.prototype);
+  }
+}
+
 export class AIServiceClient {
   private readonly timeout = 60000;
 
@@ -26,17 +37,12 @@ export class AIServiceClient {
 
   async execute(request: ExecutePromptRequest): Promise<ExecutePromptResponse> {
     const base = this.getBaseUrl();
+
     if (!base) {
-      // Return a mock response in local/dev environments when AI service is not configured
-      return {
-        text: "Mock LLM Response",
-        promptTokens: 0,
-        completionTokens: 0,
-        totalTokens: 0,
-        durationMs: 0,
-        provider: request.provider ?? "mock",
-        model: request.model ?? "mock",
-      } as ExecutePromptResponse;
+      throw new AIServiceClientError(
+        "AI_SERVICE_URL is not configured. Set the AI_SERVICE_URL environment variable " +
+          "to the base URL of the AI service (e.g. http://localhost:3007).",
+      );
     }
 
     const endpoint = base.endsWith("/api/v1")
@@ -47,23 +53,22 @@ export class AIServiceClient {
       const { data } = await axios.post<ExecutePromptResponse>(
         endpoint,
         request,
-        {
-          timeout: this.timeout,
-        },
+        { timeout: this.timeout },
       );
 
       return data;
     } catch (err) {
-      // On network errors, fall back to a mock response to keep dev flow working
-      return {
-        text: "Mock LLM Response (fallback)",
-        promptTokens: 0,
-        completionTokens: 0,
-        totalTokens: 0,
-        durationMs: 0,
-        provider: request.provider ?? "mock",
-        model: request.model ?? "mock",
-      } as ExecutePromptResponse;
+      const axiosErr = err as AxiosError;
+      if (axiosErr.response) {
+        throw new AIServiceClientError(
+          `AI service returned ${axiosErr.response.status}: ${axiosErr.response.statusText}`,
+          axiosErr,
+        );
+      }
+      throw new AIServiceClientError(
+        `AI service request failed: ${(err as Error).message}`,
+        err,
+      );
     }
   }
 }

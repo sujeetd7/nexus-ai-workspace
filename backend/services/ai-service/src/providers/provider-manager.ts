@@ -4,7 +4,21 @@ import { AIProvider } from "./provider.interface";
 
 export class ProviderManager {
   async getProvider(providerName: string): Promise<AIProvider> {
-    const provider = ProviderFactory.create(providerName);
+    let provider: AIProvider;
+
+    try {
+      provider = ProviderFactory.create(providerName);
+    } catch (err) {
+      if (err instanceof ProviderError) {
+        throw err;
+      }
+      throw new ProviderError(
+        providerName,
+        404,
+        "provider_not_found",
+        `Unknown provider: "${providerName}"`,
+      );
+    }
 
     const healthy = await provider.health();
 

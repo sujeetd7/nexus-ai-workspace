@@ -2,7 +2,13 @@
   "name": "ai-kernel",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/server.js",
+  "exports": {
+    "./openapi": {
+      "types": "./dist/openapi/index.d.ts",
+      "default": "./dist/openapi/index.js"
+    }
+  },
   "prisma": {
     "schema": "./prisma/schema.prisma"
   },
@@ -19,6 +25,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nexus/openapi": "workspace:*",
     "ioredis": "^5.3.2",
     "@anthropic-ai/sdk": "^0.110.0",
     "@google/generative-ai": "^0.21.0",

@@ -1,37 +1,17 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 import { AgentRuntimeService } from "../services/agent-execution.service";
 
 export class AgentRuntimeController {
   private readonly service = new AgentRuntimeService();
 
-  execute = async (req: Request, res: Response) => {
+  execute = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(
-        "[CONTROLLER] Request body:",
-        JSON.stringify(req.body, null, 2),
-      );
-
       const result = await this.service.execute(req.body);
-
-      console.log(
-        "[CONTROLLER] Execution result:",
-        JSON.stringify(result, null, 2),
-      );
-
       res.json(result);
     } catch (error) {
-      console.error("[CONTROLLER] ERROR:", error);
-      console.error(
-        "[CONTROLLER] Stack trace:",
-        error instanceof Error ? error.stack : "No stack trace",
-      );
-
-      res.status(500).json({
-        error: "Execution failed",
-        message: error instanceof Error ? error.message : "Unknown error",
-        details: error instanceof Error ? error.stack : error,
-      });
+      // Delegate to centralized errorHandler — never serialize stacks/Axios/Kernel URLs.
+      next(error);
     }
   };
 

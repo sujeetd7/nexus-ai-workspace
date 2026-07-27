@@ -1,4 +1,4 @@
-import { MockProvider } from "./mock.provider";
+import { ProviderError } from "../errors/provider.error";
 import { AIProvider } from "./provider.interface";
 import { ProviderRegistry } from "./provider.registry";
 
@@ -16,7 +16,12 @@ export class ProviderFactory {
     const providerInstance = ProviderRegistry.get(provider);
 
     if (!providerInstance) {
-      throw new Error(`Unknown provider: ${provider}`);
+      throw new ProviderError(
+        provider,
+        404,
+        "provider_not_found",
+        `Unknown provider: "${provider}". Available providers: ${ProviderRegistry.getAvailableProviders().join(", ")}`,
+      );
     }
 
     return providerInstance;
@@ -26,8 +31,10 @@ export class ProviderFactory {
     return ProviderRegistry.getAvailableProviders();
   }
 
-  // Legacy static method for backward compatibility
+  // Static convenience — identical behaviour to instance create().
+  // Unknown providers throw ProviderError; MockProvider is only reachable via the explicit
+  // "mock" registry key.
   static create(provider: string): AIProvider {
-    return ProviderRegistry.get(provider) ?? new MockProvider();
+    return ProviderFactory.getInstance().create(provider);
   }
 }

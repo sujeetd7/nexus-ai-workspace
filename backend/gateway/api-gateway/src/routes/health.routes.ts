@@ -1,9 +1,12 @@
-export async function healthRoutes(fastify: any) {
+/**
+ * GET /health — Gateway process liveness only (no upstream checks).
+ */
+export async function healthRoutes(fastify: any): Promise<void> {
   fastify.get("/health", async () => {
     return {
       service: "api-gateway",
       status: "healthy",
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
     };
   });
 }

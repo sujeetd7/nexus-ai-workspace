@@ -5,6 +5,8 @@
     "moduleResolution": "NodeNext",
 
     "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
 
     "rootDir": "./src",
     "outDir": "./dist",
@@ -21,5 +23,7 @@
       "@types/*": ["types/*"],
       "@generated/prisma": ["generated/prisma"]
     }
-  }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "tests"]
 }

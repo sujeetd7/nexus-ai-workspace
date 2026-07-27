@@ -2,8 +2,7 @@ import compression from "compression";
 import cors from "cors";
 import express, { Express } from "express";
 import helmet from "helmet";
-import swaggerUi from "swagger-ui-express";
-import { swaggerSpec } from "./config/swagger";
+import { mountExpressOpenApiDocs } from "@nexus/openapi";
 
 import { correlationMiddleware } from "./middleware/logging/correlation.middleware";
 
@@ -19,6 +18,7 @@ import { errorHandler } from "./middleware/error/error.middleware";
 
 import adminRoutes from "./routes/admin/admin.routes";
 import profileRoutes from "./routes/profile/profile.routes";
+import { authOpenApiSpec } from "./openapi";
 
 export default function createApp(): Express {
   const app = express();
@@ -69,7 +69,7 @@ export default function createApp(): Express {
   */
   app.use("/api/v1/auth", authRoutes);
 
-  app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  mountExpressOpenApiDocs(app, authOpenApiSpec);
 
   app.use("/profile", profileRoutes);
 

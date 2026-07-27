@@ -25,5 +25,10 @@
       "@generated/*": ["src/generated/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": [
+    "src/workspace-service",
+    "node_modules",
+    "dist"
+  ]
 }

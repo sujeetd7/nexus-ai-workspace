@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { ChatService } from "../services/chat.service";
+import { NextFunction, Request, Response } from "express";
+import { ChatService, ChatServiceError } from "../services/chat.service";
 
 export class ChatController {
   private service = new ChatService();
@@ -47,5 +47,47 @@ export class ChatController {
   addAttachment = async (req: Request, res: Response) => {
     const data = await this.service.addAttachment(req.body);
     res.status(201).json(data);
+  };
+
+  sendMessage = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { conversationId, senderId, content, provider, model } = req.body as {
+        conversationId: string;
+        senderId: string;
+        content: string;
+        provider?: string;
+        model?: string;
+      };
+
+      if (!conversationId || !senderId || !content) {
+        res.status(400).json({
+          error: "conversationId, senderId, and content are required",
+        });
+        return;
+      }
+
+      const result = await this.service.sendMessage({
+        conversationId,
+        senderId,
+        content,
+        provider,
+        model,
+        promptVersionId: (req.body as { promptVersionId?: string }).promptVersionId,
+        promptId: (req.body as { promptId?: string }).promptId,
+        variables: (req.body as { variables?: Record<string, unknown> }).variables,
+        workspaceId: (req.body as { workspaceId?: string }).workspaceId,
+        correlationId:
+          (req.headers["x-correlation-id"] as string | undefined) ??
+          (req.body as { correlationId?: string }).correlationId,
+      });
+
+      res.status(201).json(result);
+    } catch (err) {
+      if (err instanceof ChatServiceError) {
+        res.status(502).json({ error: err.message });
+        return;
+      }
+      next(err);
+    }
   };
 }

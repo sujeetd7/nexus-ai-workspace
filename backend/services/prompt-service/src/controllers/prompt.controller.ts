@@ -23,6 +23,12 @@ export class PromptController {
     res.json(execution);
   };
 
+  executeDirect = async (req: Request, res: Response) => {
+    const result = await this.service.executeDirect(req.body);
+
+    res.json(result);
+  };
+
   executePublished = async (req: Request, res: Response) => {
     const result = await this.service.executePublished(req.body);
 

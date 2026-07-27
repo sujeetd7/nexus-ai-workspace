@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { WorkspaceInvitationController } from "../controllers/workspace-invitation.controller";
+import { authenticate } from "../middleware/auth/authenticate.middleware";
 
 const router = Router();
 
@@ -10,7 +11,7 @@ router.post("/:id/invitations", controller.create);
 
 router.get("/:id/invitations", controller.list);
 
-router.post("/invitations/accept", controller.accept);
+router.post("/invitations/accept", authenticate, controller.accept);
 
 router.post("/invitations/reject", controller.reject);
 

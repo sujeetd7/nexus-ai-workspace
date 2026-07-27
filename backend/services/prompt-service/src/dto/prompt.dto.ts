@@ -45,3 +45,18 @@ export interface ComparePromptVersionDto {
   sourceVersion: number;
   targetVersion: number;
 }
+
+/**
+ * Direct / raw prompt execution used by Chat Service.
+ * Does not invent a prompt version; does not persist an execution record
+ * (no promptVersionId). Provider/model defaults are owned here.
+ */
+export interface ExecuteDirectPromptDto {
+  prompt: string;
+  systemPrompt?: string;
+  provider?: string;
+  model?: string;
+  variables?: Record<string, unknown>;
+  workspaceId?: string;
+  userId?: string;
+}

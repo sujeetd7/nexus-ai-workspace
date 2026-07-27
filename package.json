@@ -4,6 +4,7 @@
   "private": true,
   "description": "Enterprise AI Platform – ChatGPT + Copilot + Notion AI + Slack AI + GitHub Copilot",
   "workspaces": [
+    "backend/gateway/api-gateway",
     "backend/services/*",
     "shared"
   ],

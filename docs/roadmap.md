@@ -335,6 +335,8 @@ Feature flags control gradual rollout and enable safe deployment of in-progress 
 | No API versioning                     | High     | Phase 2 | API Lead      |
 | Manual MCP tool allowlists            | Low      | Phase 3 | Platform Lead |
 | No rate limits on AI endpoints        | High     | Phase 2 | Backend Lead  |
+| Invitation accept trusts body `userId` (remove; derive from verified access token) | High | **W3 — resolved** | Backend Lead |
+| Embedded Workspace duplicate under `user-service/src/workspace-service` (quarantined; delete) | Medium | **W11** | Backend Lead |
 
 ---
 

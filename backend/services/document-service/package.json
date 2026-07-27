@@ -2,18 +2,27 @@
   "name": "document-service",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/server.js",
+  "exports": {
+    "./openapi": {
+      "types": "./dist/openapi/index.d.ts",
+      "default": "./dist/openapi/index.js"
+    }
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
+    "typecheck": "tsc --noEmit",
+    "test": "jest --passWithNoTests",
     "prisma:migrate": "prisma migrate dev"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nexus/openapi": "workspace:*",
     "@prisma/client": "5.22.0",
     "@types/cors": "^2.8.19",
     "compression": "^1.8.1",
@@ -25,8 +34,12 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
     "@types/node": "^26.0.1",
+    "jest": "^30.4.2",
+    "jest-environment-node": "^30.4.1",
     "prisma": "5.22.0",
+    "ts-jest": "^29.4.11",
     "tsx": "^4.22.4",
     "typescript": "^5.4.0"
   }

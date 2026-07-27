@@ -4,4 +4,6 @@ import { env } from "../config/env";
 export default createProxy("agent", {
   prefix: "/api/v1/agents",
   upstream: env.AGENT_SERVICE_URL,
+  rewritePrefix: "/api/v1/agents",
+  requireAuth: true,
 });

@@ -5,6 +5,12 @@
   "description": "Authentication and Authorization Service",
   "main": "dist/server.js",
   "types": "dist/server.d.ts",
+  "exports": {
+    "./openapi": {
+      "types": "./dist/openapi/index.d.ts",
+      "default": "./dist/openapi/index.js"
+    }
+  },
   "prisma": {
     "schema": "./prisma/schema.prisma"
   },
@@ -21,6 +27,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@nexus/openapi": "workspace:*",
     "@prisma/client": "^5.22.0",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",
@@ -52,6 +59,7 @@
     "@types/swagger-ui-express": "^4.1.8",
     "@types/uuid": "^11.0.0",
     "jest": "^30.4.2",
+    "jest-environment-node": "^30.4.1",
     "prisma": "^5.22.0",
     "ts-jest": "^29.4.11",
     "tsx": "^4.22.4",

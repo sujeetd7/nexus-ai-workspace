@@ -1,7 +1,7 @@
 module.exports = {
   preset: "ts-jest",
 
-  testEnvironment: "node",
+  testEnvironment: require.resolve("jest-environment-node"),
 
   roots: ["<rootDir>/tests"],
 
@@ -26,5 +26,6 @@ module.exports = {
     "^@schemas/(.*)$": "<rootDir>/src/schemas/$1",
     "^@routes/(.*)$": "<rootDir>/src/routes/$1",
     "^@utils/(.*)$": "<rootDir>/src/utils/$1",
+    "^(\\.{1,2}/.*)\\.js$": "$1",
   },
 };

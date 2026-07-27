@@ -2,7 +2,13 @@
   "name": "ai-service",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/server.js",
+  "exports": {
+    "./openapi": {
+      "types": "./dist/openapi/index.d.ts",
+      "default": "./dist/openapi/index.js"
+    }
+  },
   "prisma": {
     "schema": "./prisma/schema.prisma"
   },
@@ -10,6 +16,8 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
+    "test": "jest",
+    "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev"
   },
@@ -17,6 +25,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nexus/openapi": "workspace:*",
     "@anthropic-ai/sdk": "^0.110.0",
     "@google/genai": "^2.10.0",
     "@prisma/client": "5.22.0",
@@ -39,11 +48,15 @@
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.0.1",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "jest": "^30.4.2",
+    "jest-environment-node": "^30.4.1",
     "prisma": "5.22.0",
+    "ts-jest": "^29.4.11",
     "tsx": "^4.22.4",
     "typescript": "^5.9.3"
   }

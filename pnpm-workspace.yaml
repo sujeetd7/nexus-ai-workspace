@@ -1,3 +1,6 @@
 packages:
+  - "backend/gateway/api-gateway"
+  - "backend/openapi"
   - "backend/services/*"
+  - "!backend/services/api-gateway"
   - "shared"

@@ -5,9 +5,8 @@ export class ProviderErrorHandler {
     throw new ProviderError(
       provider,
       error?.status ?? error?.response?.status ?? 500,
-      error?.code ?? "provider_error",
-      error?.message ?? "Unknown provider error",
-      error,
+      error?.code ?? "provider_execution_failed",
+      error?.message ?? "Provider execution failed",
     );
   }
 }
