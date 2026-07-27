@@ -14,7 +14,9 @@ export const CORRELATION_HEADERS = [
   "x-correlation-id",
 ] as const;
 
-export function stripClientIdentityHeaders(headers: Record<string, unknown>): void {
+export function stripClientIdentityHeaders(
+  headers: Record<string, unknown>,
+): void {
   for (const header of TRUSTED_IDENTITY_HEADERS) {
     delete headers[header];
     delete headers[header.toLowerCase()];

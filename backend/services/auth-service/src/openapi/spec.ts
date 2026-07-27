@@ -7,21 +7,70 @@ import {
 } from "@nexus/openapi";
 import type { ServiceSpecConfig, StableRoute } from "@nexus/openapi";
 
-const tags = [{ name: "Auth", description: "Authentication and session management" }];
+const tags = [
+  { name: "Auth", description: "Authentication and session management" },
+];
 
 export const authStableRoutes: StableRoute[] = [
   { method: "get", path: "/health", operationId: "authHealth", public: true },
-  { method: "post", path: "/api/v1/auth/register", operationId: "authRegister", public: true },
-  { method: "post", path: "/api/v1/auth/login", operationId: "authLogin", public: true },
-  { method: "post", path: "/api/v1/auth/refresh", operationId: "authRefresh", public: true },
+  {
+    method: "post",
+    path: "/api/v1/auth/register",
+    operationId: "authRegister",
+    public: true,
+  },
+  {
+    method: "post",
+    path: "/api/v1/auth/login",
+    operationId: "authLogin",
+    public: true,
+  },
+  {
+    method: "post",
+    path: "/api/v1/auth/refresh",
+    operationId: "authRefresh",
+    public: true,
+  },
   { method: "post", path: "/api/v1/auth/logout", operationId: "authLogout" },
-  { method: "delete", path: "/api/v1/auth/sessions", operationId: "authLogoutAll" },
-  { method: "get", path: "/api/v1/auth/sessions", operationId: "authSessionList" },
-  { method: "delete", path: "/api/v1/auth/sessions/{id}", operationId: "authSessionRevoke" },
-  { method: "post", path: "/api/v1/auth/verify-email", operationId: "authVerifyEmail", public: true },
-  { method: "post", path: "/api/v1/auth/resend-verification", operationId: "authResendVerification", public: true },
-  { method: "post", path: "/api/v1/auth/forgot-password", operationId: "authForgotPassword", public: true },
-  { method: "post", path: "/api/v1/auth/reset-password", operationId: "authResetPassword", public: true },
+  {
+    method: "delete",
+    path: "/api/v1/auth/sessions",
+    operationId: "authLogoutAll",
+  },
+  {
+    method: "get",
+    path: "/api/v1/auth/sessions",
+    operationId: "authSessionList",
+  },
+  {
+    method: "delete",
+    path: "/api/v1/auth/sessions/{id}",
+    operationId: "authSessionRevoke",
+  },
+  {
+    method: "post",
+    path: "/api/v1/auth/verify-email",
+    operationId: "authVerifyEmail",
+    public: true,
+  },
+  {
+    method: "post",
+    path: "/api/v1/auth/resend-verification",
+    operationId: "authResendVerification",
+    public: true,
+  },
+  {
+    method: "post",
+    path: "/api/v1/auth/forgot-password",
+    operationId: "authForgotPassword",
+    public: true,
+  },
+  {
+    method: "post",
+    path: "/api/v1/auth/reset-password",
+    operationId: "authResetPassword",
+    public: true,
+  },
   { method: "get", path: "/profile/me", operationId: "authCurrentProfile" },
 ];
 
@@ -49,7 +98,8 @@ const authConfig: ServiceSpecConfig = {
       post: operation("authRegister", "Register a new account", {
         tags: ["Auth"],
         security: [],
-        description: "Public route. Account may require email verification before full access.",
+        description:
+          "Public route. Account may require email verification before full access.",
         requestBody: jsonRequestBody({
           type: "object",
           required: ["email", "password"],
@@ -149,7 +199,12 @@ const authConfig: ServiceSpecConfig = {
       delete: operation("authSessionRevoke", "Revoke a session", {
         tags: ["Auth"],
         parameters: [
-          { name: "id", in: "path", required: true, schema: { type: "string" } },
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string" },
+          },
         ],
         responses: {
           "204": { description: "Session revoked" },
@@ -221,15 +276,19 @@ const authConfig: ServiceSpecConfig = {
       }),
     },
     "/profile/me": {
-      get: operation("authCurrentProfile", "Get current authenticated profile", {
-        tags: ["Auth"],
-        description:
-          "Direct Auth Service route (not proxied by Gateway). Requires verified access token.",
-        responses: {
-          "200": jsonResponse("200", "Current profile"),
-          ...standardErrorResponses(["401", "500"]),
+      get: operation(
+        "authCurrentProfile",
+        "Get current authenticated profile",
+        {
+          tags: ["Auth"],
+          description:
+            "Direct Auth Service route (not proxied by Gateway). Requires verified access token.",
+          responses: {
+            "200": jsonResponse("200", "Current profile"),
+            ...standardErrorResponses(["401", "500"]),
+          },
         },
-      }),
+      ),
     },
   },
 };

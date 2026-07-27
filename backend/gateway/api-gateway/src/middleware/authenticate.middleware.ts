@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import type { FastifyReply, FastifyRequest } from "fastify";
 import { env } from "../config/env";
 import { gatewayError } from "../errors/gateway-error";
 
@@ -20,30 +21,47 @@ declare module "fastify" {
  * Verify access tokens only (same secret as Auth JwtService).
  * Refresh-token verification remains in Auth Service.
  */
-export async function authenticate(req: any, reply: any): Promise<void> {
+export async function authenticate(
+  req: FastifyRequest,
+  reply: FastifyReply,
+): Promise<void> {
   const authHeader = req.headers?.authorization as string | undefined;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return reply.status(401).send(
-      gatewayError("unauthorized", "Missing or invalid Authorization header", req.correlationId),
-    );
+    return reply
+      .status(401)
+      .send(
+        gatewayError(
+          "unauthorized",
+          "Missing or invalid Authorization header",
+          req.correlationId,
+        ),
+      );
   }
 
   const token = authHeader.slice("Bearer ".length).trim();
 
   if (!token) {
-    return reply.status(401).send(
-      gatewayError("unauthorized", "Missing access token", req.correlationId),
-    );
+    return reply
+      .status(401)
+      .send(
+        gatewayError("unauthorized", "Missing access token", req.correlationId),
+      );
   }
 
   try {
     const payload = jwt.verify(token, env.JWT_ACCESS_SECRET) as jwt.JwtPayload;
 
     if (!payload.sub || typeof payload.sub !== "string") {
-      return reply.status(401).send(
-        gatewayError("unauthorized", "Invalid token subject", req.correlationId),
-      );
+      return reply
+        .status(401)
+        .send(
+          gatewayError(
+            "unauthorized",
+            "Invalid token subject",
+            req.correlationId,
+          ),
+        );
     }
 
     req.user = {
@@ -52,8 +70,14 @@ export async function authenticate(req: any, reply: any): Promise<void> {
       role: typeof payload.role === "string" ? payload.role : undefined,
     };
   } catch {
-    return reply.status(401).send(
-      gatewayError("unauthorized", "Invalid or expired access token", req.correlationId),
-    );
+    return reply
+      .status(401)
+      .send(
+        gatewayError(
+          "unauthorized",
+          "Invalid or expired access token",
+          req.correlationId,
+        ),
+      );
   }
 }

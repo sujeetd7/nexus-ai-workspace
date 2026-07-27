@@ -14,6 +14,8 @@ const tags = [{ name: "Users", description: "User profile and directory operatio
 export const userStableRoutes: StableRoute[] = [
   { method: "post", path: "/api/v1/users", operationId: "userCreate" },
   { method: "get", path: "/api/v1/users", operationId: "userList" },
+  { method: "get", path: "/api/v1/users/me", operationId: "userGetMe" },
+  { method: "patch", path: "/api/v1/users/me", operationId: "userUpdateMe" },
   { method: "get", path: "/api/v1/users/{id}", operationId: "userGet" },
   { method: "patch", path: "/api/v1/users/{id}", operationId: "userUpdate" },
   { method: "delete", path: "/api/v1/users/{id}", operationId: "userDelete" },
@@ -44,6 +46,27 @@ const userConfig: ServiceSpecConfig = {
         responses: {
           "201": jsonResponse("201", "User created"),
           ...standardErrorResponses(["400", "401", "409", "500"]),
+        },
+      }),
+    },
+    "/api/v1/users/me": {
+      get: operation("userGetMe", "Get current user profile", {
+        tags: ["Users"],
+        description:
+          "Returns the profile for the verified access-token subject. Identity is never taken from client-supplied user IDs.",
+        responses: {
+          "200": jsonResponse("200", "Current user profile"),
+          ...standardErrorResponses(["401", "404", "500"]),
+        },
+      }),
+      patch: operation("userUpdateMe", "Update current user profile", {
+        tags: ["Users"],
+        description:
+          "Updates profile fields for the verified access-token subject.",
+        requestBody: jsonRequestBody({ type: "object" }),
+        responses: {
+          "200": jsonResponse("200", "Updated profile"),
+          ...standardErrorResponses(["400", "401", "404", "500"]),
         },
       }),
     },

@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
 
     "rootDir": "./src",
     "outDir": "./dist",
@@ -15,18 +15,19 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
 
-    "baseUrl": ".",
-
     "paths": {
-      "@config/*": ["src/config/*"],
-      "@controllers/*": ["src/controllers/*"],
-      "@services/*": ["src/services/*"],
-      "@repositories/*": ["src/repositories/*"],
-      "@generated/*": ["src/generated/*"]
+      "src/*": ["./src/*"],
+      "@config/*": ["./src/config/*"],
+      "@controllers/*": ["./src/controllers/*"],
+      "@services/*": ["./src/services/*"],
+      "@repositories/*": ["./src/repositories/*"],
+      "@generated/*": ["./src/generated/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts"],
   "exclude": [
+    "node_modules",
+    "dist",
     "src/integrations/document/document-cache.ts",
     "src/integrations/document/__tests__/**",
     "src/scripts/test-document-api.ts",

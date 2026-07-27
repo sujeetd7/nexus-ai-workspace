@@ -9,17 +9,15 @@
     "rootDir": "./src",
     "outDir": "./dist",
 
-    "baseUrl": "./src",
-
     "paths": {
-      "@config/*": ["config/*"],
-      "@controllers/*": ["controllers/*"],
-      "@routes/*": ["routes/*"],
-      "@services/*": ["services/*"],
-      "@repositories/*": ["repositories/*"],
-      "@middleware/*": ["middleware/*"],
-      "@types/*": ["types/*"],
-      "@generated/prisma": ["generated/prisma"]
+      "@config/*": ["./src/config/*"],
+      "@controllers/*": ["./src/controllers/*"],
+      "@routes/*": ["./src/routes/*"],
+      "@services/*": ["./src/services/*"],
+      "@repositories/*": ["./src/repositories/*"],
+      "@middleware/*": ["./src/middleware/*"],
+      "@types/*": ["./src/types/*"],
+      "@generated/prisma": ["./src/generated/prisma"]
     }
   }
 }

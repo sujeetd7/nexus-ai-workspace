@@ -5,6 +5,7 @@
   "description": "Enterprise AI Platform – ChatGPT + Copilot + Notion AI + Slack AI + GitHub Copilot",
   "workspaces": [
     "backend/gateway/api-gateway",
+    "backend/openapi",
     "backend/services/*",
     "shared"
   ],
@@ -23,6 +24,7 @@
     "db:studio": "turbo run db:studio --filter=@nexus/database"
   },
   "devDependencies": {
+    "pnpm": "9.15.9",
     "@commitlint/cli": "^19.0.0",
     "@commitlint/config-conventional": "^19.0.0",
     "@types/jest": "^30.0.0",

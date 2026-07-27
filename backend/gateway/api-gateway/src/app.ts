@@ -1,10 +1,7 @@
-import Fastify, { FastifyInstance } from "fastify";
+import Fastify, { FastifyError, FastifyInstance } from "fastify";
 
 import { env } from "./config/env";
-import {
-  classifyUpstreamFailure,
-  gatewayError,
-} from "./errors/gateway-error";
+import { classifyUpstreamFailure, gatewayError } from "./errors/gateway-error";
 import { loggerMiddleware } from "./middleware/logger.middleware";
 import { requestIdMiddleware } from "./middleware/request-id.middleware";
 import agentProxy from "./plugins/agent.proxy";
@@ -41,7 +38,7 @@ export async function buildApp(
   app.addHook("onRequest", requestIdMiddleware);
   app.addHook("onResponse", loggerMiddleware);
 
-  app.setErrorHandler((error: any, request, reply) => {
+  app.setErrorHandler((error: FastifyError, request, reply) => {
     if (
       error?.statusCode === 413 ||
       error?.code === "FST_ERR_CTP_BODY_TOO_LARGE"
@@ -59,7 +56,10 @@ export async function buildApp(
 
     const classified = classifyUpstreamFailure(error);
     if (classified.matched) {
-      request.log.warn({ err: error, code: classified.code }, "upstream_failure");
+      request.log.warn(
+        { err: error, code: classified.code },
+        "upstream_failure",
+      );
       return reply
         .status(classified.status)
         .send(

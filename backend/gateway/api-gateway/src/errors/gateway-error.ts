@@ -27,18 +27,31 @@ export function gatewayError(
 
 function collectErrorCodes(err: unknown): string[] {
   const codes: string[] = [];
-  const walk = (value: any, depth: number) => {
-    if (!value || depth > 4) return;
-    if (typeof value.code === "string") codes.push(value.code);
-    if (typeof value.errno === "string") codes.push(value.errno);
-    if (typeof value.message === "string") {
-      if (value.message.includes("ECONNREFUSED")) codes.push("ECONNREFUSED");
-      if (value.message.includes("ENOTFOUND")) codes.push("ENOTFOUND");
-      if (value.message.includes("ETIMEDOUT")) codes.push("ETIMEDOUT");
-      if (value.message.includes("fetch failed")) codes.push("FETCH_FAILED");
+  const walk = (value: unknown, depth: number) => {
+    if (!value || depth > 4 || typeof value !== "object") return;
+
+    const candidate = value as {
+      code?: unknown;
+      errno?: unknown;
+      message?: unknown;
+      cause?: unknown;
+      error?: unknown;
+    };
+
+    if (typeof candidate.code === "string") codes.push(candidate.code);
+    if (typeof candidate.errno === "string") codes.push(candidate.errno);
+    if (typeof candidate.message === "string") {
+      if (candidate.message.includes("ECONNREFUSED")) {
+        codes.push("ECONNREFUSED");
+      }
+      if (candidate.message.includes("ENOTFOUND")) codes.push("ENOTFOUND");
+      if (candidate.message.includes("ETIMEDOUT")) codes.push("ETIMEDOUT");
+      if (candidate.message.includes("fetch failed")) {
+        codes.push("FETCH_FAILED");
+      }
     }
-    walk(value.cause, depth + 1);
-    walk(value.error, depth + 1);
+    walk(candidate.cause, depth + 1);
+    walk(candidate.error, depth + 1);
   };
   walk(err, 0);
   return codes;
@@ -56,7 +69,11 @@ export function classifyUpstreamFailure(err: unknown): {
 
   if (
     codes.some((c) =>
-      ["UND_ERR_CONNECT_TIMEOUT", "ETIMEDOUT", "UND_ERR_HEADERS_TIMEOUT"].includes(c),
+      [
+        "UND_ERR_CONNECT_TIMEOUT",
+        "ETIMEDOUT",
+        "UND_ERR_HEADERS_TIMEOUT",
+      ].includes(c),
     )
   ) {
     return {

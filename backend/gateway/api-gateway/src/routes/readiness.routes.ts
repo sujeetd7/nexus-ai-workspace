@@ -1,3 +1,4 @@
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { UPSTREAM_SERVICES } from "../config/env";
 
 export interface UpstreamReadiness {
@@ -15,6 +16,25 @@ function sanitizeProbeUrl(baseUrl: string, healthPath: string): string {
   const base = baseUrl.replace(/\/$/, "");
   const path = healthPath.startsWith("/") ? healthPath : `/${healthPath}`;
   return `${base}${path}`;
+}
+
+function probeFailureReason(err: unknown): string {
+  if (!err || typeof err !== "object") return "unreachable";
+
+  const error = err as {
+    name?: string;
+    code?: string;
+    cause?: { code?: string };
+  };
+
+  if (error.name === "AbortError") return "probe_timeout";
+  if (error.cause?.code === "ECONNREFUSED" || error.code === "ECONNREFUSED") {
+    return "connection_refused";
+  }
+  if (error.cause?.code === "ENOTFOUND" || error.code === "ENOTFOUND") {
+    return "dns_failure";
+  }
+  return "unreachable";
 }
 
 async function probeUpstream(
@@ -61,23 +81,14 @@ async function probeUpstream(
       latencyMs: Date.now() - started,
       checkedAt,
     };
-  } catch (err: any) {
-    const reason =
-      err?.name === "AbortError"
-        ? "probe_timeout"
-        : err?.cause?.code === "ECONNREFUSED" || err?.code === "ECONNREFUSED"
-          ? "connection_refused"
-          : err?.cause?.code === "ENOTFOUND" || err?.code === "ENOTFOUND"
-            ? "dns_failure"
-            : "unreachable";
-
+  } catch (err: unknown) {
     return {
       name,
       configured: true,
       reachable: false,
       status: "unavailable",
       latencyMs: Date.now() - started,
-      error: reason,
+      error: probeFailureReason(err),
       checkedAt,
     };
   }
@@ -92,28 +103,34 @@ async function probeUpstream(
  *
  * Admin / Analytics / Notification are deferred and are NOT probed.
  */
-export async function readinessRoutes(fastify: any): Promise<void> {
-  fastify.get("/readiness", async (_req: any, reply: any) => {
-    const results = await Promise.all(
-      UPSTREAM_SERVICES.map((svc) =>
-        probeUpstream(svc.name, svc.url(), svc.healthPath),
-      ),
-    );
+export async function readinessRoutes(fastify: FastifyInstance): Promise<void> {
+  fastify.get(
+    "/readiness",
+    async (_req: FastifyRequest, reply: FastifyReply) => {
+      const results = await Promise.all(
+        UPSTREAM_SERVICES.map((svc) =>
+          probeUpstream(svc.name, svc.url(), svc.healthPath),
+        ),
+      );
 
-    const ready = results.every((r) => r.status === "ready");
+      const ready = results.every((r) => r.status === "ready");
 
-    return reply.status(ready ? 200 : 503).send({
-      service: "api-gateway",
-      status: ready ? "ready" : "not_ready",
-      policy:
-        "200 when all required product upstreams are reachable; 503 otherwise. Deferred Admin/Analytics/Notification are excluded.",
-      timestamp: new Date().toISOString(),
-      upstreams: results,
-    });
-  });
+      return reply.status(ready ? 200 : 503).send({
+        service: "api-gateway",
+        status: ready ? "ready" : "not_ready",
+        policy:
+          "200 when all required product upstreams are reachable; 503 otherwise. Deferred Admin/Analytics/Notification are excluded.",
+        timestamp: new Date().toISOString(),
+        upstreams: results,
+      });
+    },
+  );
 
   // Back-compat alias used by older probes
-  fastify.get("/system/health", async (_req: any, reply: any) => {
-    return reply.redirect("/readiness");
-  });
+  fastify.get(
+    "/system/health",
+    async (_req: FastifyRequest, reply: FastifyReply) => {
+      return reply.redirect("/readiness");
+    },
+  );
 }

@@ -19,6 +19,14 @@ export class UserRepository {
     });
   }
 
+  async findByAuthUserId(authUserId: string) {
+    return prisma.userProfile.findUnique({
+      where: {
+        authUserId,
+      },
+    });
+  }
+
   async update(id: string, data: any) {
     return prisma.userProfile.update({
       where: {

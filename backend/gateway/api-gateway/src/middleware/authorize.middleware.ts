@@ -1,3 +1,4 @@
+import type { FastifyReply, FastifyRequest } from "fastify";
 import { gatewayError } from "../errors/gateway-error";
 
 type UserRole = string;
@@ -7,17 +8,29 @@ type UserRole = string;
  * Gateway does not invent roles — it only checks claims already on the token.
  */
 export function authorize(roles: UserRole[]) {
-  return async (req: any, reply: any) => {
+  return async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.user) {
       return reply
         .status(401)
-        .send(gatewayError("unauthorized", "Authentication required", req.correlationId));
+        .send(
+          gatewayError(
+            "unauthorized",
+            "Authentication required",
+            req.correlationId,
+          ),
+        );
     }
 
     if (!req.user.role || !roles.includes(req.user.role)) {
       return reply
         .status(403)
-        .send(gatewayError("forbidden", "Insufficient permissions", req.correlationId));
+        .send(
+          gatewayError(
+            "forbidden",
+            "Insufficient permissions",
+            req.correlationId,
+          ),
+        );
     }
   };
 }

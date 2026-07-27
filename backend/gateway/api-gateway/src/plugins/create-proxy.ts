@@ -1,10 +1,14 @@
 import fastifyProxy from "@fastify/http-proxy";
+import type {
+  FastifyInstance,
+  FastifyPluginCallback,
+  FastifyReply,
+  FastifyRequest,
+} from "fastify";
+import type { IncomingHttpHeaders } from "node:http";
 import fp from "fastify-plugin";
 import { env } from "../config/env";
-import {
-  classifyUpstreamFailure,
-  gatewayError,
-} from "../errors/gateway-error";
+import { classifyUpstreamFailure, gatewayError } from "../errors/gateway-error";
 import { authenticate } from "../middleware/authenticate.middleware";
 import {
   injectVerifiedIdentity,
@@ -39,6 +43,27 @@ function isPublicPath(url: string, matchers?: RegExp[]): boolean {
   return matchers.some((re) => re.test(pathOnly));
 }
 
+interface HttpProxyRegisterOptions {
+  upstream: string;
+  prefix: string;
+  rewritePrefix: string;
+  httpTimeout: number;
+  preHandler: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
+  replyOptions: {
+    rewriteRequestHeaders: (
+      originalReq: FastifyRequest,
+      headers: IncomingHttpHeaders,
+    ) => IncomingHttpHeaders;
+    onError: (reply: FastifyReply, payload: { error: Error }) => void;
+  };
+  undici: {
+    connections: number;
+    pipelining: number;
+    bodyTimeout: number;
+    headersTimeout: number;
+  };
+}
+
 /**
  * Create a path-preserving HTTP proxy to one product service.
  * Preserves method, path suffix, query, body, headers, and upstream status.
@@ -47,94 +72,115 @@ function isPublicPath(url: string, matchers?: RegExp[]): boolean {
 export function createProxy(serviceName: string, config: ProxyConfig) {
   const requireAuth = config.requireAuth !== false;
 
-  return fp(async (fastify: any) => {
-    fastify.log.info(
-      { service: serviceName, upstream: config.upstream, prefix: config.prefix, rewritePrefix: config.rewritePrefix },
-      "registering upstream proxy",
-    );
+  return fp(
+    async (fastify: FastifyInstance) => {
+      fastify.log.info(
+        {
+          service: serviceName,
+          upstream: config.upstream,
+          prefix: config.prefix,
+          rewritePrefix: config.rewritePrefix,
+        },
+        "registering upstream proxy",
+      );
 
-    await fastify.register(fastifyProxy as any, {
-      upstream: config.upstream,
-      prefix: config.prefix,
-      rewritePrefix: config.rewritePrefix,
-      httpTimeout: config.httpTimeout ?? env.PROXY_TIMEOUT,
+      const proxyOptions: HttpProxyRegisterOptions = {
+        upstream: config.upstream,
+        prefix: config.prefix,
+        rewritePrefix: config.rewritePrefix,
+        httpTimeout: config.httpTimeout ?? env.PROXY_TIMEOUT,
 
-      preHandler: async (request: any, reply: any) => {
-        stripClientIdentityHeaders(request.headers);
+        preHandler: async (request: FastifyRequest, reply: FastifyReply) => {
+          stripClientIdentityHeaders(request.headers);
 
-        const publicRoute = isPublicPath(request.url, config.publicPathMatchers);
+          const publicRoute = isPublicPath(
+            request.url,
+            config.publicPathMatchers,
+          );
 
-        if (requireAuth && !publicRoute) {
-          await authenticate(request, reply);
-          if (reply.sent) return;
-        }
-
-        if (request.user) {
-          injectVerifiedIdentity(request.headers, request.user);
-        }
-      },
-
-      replyOptions: {
-        rewriteRequestHeaders: (originalReq: any, headers: Record<string, unknown>) => {
-          const forwarded: Record<string, unknown> = { ...headers };
-
-          stripClientIdentityHeaders(forwarded);
-
-          const correlationId =
-            originalReq.correlationId ??
-            originalReq.requestId ??
-            originalReq.headers["x-correlation-id"] ??
-            originalReq.headers["x-request-id"];
-
-          if (correlationId) {
-            forwarded["x-request-id"] = correlationId;
-            forwarded["x-correlation-id"] = correlationId;
+          if (requireAuth && !publicRoute) {
+            await authenticate(request, reply);
+            if (reply.sent) return;
           }
 
-          if (originalReq.headers?.authorization) {
-            forwarded.authorization = originalReq.headers.authorization;
+          if (request.user) {
+            injectVerifiedIdentity(request.headers, request.user);
           }
-
-          if (originalReq.user) {
-            injectVerifiedIdentity(forwarded, originalReq.user);
-          }
-
-          // Preserve content-type (critical for multipart boundaries)
-          if (originalReq.headers?.["content-type"]) {
-            forwarded["content-type"] = originalReq.headers["content-type"];
-          }
-
-          return forwarded;
         },
 
-        onError: (reply: any, payload: { error: Error }) => {
-          const classified = classifyUpstreamFailure(payload?.error ?? payload);
-          const correlationId = reply.request?.correlationId;
+        replyOptions: {
+          rewriteRequestHeaders: (
+            originalReq: FastifyRequest,
+            headers: IncomingHttpHeaders,
+          ) => {
+            const forwarded: IncomingHttpHeaders = { ...headers };
 
-          if (!reply.sent) {
-            reply
-              .status(classified.status)
-              .send(
-                gatewayError(
-                  classified.code,
-                  classified.message,
-                  correlationId,
-                ),
-              );
-          }
+            stripClientIdentityHeaders(forwarded);
+
+            const correlationId =
+              originalReq.correlationId ??
+              originalReq.requestId ??
+              originalReq.headers["x-correlation-id"] ??
+              originalReq.headers["x-request-id"];
+
+            if (correlationId) {
+              forwarded["x-request-id"] = correlationId;
+              forwarded["x-correlation-id"] = correlationId;
+            }
+
+            if (originalReq.headers?.authorization) {
+              forwarded.authorization = originalReq.headers.authorization;
+            }
+
+            if (originalReq.user) {
+              injectVerifiedIdentity(forwarded, originalReq.user);
+            }
+
+            // Preserve content-type (critical for multipart boundaries)
+            if (originalReq.headers?.["content-type"]) {
+              forwarded["content-type"] = originalReq.headers["content-type"];
+            }
+
+            return forwarded;
+          },
+
+          onError: (reply: FastifyReply, payload: { error: Error }) => {
+            const classified = classifyUpstreamFailure(
+              payload?.error ?? payload,
+            );
+            const correlationId = reply.request?.correlationId;
+
+            if (!reply.sent) {
+              reply
+                .status(classified.status)
+                .send(
+                  gatewayError(
+                    classified.code,
+                    classified.message,
+                    correlationId,
+                  ),
+                );
+            }
+          },
         },
-      },
 
-      undici: {
-        connections: 128,
-        pipelining: 1,
-        bodyTimeout: config.httpTimeout ?? env.PROXY_TIMEOUT,
-        headersTimeout: config.httpTimeout ?? env.PROXY_TIMEOUT,
-      },
-    });
-  }, {
-    name: `proxy-${serviceName}`,
-  });
+        undici: {
+          connections: 128,
+          pipelining: 1,
+          bodyTimeout: config.httpTimeout ?? env.PROXY_TIMEOUT,
+          headersTimeout: config.httpTimeout ?? env.PROXY_TIMEOUT,
+        },
+      };
+
+      await fastify.register(
+        fastifyProxy as unknown as FastifyPluginCallback<HttpProxyRegisterOptions>,
+        proxyOptions,
+      );
+    },
+    {
+      name: `proxy-${serviceName}`,
+    },
+  );
 }
 
 /**

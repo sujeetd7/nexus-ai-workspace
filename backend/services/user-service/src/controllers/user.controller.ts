@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 
+import { AuthenticatedRequest } from "../middleware/auth/authenticate.middleware";
 import { UserService } from "../services/user.service";
 
 export class UserController {
@@ -15,6 +16,44 @@ export class UserController {
     const users = await this.service.list();
 
     res.json(users);
+  };
+
+  getMe = async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const authUserId = authReq.auth?.userId ?? authReq.user?.id;
+
+    if (!authUserId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const user = await this.service.getByAuthUserId(authUserId);
+
+    if (!user) {
+      res.status(404).json({ error: "User profile not found" });
+      return;
+    }
+
+    res.json(user);
+  };
+
+  updateMe = async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const authUserId = authReq.auth?.userId ?? authReq.user?.id;
+
+    if (!authUserId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const user = await this.service.updateByAuthUserId(authUserId, req.body);
+
+    if (!user) {
+      res.status(404).json({ error: "User profile not found" });
+      return;
+    }
+
+    res.json(user);
   };
 
   get = async (req: Request, res: Response) => {

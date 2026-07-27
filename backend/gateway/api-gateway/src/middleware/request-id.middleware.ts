@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 const REQUEST_ID_HEADER = "x-request-id";
 const CORRELATION_ID_HEADER = "x-correlation-id";
@@ -16,9 +17,14 @@ function pickIncomingId(value: unknown): string | undefined {
  * Reuse a safe incoming request/correlation ID; otherwise generate one.
  * Propagates both x-request-id and x-correlation-id (same value when only one supplied).
  */
-export async function requestIdMiddleware(req: any, reply: any): Promise<void> {
+export async function requestIdMiddleware(
+  req: FastifyRequest,
+  reply: FastifyReply,
+): Promise<void> {
   const incomingRequestId = pickIncomingId(req.headers[REQUEST_ID_HEADER]);
-  const incomingCorrelationId = pickIncomingId(req.headers[CORRELATION_ID_HEADER]);
+  const incomingCorrelationId = pickIncomingId(
+    req.headers[CORRELATION_ID_HEADER],
+  );
 
   const id = incomingRequestId ?? incomingCorrelationId ?? crypto.randomUUID();
 

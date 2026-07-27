@@ -27,7 +27,10 @@ export const env = {
   PROXY_TIMEOUT: parseInt(process.env.PROXY_TIMEOUT ?? "30000", 10),
   STREAM_TIMEOUT: parseInt(process.env.STREAM_TIMEOUT ?? "300000", 10),
   /** Max proxied request body (bytes). Applies to multipart and JSON. */
-  PROXY_BODY_LIMIT: parseInt(process.env.PROXY_BODY_LIMIT ?? String(25 * 1024 * 1024), 10),
+  PROXY_BODY_LIMIT: parseInt(
+    process.env.PROXY_BODY_LIMIT ?? String(25 * 1024 * 1024),
+    10,
+  ),
 
   /**
    * Same contract as Auth Service access-token signing.
