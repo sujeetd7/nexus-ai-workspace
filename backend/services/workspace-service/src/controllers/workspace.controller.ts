@@ -1,4 +1,7 @@
 import { Request, Response } from "express";
+import {
+  AuthenticatedRequest,
+} from "../middleware/auth/authenticate.middleware";
 import { WorkspaceService } from "../services/workspace.service";
 
 export class WorkspaceController {
@@ -9,9 +12,16 @@ export class WorkspaceController {
     res.status(201).json(workspace);
   };
 
-  list = async (_req: Request, res: Response) => {
-    const workspaces = await this.service.list();
-    res.status(200).json(workspaces);
+  list = async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.auth?.userId ?? authReq.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const workspaces = await this.service.list(userId);
+    return res.status(200).json(workspaces);
   };
 
   get = async (req: Request<{ id: string }>, res: Response) => {

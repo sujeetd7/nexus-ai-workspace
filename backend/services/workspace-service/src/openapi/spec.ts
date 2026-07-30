@@ -60,17 +60,24 @@ const workspaceConfig: ServiceSpecConfig = {
       }),
     },
     "/api/v1/workspaces": {
-      get: operation("workspaceList", "List workspaces for caller", {
-        tags: ["Workspaces"],
-        parameters: [
-          queryParam("page", "Page number", { schema: { type: "integer" } }),
-          queryParam("limit", "Page size", { schema: { type: "integer" } }),
-        ],
-        responses: {
-          "200": jsonResponse("200", "Paginated workspace list"),
-          ...standardErrorResponses(["401", "500"]),
+      get: operation(
+        "workspaceList",
+        "List membership-scoped workspaces for the authenticated caller",
+        {
+          tags: ["Workspaces"],
+          parameters: [
+            queryParam("page", "Page number", { schema: { type: "integer" } }),
+            queryParam("limit", "Page size", { schema: { type: "integer" } }),
+          ],
+          responses: {
+            "200": jsonResponse(
+              "200",
+              "Workspaces the caller owns or is a member of",
+            ),
+            ...standardErrorResponses(["401", "500"]),
+          },
         },
-      }),
+      ),
       post: operation("workspaceCreate", "Create workspace", {
         tags: ["Workspaces"],
         requestBody: jsonRequestBody({ type: "object" }),

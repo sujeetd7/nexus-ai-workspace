@@ -16,8 +16,8 @@ export class WorkspaceService {
     });
   }
 
-  async list() {
-    return this.repository.findAll();
+  async list(userId: string) {
+    return this.repository.findAccessibleByUserId(userId);
   }
 
   async get(id: string) {

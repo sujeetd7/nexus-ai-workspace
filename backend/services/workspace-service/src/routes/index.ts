@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { WorkspaceController } from "../controllers/workspace.controller";
+import { authenticate } from "../middleware/auth/authenticate.middleware";
 import workspaceAuditRoutes from "./workspace-audit.routes";
 import workspaceBillingRoutes from "./workspace-billing.routes";
 import workspaceInvitationRoutes from "./workspace-invitation.routes";
@@ -22,7 +23,11 @@ router.post(
   workspaceController.create.bind(workspaceController),
 );
 
-router.get("/workspaces", workspaceController.list.bind(workspaceController));
+router.get(
+  "/workspaces",
+  authenticate,
+  workspaceController.list.bind(workspaceController),
+);
 
 router.get(
   "/workspaces/:id",

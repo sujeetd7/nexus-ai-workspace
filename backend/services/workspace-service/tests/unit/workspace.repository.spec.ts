@@ -40,6 +40,13 @@ describe("WorkspaceRepository — no silent memory fallback", () => {
     await expect(repo.findAll()).rejects.toThrow(dbError);
   });
 
+  it("findAccessibleByUserId: propagates DB error without switching to memory", async () => {
+    (mockedPrisma.workspace.findMany as jest.Mock).mockRejectedValue(dbError);
+    const repo = new WorkspaceRepository();
+
+    await expect(repo.findAccessibleByUserId("user-1")).rejects.toThrow(dbError);
+  });
+
   it("findById: propagates DB error without switching to memory", async () => {
     (mockedPrisma.workspace.findUnique as jest.Mock).mockRejectedValue(dbError);
     const repo = new WorkspaceRepository();

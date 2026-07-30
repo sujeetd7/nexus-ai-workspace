@@ -11,6 +11,10 @@ describe("Gateway Swagger (W4)", () => {
     expect(body.paths["/api/v1/auth/login"]).toBeDefined();
     expect(body.paths["/api/v1/ai/stream"]).toBeDefined();
     expect(body.paths["/api/v1/chat/messages/send"]).toBeDefined();
+    expect(body.paths["/api/v1/workspaces"]).toBeDefined();
+    expect(body.paths["/api/v1/workspaces"].get?.operationId).toBe(
+      "workspaceList",
+    );
     expect(JSON.stringify(body.paths)).not.toMatch(/notification/i);
 
     const services = await app.inject({ method: "GET", url: "/docs/services" });
